@@ -1,0 +1,39 @@
+name: Garmin – synchronizacja planu
+
+on:
+  push:
+    branches: [main]
+    paths: [plan.yaml]
+  workflow_dispatch:
+    inputs:
+      podglad:
+        description: "Tylko podgląd (dry-run, nic nie wysyła)"
+        type: boolean
+        default: false
+
+concurrency:
+  group: garmin
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      TZ: Europe/Warsaw
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalacja
+        run: pip install --upgrade garminconnect curl_cffi pyyaml
+
+      - name: Synchronizacja z Garmin Connect
+        env:
+          GARMIN_TOKENS: ${{ secrets.GARMIN_TOKENS }}
+        run: >
+          python garmin_trening.py --zrodlo plan.yaml --tak --zawsze
+          ${{ inputs.podglad && '--dry-run' || '' }}

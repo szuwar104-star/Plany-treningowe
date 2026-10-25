@@ -1,0 +1,275 @@
+# Plan biegowy 10 km, 26.10 - 20.12 (8 tygodni)
+# Zmiana tego pliku na GitHubie (main) = automatyczna synchronizacja z Garmin Connect.
+#
+# Tempa i czasy ZAWSZE w cudzysłowie: "4:11", "2:00".
+#
+# Szablony (szablon: ...):
+#   spokojny       km_txt, km, [opcja], [przebiezki: true], [sila: false]
+#   dlugi          km_txt, km, [opcja], [uwaga]
+#   opcja_rozruch  (tylko data) – wolne lub 5-6 km
+#   akcent         nazwa, cel, powtorzenia, metry, tempo: ["od", "do"],
+#                  przerwa: {min/sek/m}, przerwa_txt, stop: PROG | VO2 | "własny tekst",
+#                  [stop_dodatek], [uwaga], [dodatkowe]  (dodatkowe = opcjonalne powtórzenie)
+# Bez szablonu:    nazwa, opis, [dopisz_stop: true], kroki:
+#                  - test_5km / start_10km (gotowe zestawy), albo lista kroków:
+#                      - rozgrzewka: {km: 3, notatka: "..."}     # bez wartości = do Lap
+#                      - powtorz: 5
+#                        kroki:
+#                          - bieg: {m: 1000, tempo: ["4:50", "5:10"], luz: 2}
+#                          - odpoczynek: {min: 2}
+#                      - schladzanie:
+#                    gotowe kroki: przebiezki, rozgrzewka_std, schlodzenie_std
+#                    czas kroku: km / m / min / sek / lap: true; cel: tempo albo strefa_hr
+# Każda pozycja może mieć opcjonalny: true (pomijane z --bez-opcjonalnych).
+#
+# Zmiana nazwy/opisu = trening w Garminie zostanie wymieniony. Pozycje usunięte
+# z pliku znikają z kalendarza (w zakresie dat planu).
+
+stare_nazwy:  # usuwane z "Moje treningi" (stary plan 20-30.10)
+  - Próg 4x1600
+  - Spokojny 9 km
+  - Interwały 5x1000
+  - Interwały 6x800
+  - Spokojny 8 km
+  - Próg 3x2000
+
+treningi:
+  # --- Tydzień 1/8 ---
+  - {data: 2026-10-26, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
+  - data: 2026-10-27
+    szablon: akcent
+    nazwa: T1 Próg 3x2000
+    cel: Wytrzymałość tempowa, tempo bliskie 10 km.
+    powtorzenia: 3
+    metry: 2000
+    tempo: ["4:11", "4:14"]
+    przerwa: {min: 2}
+    przerwa_txt: "2:00"
+    stop: PROG
+    stop_dodatek: Druga seria wolniejsza niż 4:16 - kończysz.
+    uwaga: Nie szybciej niż 4:10.
+  - {data: 2026-10-28, szablon: opcja_rozruch}
+  - {data: 2026-10-29, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
+  - data: 2026-10-30
+    szablon: akcent
+    nazwa: T1 VO2 5-6x1000
+    cel: Utrzymanie szybkości i VO2max.
+    powtorzenia: 5
+    metry: 1000
+    tempo: ["3:52", "3:56"]
+    przerwa: {min: 2, sek: 45}
+    przerwa_txt: "2:45"
+    stop: "Zmniejsz/przerwij: 4. powtórzenie wolniejsze niż 3:58 - kończysz na 4."
+    dodatkowe: "OPCJONALNIE 6. powtórzenie: tylko jeśli wtorek RPE <=17 i HRV w normie. Inaczej pomiń krok."
+  - {data: 2026-10-31, szablon: opcja_rozruch}
+  - {data: 2026-11-01, szablon: dlugi, km_txt: "18-20", km: 18, opcja: 2}
+
+  # --- Tydzień 2/8 ---
+  - {data: 2026-11-02, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
+  - data: 2026-11-03
+    szablon: akcent
+    nazwa: T2 Próg 2x3000
+    cel: Wytrzymałość tempowa - dłuższe odcinki.
+    powtorzenia: 2
+    metry: 3000
+    tempo: ["4:11", "4:14"]
+    przerwa: {min: 2, sek: 30}
+    przerwa_txt: "2:30"
+    stop: PROG
+  - {data: 2026-11-04, szablon: opcja_rozruch}
+  - {data: 2026-11-05, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
+  - data: 2026-11-06
+    szablon: akcent
+    nazwa: T2 VO2 5x1200
+    cel: VO2max i ekonomia biegu.
+    powtorzenia: 5
+    metry: 1200
+    tempo: ["3:55", "3:58"]
+    przerwa: {min: 2, sek: 45}
+    przerwa_txt: "2:45"
+    stop: VO2
+  - {data: 2026-11-07, szablon: opcja_rozruch}
+  - {data: 2026-11-08, szablon: dlugi, km_txt: "20", km: 20}
+
+  # --- Tydzień 3/8 ---
+  - {data: 2026-11-09, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
+  - data: 2026-11-10
+    szablon: akcent
+    nazwa: T3 Próg 4x2000
+    cel: Wytrzymałość tempowa - największa objętość progu w bloku (8 km).
+    powtorzenia: 4
+    metry: 2000
+    tempo: ["4:10", "4:13"]
+    przerwa: {min: 1, sek: 45}
+    przerwa_txt: "1:45"
+    stop: PROG
+    stop_dodatek: Po 3. serii RPE >17 - kończysz na 3.
+  - {data: 2026-11-11, szablon: opcja_rozruch}
+  - {data: 2026-11-12, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
+  - data: 2026-11-13
+    szablon: akcent
+    nazwa: T3 Szybkość 8x400
+    cel: Szybkość i ekonomia, krótkie odcinki.
+    powtorzenia: 8
+    metry: 400
+    tempo: ["3:45", "3:50"]
+    przerwa: {m: 200}
+    przerwa_txt: 200 m
+    stop: VO2
+    uwaga: Ok. 1:30-1:32 na odcinek.
+  - {data: 2026-11-14, szablon: opcja_rozruch}
+  - {data: 2026-11-15, szablon: dlugi, km_txt: "20", km: 20}
+
+  # --- Tydzień 4/8 (odciążenie + test) ---
+  - {data: 2026-11-16, szablon: spokojny, km_txt: "6-7", km: 6, opcja: 1}
+  - data: 2026-11-17
+    szablon: akcent
+    nazwa: T4 Próg 4x1000 lekko
+    cel: Utrzymanie progu w tygodniu odciążenia.
+    powtorzenia: 4
+    metry: 1000
+    tempo: ["4:08", "4:10"]
+    przerwa: {sek: 90}
+    przerwa_txt: 90 s
+    stop: PROG
+    uwaga: Kontrolowane, RPE <=15.
+  - {data: 2026-11-18, szablon: opcja_rozruch}
+  - {data: 2026-11-19, szablon: spokojny, km_txt: "6", km: 6, przebiezki: true}
+  - data: 2026-11-20
+    nazwa: T4 TEST 5 km
+    opis: >-
+      Test formy - porównanie z 19:44 z 13.10. Rozgrzewka 3 km + 4x100 m
+      + 5 min przerwy. 5 km maksymalnie równo: start 3:56-3:58/km (pierwsze
+      2 km nie szybciej niż 3:56), od 3 km utrzymaj, ostatnie 1000 m dociśnij.
+      Wynik: <=19:15 sub-40 realne; 19:15-19:40 cel 40:30-40:50; >19:40
+      sub-40 na wiosnę. Przy wietrze/lodzie, złym samopoczuciu lub niskim HRV
+      przełóż o dzień.
+    dopisz_stop: true
+    kroki: test_5km
+  - {data: 2026-11-21, szablon: opcja_rozruch}
+  - {data: 2026-11-22, szablon: dlugi, km_txt: "14-16", km: 14, opcja: 2, uwaga: Tydzień odciążenia - spokojnie.}
+
+  # --- Tydzień 5/8 ---
+  - {data: 2026-11-23, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
+  - data: 2026-11-24
+    szablon: akcent
+    nazwa: T5 Próg 2x4000
+    cel: Wytrzymałość tempowa, długie odcinki. Tempo skoryguj po teście (próg ok. 6-7% wolniej niż 5 km).
+    powtorzenia: 2
+    metry: 4000
+    tempo: ["4:10", "4:13"]
+    przerwa: {min: 2, sek: 30}
+    przerwa_txt: "2:30"
+    stop: PROG
+  - {data: 2026-11-25, szablon: opcja_rozruch}
+  - {data: 2026-11-26, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
+  - data: 2026-11-27
+    szablon: akcent
+    nazwa: T5 VO2 5x1000
+    cel: VO2max.
+    powtorzenia: 5
+    metry: 1000
+    tempo: ["3:52", "3:55"]
+    przerwa: {min: 2, sek: 45}
+    przerwa_txt: "2:45"
+    stop: VO2
+    uwaga: Tempo = 5 km z testu minus 2-3 s/km.
+  - {data: 2026-11-28, szablon: opcja_rozruch}
+  - {data: 2026-11-29, szablon: dlugi, km_txt: "20", km: 20}
+
+  # --- Tydzień 6/8 ---
+  - {data: 2026-11-30, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
+  - data: 2026-12-01
+    szablon: akcent
+    nazwa: T6 Próg 3x3000
+    cel: Wytrzymałość tempowa. Tempo skoryguj po teście 5 km.
+    powtorzenia: 3
+    metry: 3000
+    tempo: ["4:09", "4:12"]
+    przerwa: {min: 2}
+    przerwa_txt: "2:00"
+    stop: PROG
+    stop_dodatek: Po 2. serii RPE >17 - kończysz na dwóch.
+  - {data: 2026-12-02, szablon: opcja_rozruch}
+  - {data: 2026-12-03, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
+  - data: 2026-12-04
+    szablon: akcent
+    nazwa: T6 Tempo 5 km 4x1600
+    cel: Tempo 5 km, utrzymanie szybkości.
+    powtorzenia: 4
+    metry: 1600
+    tempo: ["3:56", "3:58"]
+    przerwa: {min: 2, sek: 30}
+    przerwa_txt: "2:30"
+    stop: VO2
+  - {data: 2026-12-05, szablon: opcja_rozruch}
+  - {data: 2026-12-06, szablon: dlugi, km_txt: "20", km: 20}
+
+  # --- Tydzień 7/8 ---
+  - {data: 2026-12-07, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
+  - data: 2026-12-08
+    szablon: akcent
+    nazwa: T7 Tempo startowe 3x2000
+    cel: Specyficzność - tempo docelowe na 10 km.
+    powtorzenia: 3
+    metry: 2000
+    tempo: ["4:02", "4:05"]
+    przerwa: {min: 2}
+    przerwa_txt: "2:00"
+    stop: PROG
+    stop_dodatek: Tempo nie trzyma się w 3. serii - kończysz na dwóch.
+    uwaga: "Jeśli test 5 km nie wskazuje na sub-40: 4:06-4:08."
+  - {data: 2026-12-09, szablon: opcja_rozruch}
+  - {data: 2026-12-10, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
+  - data: 2026-12-11
+    szablon: akcent
+    nazwa: T7 VO2 5x1000
+    cel: Utrzymanie szybkości przed startem.
+    powtorzenia: 5
+    metry: 1000
+    tempo: ["3:52", "3:55"]
+    przerwa: {min: 2, sek: 45}
+    przerwa_txt: "2:45"
+    stop: VO2
+  - {data: 2026-12-12, szablon: opcja_rozruch}
+  - {data: 2026-12-13, szablon: dlugi, km_txt: "18", km: 18}
+
+  # --- Tydzień 8/8 (start) ---
+  - {data: 2026-12-14, szablon: spokojny, km_txt: "6-7", km: 6, opcja: 1}
+  - data: 2026-12-15
+    szablon: akcent
+    nazwa: T8 Wyostrzenie 4x1000
+    cel: Wyostrzenie przed startem, bez zmęczenia.
+    powtorzenia: 4
+    metry: 1000
+    tempo: ["4:00", "4:02"]
+    przerwa: {sek: 90}
+    przerwa_txt: 90 s
+    stop: Cokolwiek wymaga wysiłku ponad RPE 15 - kończysz.
+    uwaga: Kontrolowane.
+  - {data: 2026-12-16, szablon: opcja_rozruch}
+  - {data: 2026-12-17, szablon: spokojny, km_txt: "6", km: 6, przebiezki: true, sila: false}
+  - data: 2026-12-18
+    nazwa: Rozruch 4-5 km + przebieżki
+    opis: "4-5 km spokojnie (5:40-6:00/km) + 4x100 m przebieżki. Dzień przed ostatnim wolnym: lekko, nic nowego."
+    dopisz_stop: true
+    kroki:
+      - bieg: {km: 4, notatka: "Spokojnie 5:40-6:00/km"}
+      - bieg: {km: 1, notatka: "OPCJONALNIE 5. km. Inaczej pomiń krok."}
+      - przebiezki:
+  - data: 2026-12-19
+    nazwa: "Opcja: wolne lub trucht 2-3 km"
+    opcjonalny: true
+    opis: Wolne albo 2-3 km truchtu. Sprzęt, śniadanie i dojazd przygotuj dzień wcześniej.
+    kroki:
+      - bieg: {km: 2, notatka: "Trucht, możesz do 3 km"}
+  - data: 2026-12-20
+    nazwa: START 10 km
+    opis: >-
+      Start 10 km. Rozgrzewka 2-3 km truchtu + 4x100 m. Pierwsze 2 km
+      4:03-4:05/km (nie szybciej), 3-8 km równo ok. 4:00-4:03, ostatnie
+      2 km dociśnij. Tempo skoryguj wynikiem testu 5 km. Bez ibuprofenu;
+      kofeina tylko jeśli przetestowana na akcencie; śniadanie 2-3 h przed,
+      nic nowego. Schłodzenie 2 km.
+    dopisz_stop: true
+    kroki: start_10km
