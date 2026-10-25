@@ -141,7 +141,7 @@ zestawy_sily:
 
 treningi:
   # --- Tydzień 1/8 ---
-  - {data: 2026-10-26, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
+  - {data: 2026-10-26, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1, sila: false}
   - {data: 2026-10-26, sila: A}
   - data: 2026-10-27
     szablon: akcent
@@ -156,7 +156,7 @@ treningi:
     stop_dodatek: Druga seria wolniejsza niż 4:16 - kończysz.
     uwaga: Nie szybciej niż 4:10.
   - {data: 2026-10-28, szablon: opcja_rozruch}
-  - {data: 2026-10-29, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
+  - {data: 2026-10-29, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1, sila: false}
   - {data: 2026-10-29, sila: B}
   - data: 2026-10-30
     szablon: akcent
@@ -174,7 +174,7 @@ treningi:
   - {data: 2026-11-01, szablon: dlugi, km_txt: "18-20", km: 18, opcja: 2}
 
   # --- Tydzień 2/8 ---
-  - {data: 2026-11-02, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
+  - {data: 2026-11-02, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1, sila: false}
   - {data: 2026-11-02, sila: A}
   - data: 2026-11-03
     szablon: akcent
@@ -187,7 +187,7 @@ treningi:
     przerwa_txt: "2:30"
     stop: PROG
   - {data: 2026-11-04, szablon: opcja_rozruch}
-  - {data: 2026-11-05, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
+  - {data: 2026-11-05, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1, sila: false}
   - {data: 2026-11-05, sila: B}
   - data: 2026-11-06
     szablon: akcent
@@ -204,7 +204,7 @@ treningi:
   - {data: 2026-11-08, szablon: dlugi, km_txt: "20", km: 20}
 
   # --- Tydzień 3/8 ---
-  - {data: 2026-11-09, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
+  - {data: 2026-11-09, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1, sila: false}
   - {data: 2026-11-09, sila: A}
   - data: 2026-11-10
     szablon: akcent
@@ -218,7 +218,7 @@ treningi:
     stop: PROG
     stop_dodatek: Po 3. serii RPE >17 - kończysz na 3.
   - {data: 2026-11-11, szablon: opcja_rozruch}
-  - {data: 2026-11-12, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
+  - {data: 2026-11-12, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1, sila: false}
   - {data: 2026-11-12, sila: B}
   - data: 2026-11-13
     szablon: akcent
@@ -236,7 +236,7 @@ treningi:
   - {data: 2026-11-15, szablon: dlugi, km_txt: "20", km: 20}
 
   # --- Tydzień 4/8 (odciążenie + test) ---
-  - {data: 2026-11-16, szablon: spokojny, km_txt: "6-7", km: 6, opcja: 1}
+  - {data: 2026-11-16, szablon: spokojny, km_txt: "6-7", km: 6, opcja: 1, sila: false}
   - {data: 2026-11-16, sila: L}
   - data: 2026-11-17
     szablon: akcent
@@ -267,7 +267,7 @@ treningi:
   - {data: 2026-11-22, szablon: dlugi, km_txt: "14-16", km: 14, opcja: 2, uwaga: Tydzień odciążenia - spokojnie.}
 
   # --- Tydzień 5/8 ---
-  - {data: 2026-11-23, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
+  - {data: 2026-11-23, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1, sila: false}
   - {data: 2026-11-23, sila: A2}
   - data: 2026-11-24
     szablon: akcent
@@ -280,7 +280,7 @@ treningi:
     przerwa_txt: "2:30"
     stop: PROG
   - {data: 2026-11-25, szablon: opcja_rozruch}
-  - {data: 2026-11-26, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
+  - {data: 2026-11-26, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1, sila: false}
   - {data: 2026-11-26, sila: B2}
   - data: 2026-11-27
     szablon: akcent
@@ -298,7 +298,7 @@ treningi:
   - {data: 2026-11-29, szablon: dlugi, km_txt: "20", km: 20}
 
   # --- Tydzień 6/8 ---
-  - {data: 2026-11-30, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
+  - {data: 2026-11-30, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1, sila: false}
   - {data: 2026-11-30, sila: A2}
   - data: 2026-12-01
     szablon: akcent
@@ -312,7 +312,7 @@ treningi:
     stop: PROG
     stop_dodatek: Po 2. serii RPE >17 - kończysz na dwóch.
   - {data: 2026-12-02, szablon: opcja_rozruch}
-  - {data: 2026-12-03, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
+  - {data: 2026-12-03, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1, sila: false}
   - {data: 2026-12-03, sila: B2}
   - data: 2026-12-04
     szablon: akcent
@@ -329,7 +329,7 @@ treningi:
   - {data: 2026-12-06, szablon: dlugi, km_txt: "20", km: 20}
 
   # --- Tydzień 7/8 ---
-  - {data: 2026-12-07, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
+  - {data: 2026-12-07, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1, sila: false}
   - {data: 2026-12-07, sila: A2}
   - data: 2026-12-08
     szablon: akcent
@@ -344,7 +344,7 @@ treningi:
     stop_dodatek: Tempo nie trzyma się w 3. serii - kończysz na dwóch.
     uwaga: "Jeśli test 5 km nie wskazuje na sub-40: 4:06-4:08."
   - {data: 2026-12-09, szablon: opcja_rozruch}
-  - {data: 2026-12-10, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
+  - {data: 2026-12-10, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1, sila: false}
   - {data: 2026-12-10, sila: B2}
   - data: 2026-12-11
     szablon: akcent
@@ -361,7 +361,7 @@ treningi:
   - {data: 2026-12-13, szablon: dlugi, km_txt: "18", km: 18}
 
   # --- Tydzień 8/8 (start) ---
-  - {data: 2026-12-14, szablon: spokojny, km_txt: "6-7", km: 6, opcja: 1}
+  - {data: 2026-12-14, szablon: spokojny, km_txt: "6-7", km: 6, opcja: 1, sila: false}
   - {data: 2026-12-14, sila: L}
   - data: 2026-12-15
     szablon: akcent
