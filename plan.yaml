@@ -1,29 +1,5 @@
 # Plan biegowy 10 km, 26.10 - 20.12 (8 tygodni)
-# Zmiana tego pliku na GitHubie (main) = automatyczna synchronizacja z Garmin Connect.
-#
 # Tempa i czasy ZAWSZE w cudzysłowie: "4:11", "2:00".
-#
-# Szablony (szablon: ...):
-#   spokojny       km_txt, km, [opcja], [przebiezki: true], [sila: false]
-#   dlugi          km_txt, km, [opcja], [uwaga]
-#   opcja_rozruch  (tylko data) – wolne lub 5-6 km
-#   akcent         nazwa, cel, powtorzenia, metry, tempo: ["od", "do"],
-#                  przerwa: {min/sek/m}, przerwa_txt, stop: PROG | VO2 | "własny tekst",
-#                  [stop_dodatek], [uwaga], [dodatkowe]  (dodatkowe = opcjonalne powtórzenie)
-# Bez szablonu:    nazwa, opis, [dopisz_stop: true], kroki:
-#                  - test_5km / start_10km (gotowe zestawy), albo lista kroków:
-#                      - rozgrzewka: {km: 3, notatka: "..."}     # bez wartości = do Lap
-#                      - powtorz: 5
-#                        kroki:
-#                          - bieg: {m: 1000, tempo: ["4:50", "5:10"], luz: 2}
-#                          - odpoczynek: {min: 2}
-#                      - schladzanie:
-#                    gotowe kroki: przebiezki, rozgrzewka_std, schlodzenie_std
-#                    czas kroku: km / m / min / sek / lap: true; cel: tempo albo strefa_hr
-# Każda pozycja może mieć opcjonalny: true (pomijane z --bez-opcjonalnych).
-#
-# Zmiana nazwy/opisu = trening w Garminie zostanie wymieniony. Pozycje usunięte
-# z pliku znikają z kalendarza (w zakresie dat planu).
 
 stare_nazwy:  # usuwane z "Moje treningi" (stary plan 20-30.10)
   - Próg 4x1600
@@ -49,7 +25,7 @@ treningi:
     stop_dodatek: Druga seria wolniejsza niż 4:16 - kończysz.
     uwaga: Nie szybciej niż 4:10.
   - {data: 2026-10-28, szablon: opcja_rozruch}
-  - {data: 2026-10-29, szablon: spokojny, km_txt: "9-10", km: 9, opcja: 1}
+  - {data: 2026-10-29, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
   - data: 2026-10-30
     szablon: akcent
     nazwa: T1 VO2 5-6x1000
