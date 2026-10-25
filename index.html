@@ -16,6 +16,7 @@
   --bg: #E9EEF4; --surface: #FFFFFF; --sunk: #F3F6F9; --ink: #13233A; --muted: #5A6B81;
   --line: #D3DCE7; --track: #1F4E8C; --track-2: #2C62A8; --on-track: #FFFFFF;
   --signal: #F2C230; --on-signal: #13233A; --easy: #CCDCF1; --red: #C23B3B; --ok: #2E7D4F;
+  --sila: #2A9A86; --on-sila: #FFFFFF;
   --cond: "Barlow Condensed", "Roboto Condensed", sans-serif-condensed, "Arial Narrow", system-ui, sans-serif;
   --body: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, "Cascadia Mono", "Roboto Mono", Menlo, monospace;
@@ -28,7 +29,7 @@
   :root {
     --bg: #0B1524; --surface: #13223A; --sunk: #0F1C30; --ink: #E6EDF6; --muted: #91A2B8;
     --line: #243753; --track: #1F4E8C; --track-2: #2C62A8; --on-track: #FFFFFF;
-    --easy: #2A4467; --red: #DD5A5A; --ok: #58B884;
+    --easy: #2A4467; --red: #DD5A5A; --ok: #58B884; --sila: #3BB39E; --on-sila: #0B1524;
     color-scheme: dark;
   }
 }
@@ -122,6 +123,9 @@ main { max-width: 640px; margin: 0 auto; padding: 16px 16px 128px; }
   background: repeating-linear-gradient(135deg, transparent 0 5px, var(--line) 5px 7px);
   color: var(--muted); box-shadow: inset 0 0 0 1px var(--line);
 }
+.dzien.sila { background: var(--sila); color: var(--on-sila); }
+.dzien.plus-sila { box-shadow: inset 0 -5px 0 var(--sila); padding-bottom: 8px; }
+.dzien.opcja.plus-sila, .dzien.inny.plus-sila { box-shadow: inset 0 0 0 1px var(--line), inset 0 -5px 0 var(--sila); }
 .dzien.minelo { opacity: .3; }
 .dzien.zmiana::after, .dzien.nowy::after {
   content: ""; position: absolute; top: 4px; right: 4px; width: 8px; height: 8px;
@@ -136,6 +140,8 @@ main { max-width: 640px; margin: 0 auto; padding: 16px 16px 128px; }
 .szczegoly { margin-top: 12px; padding: 12px 14px; background: var(--sunk); border-radius: 10px; display: flex; gap: 12px; align-items: center; }
 .szczegoly .tresc { flex: 1; min-width: 0; }
 .szczegoly b { font: 700 21px/1.1 var(--cond); display: block; }
+.szczegoly b + b { margin-top: 4px; }
+.szczegoly b.s { color: var(--sila); }
 .szczegoly p { margin: 3px 0 0; color: var(--muted); font-size: 14px; }
 .maly {
   border: 1px solid var(--line); background: var(--surface); border-radius: 8px;
@@ -251,10 +257,11 @@ dialog input { width: 100%; margin-top: 6px; padding: 11px; border: 1px solid va
       <span><i style="background:var(--track)"></i>długi</span>
       <span><i style="background:var(--red)"></i>test / start</span>
       <span><i style="background:repeating-linear-gradient(135deg,transparent 0 3px,var(--muted) 3px 4px)"></i>opcjonalny</span>
+      <span><i style="background:var(--sila)"></i>siła (pasek u dołu = bieg + siła)</span>
       <span id="leg-zmiana" hidden><i style="background:var(--ink);border-radius:50%"></i>inny niż w repo</span>
     </div>
     <div class="szczegoly" id="szczegoly" hidden>
-      <div class="tresc"><b id="sz-nazwa"></b><p id="sz-info"></p></div>
+      <div class="tresc"><div id="sz-nazwa"></div><p id="sz-info"></p></div>
       <button class="maly" id="sz-pokaz">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
         Edytuj
@@ -372,6 +379,20 @@ function rozbierz(tekst) {
   if (/\t/.test(tekst)) wynik.bledy.push("Plik zawiera tabulatory – YAML ich nie przyjmie. Użyj spacji.");
   const linie = tekst.replace(/\r/g, "").split("\n");
   const start = linie.findIndex(l => /^treningi:\s*(#.*)?$/.test(l));
+
+  // nazwy zestawów z sekcji zestawy_sily (tylko do podglądu)
+  const zestawy = new Map();
+  const zs = linie.findIndex(l => /^zestawy_sily:\s*(#.*)?$/.test(l));
+  if (zs >= 0) {
+    let klucz = null;
+    for (const l of linie.slice(zs + 1)) {
+      if (/^\S/.test(l)) break;
+      const k = l.match(/^  ([^\s:#][^:]*):\s*(#.*)?$/);
+      if (k) { klucz = k[1].trim(); zestawy.set(klucz, "Siła " + klucz); continue; }
+      const n = klucz && l.match(/^\s{4,}nazwa:\s*["']?(.+?)["']?\s*$/);
+      if (n && zestawy.get(klucz) === "Siła " + klucz) zestawy.set(klucz, n[1]);
+    }
+  }
   if (start < 0) { wynik.bledy.push("Brak linii treningi: – to nie wygląda na cały plan."); return wynik; }
 
   let wciecie = null, biezacy = null;
@@ -395,7 +416,13 @@ function rozbierz(tekst) {
     const km = pole(surowe, "km_txt") || "";
     const opc = /opcjonalny:\s*true/.test(surowe);
     let rodzaj, etykieta, pelna;
-    if (szablon === "spokojny") {
+    const silaKlucz = !szablon ? pole(surowe, "sila") : null;
+    const sport = pole(surowe, "sport");
+    if (silaKlucz || sport === "sila") {
+      rodzaj = "sila"; etykieta = "siła";
+      pelna = silaKlucz ? (zestawy.get(silaKlucz) || "Siła " + silaKlucz + " (brak w zestawy_sily!)") : (nazwa || "Siła");
+      if (silaKlucz && !zestawy.has(silaKlucz)) wynik.bledy.push(data + ": brak zestawu „" + silaKlucz + "” w sekcji zestawy_sily.");
+    } else if (szablon === "spokojny") {
       rodzaj = "spokojny"; etykieta = km;
       pelna = "Spokojny " + km + " km" + (/przebiezki:\s*true/.test(surowe) ? " + przebieżki" : "");
     } else if (szablon === "dlugi") {
@@ -476,6 +503,10 @@ function rysuj() {
   const poz = [...plan.pozycje].sort((a, b) => a.data.localeCompare(b.data));
   const pierwsza = naDate(poz[0].data), ostatnia = naDate(poz[poz.length - 1].data);
   const minione = poz.filter(p => naDate(p.data) < dzisiaj).length;
+  const silowych = poz.filter(p => p.rodzaj === "sila").length;
+  const wgDaty = new Map();
+  for (const p of poz) { if (!wgDaty.has(p.data)) wgDaty.set(p.data, []); wgDaty.get(p.data).push(p); }
+  const kluczDnia = l => l.map(p => p.klucz).join(" | ");
 
   $("#ile").innerHTML = "";
   $("#ile").append(String(poz.length), el("span", "", odmiana(poz.length, "trening", "treningi", "treningów")));
@@ -487,13 +518,12 @@ function rysuj() {
   const status = new Map();
   let nowe = 0, zmienione = 0, usuniete = 0;
   if (bazowy) {
-    for (const p of poz) {
-      if (!bazowy.has(p.data)) { status.set(p.data, "nowy"); nowe++; }
-      else if (bazowy.get(p.data) !== p.klucz) { status.set(p.data, "zmiana"); zmienione++; }
+    for (const [d, l] of wgDaty) {
+      if (!bazowy.has(d)) { status.set(d, "nowy"); nowe++; }
+      else if (bazowy.get(d) !== kluczDnia(l)) { status.set(d, "zmiana"); zmienione++; }
     }
-    const daty = new Set(poz.map(p => p.data));
     for (const d of bazowy.keys())
-      if (!daty.has(d) && naDate(d) >= pierwsza && naDate(d) <= ostatnia) usuniete++;
+      if (!wgDaty.has(d) && naDate(d) >= pierwsza && naDate(d) <= ostatnia) usuniete++;
   }
   const zn = $("#znaczki");
   zn.innerHTML = "";
@@ -503,6 +533,7 @@ function rysuj() {
     if (usuniete) zn.append(el("span", "znaczek zm", usuniete + " do usunięcia"));
     if (!zmienione && !nowe && !usuniete) zn.append(el("span", "znaczek ok", "✓ taki sam jak w repo"));
   }
+  if (silowych) zn.append(el("span", "znaczek", "w tym " + silowych + " " + odmiana(silowych, "siłowy", "siłowe", "siłowych")));
   if (minione) zn.append(el("span", "znaczek", minione + " " + odmiana(minione, "minął", "minęły", "minęło") + " – nie zostaną wysłane"));
   zn.hidden = !zn.children.length;
   $("#leg-zmiana").hidden = !(zmienione || nowe);
@@ -512,19 +543,20 @@ function rysuj() {
   s.innerHTML = "";
   s.append(el("div", "dz", ""));
   DNI.forEach((d, i) => s.append(el("div", "dz" + (i > 4 ? " weekend" : ""), d)));
-  const wgDaty = new Map(poz.map(p => [p.data, p]));
   const od = new Date(pierwsza); od.setUTCDate(od.getUTCDate() - ((od.getUTCDay() + 6) % 7));
   for (let t = new Date(od); t <= ostatnia; t.setUTCDate(t.getUTCDate() + 7)) {
     s.append(el("div", "tydz", krotko(t)));
     for (let i = 0; i < 7; i++) {
       const d = new Date(t); d.setUTCDate(d.getUTCDate() + i);
-      const p = wgDaty.get(iso(d));
+      const lista = wgDaty.get(iso(d));
       const b = document.createElement("button");
       b.type = "button";
-      if (!p) { b.className = "dzien pusty"; b.tabIndex = -1; b.setAttribute("aria-hidden", "true"); s.append(b); continue; }
-      b.className = "dzien " + p.rodzaj + (d < dzisiaj ? " minelo" : "") + (status.get(p.data) ? " " + status.get(p.data) : "");
+      if (!lista) { b.className = "dzien pusty"; b.tabIndex = -1; b.setAttribute("aria-hidden", "true"); s.append(b); continue; }
+      const p = lista.find(x => x.rodzaj !== "sila") || lista[0];
+      const zSila = p.rodzaj !== "sila" && lista.some(x => x.rodzaj === "sila");
+      b.className = "dzien " + p.rodzaj + (zSila ? " plus-sila" : "") + (d < dzisiaj ? " minelo" : "") + (status.get(p.data) ? " " + status.get(p.data) : "");
       b.setAttribute("aria-pressed", String(wybrany === p.data));
-      b.setAttribute("aria-label", p.data + ": " + p.pelna);
+      b.setAttribute("aria-label", p.data + ": " + lista.map(x => x.pelna).join(" i "));
       const dl = p.etykieta.length;
       b.append(el("span", "nr", String(d.getUTCDate())), el("span", "et" + (dl > 5 ? " s" : dl > 4 ? " m" : ""), p.etykieta));
       b.addEventListener("click", () => { wybrany = wybrany === p.data ? null : p.data; rysuj(); });
@@ -538,13 +570,16 @@ function rysuj() {
     while (e.scrollWidth > e.clientWidth + 0.5 && f > 9) { f -= 0.5; e.style.fontSize = f + "px"; }
   }
 
-  const p = wybrany && wgDaty.get(wybrany);
-  $("#szczegoly").hidden = !p;
-  if (p) {
+  const lista = wybrany && wgDaty.get(wybrany);
+  $("#szczegoly").hidden = !lista;
+  if (lista) {
+    const p = lista[0];
     const d = naDate(p.data);
-    $("#sz-nazwa").textContent = p.pelna;
+    const nz = $("#sz-nazwa");
+    nz.innerHTML = "";
+    lista.forEach(x => nz.append(el("b", x.rodzaj === "sila" ? "s" : "", x.pelna)));
     const info = [DNI_PELNE[(d.getUTCDay() + 6) % 7] + " " + krotko(d)];
-    if (p.opcjonalny) info.push("opcjonalny");
+    if (lista.some(x => x.opcjonalny)) info.push("opcjonalny");
     if (d < dzisiaj) info.push("minął – nie zostanie wysłany");
     if (status.get(p.data) === "zmiana") info.push("inny niż w repo");
     if (status.get(p.data) === "nowy") info.push("nowy dzień");
@@ -553,7 +588,7 @@ function rysuj() {
 }
 
 function pokazWTekscie() {
-  const p = plan.pozycje.find(x => x.data === wybrany);
+  const p = plan.pozycje.filter(x => x.data === wybrany).sort((a, b) => a.linia - b.linia)[0];
   if (!p) return;
   const ta = $("#tekst");
   const linie = ta.value.split("\n");
@@ -565,6 +600,13 @@ function pokazWTekscie() {
   const wys = parseFloat(getComputedStyle(ta).lineHeight) || 20;
   ta.scrollTop = Math.max(0, p.linia * wys - ta.clientHeight / 3);
   $("#edytor").scrollIntoView({ block: "start", behavior: "smooth" });
+}
+
+function mapaDni(pozycje) {
+  const m = new Map();
+  for (const p of [...pozycje].sort((a, b) => a.data.localeCompare(b.data)))
+    m.set(p.data, m.has(p.data) ? m.get(p.data) + " | " + p.klucz : p.klucz);
+  return m;
 }
 
 // ---------- plan z repo ----------
@@ -579,7 +621,7 @@ async function wczytajBazowy() {
   if (!ust.token) return;
   try {
     const t = await pobierzZRepo();
-    bazowy = new Map((t ? rozbierz(t).pozycje : []).map(p => [p.data, p.klucz]));
+    bazowy = mapaDni(t ? rozbierz(t).pozycje : []);
     rysuj();
   } catch { /* brak porównania nie blokuje wysyłki */ }
 }
@@ -682,7 +724,7 @@ async function sledz(wyslano, tekst) {
       if (stan.conclusion === "success") {
         etap(2, "zrobione"); etap(3, "zrobione");
         info("Gotowe. Zsynchronizuj zegarek, żeby zobaczyć zmiany.", "ok", run.html_url);
-        bazowy = new Map(rozbierz(tekst).pozycje.map(p => [p.data, p.klucz]));
+        bazowy = mapaDni(rozbierz(tekst).pozycje);
         rysuj();
       } else {
         if (!zapis || zapis.conclusion !== "success") etap(2, "blad"); else etap(3, "blad");
@@ -774,7 +816,7 @@ $("#z-repo").addEventListener("click", async () => {
   try {
     const t = await pobierzZRepo();
     if (t === null) { komunikat("W repo nie ma jeszcze pliku plan.yaml.", "blad"); return; }
-    bazowy = new Map(rozbierz(t).pozycje.map(p => [p.data, p.klucz]));
+    bazowy = mapaDni(rozbierz(t).pozycje);
     ustawTekst(t, "Wczytano plan z repo. Popraw go w tekście planu albo wybierz dzień w siatce.");
   } catch (e) { komunikat(e.message, "blad"); }
 });

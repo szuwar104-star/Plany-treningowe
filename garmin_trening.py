@@ -34,6 +34,9 @@ Plan z pliku (YAML/JSON) zamiast sekcji PLAN – lokalnie albo z GitHuba:
     uruchomienia = nic się nie dzieje (wymuszenie: --zawsze), więc można to
     puszczać z harmonogramu np. co godzinę.
 
+Treningi siłowe: sekcja zestawy_sily w pliku planu (opis w plan.yaml).
+    python garmin_trening.py --cwiczenia plank    # nazwy ćwiczeń z katalogu Garmina
+
 Tokeny dla GitHub Actions:
     python garmin_trening.py --eksport-tokenow    # wypisuje tekst do sekretu GARMIN_TOKENS
 
@@ -382,7 +385,8 @@ def _mmss(v):
 
 def _kroki_z_pliku(lista):
     rodzaje = {"rozgrzewka": rozgrzewka, "bieg": bieg,
-               "odpoczynek": odpoczynek, "schladzanie": schladzanie}
+               "odpoczynek": odpoczynek, "schladzanie": schladzanie,
+               "cwiczenie": cwiczenie, "przerwa": przerwa}
     wynik = []
     for k in lista:
         if not isinstance(k, dict) or not k:
@@ -400,6 +404,8 @@ def _kroki_z_pliku(lista):
         elif typ == "schlodzenie_std":
             wynik.append(_schlodzenie_std())
         elif typ in rodzaje:
+            if typ == "cwiczenie" and isinstance(par, str):
+                par = {"co": par}
             par = dict(par or {})
             if "tempo" in par:
                 od, do_ = (_mmss(t) for t in par["tempo"])
@@ -410,11 +416,19 @@ def _kroki_z_pliku(lista):
     return wynik
 
 
-def _wpis_z_pliku(w):
+def _wpis_z_pliku(w, zestawy=None):
     w = dict(w)
     d = str(w.pop("data"))
     szablon = w.pop("szablon", None)
     opcjonalny = w.pop("opcjonalny", None)
+
+    if szablon is None and "sila" in w:  # trening siłowy z sekcji zestawy_sily
+        klucz = str(w.pop("sila"))
+        if not zestawy or klucz not in zestawy:
+            raise ValueError(f"brak zestawu siłowego '{klucz}' w sekcji zestawy_sily")
+        z = dict(zestawy[klucz])
+        w = {**z, **w, "sport": "sila"}
+        w.setdefault("nazwa", f"Siła {klucz}")
 
     if szablon == "spokojny":
         wynik = spokojny(d, str(w.pop("km_txt")), **w)
@@ -439,7 +453,11 @@ def _wpis_z_pliku(w):
         else:
             fn = (lambda k=kroki: _kroki_z_pliku(k))
         opis = w.get("opis", "") + (STOP if w.get("dopisz_stop") else "")
-        wynik = {"data": d, "nazwa": str(w["nazwa"]), "opis": opis, "kroki": fn}
+        sport = str(w.get("sport", "bieg"))
+        if sport not in SPORTY:
+            raise ValueError(f"nieznany sport: {sport} (dostępne: {', '.join(SPORTY)})")
+        wynik = {"data": d, "nazwa": str(w["nazwa"]), "opis": opis, "kroki": fn,
+                 "sport": sport}
     else:
         raise ValueError(f"nieznany szablon: {szablon}")
 
@@ -485,10 +503,12 @@ def plan_z_tekstu(tekst, zrodlo):
         dane = {"treningi": dane}
     dane = dane or {}
 
+    zestawy = dane.get("zestawy_sily") or {}
+    zestawy = {str(k): v for k, v in zestawy.items()}
     plan = []
     for i, w in enumerate(dane.get("treningi") or [], 1):
         try:
-            p = _wpis_z_pliku(w)
+            p = _wpis_z_pliku(w, zestawy)
             p["kroki"]()  # od razu sprawdza kroki, zanim cokolwiek pójdzie do Garmina
         except KeyError as e:
             sys.exit(f"Błąd w pliku planu, pozycja {i} ({w.get('data', '?')}"
@@ -506,7 +526,11 @@ STEP_TYPES = {
     "recovery": 4, "rest": 5, "repeat": 6,
 }
 CONDITIONS = {
-    "lap.button": 1, "time": 2, "distance": 3, "iterations": 7,
+    "lap.button": 1, "time": 2, "distance": 3, "iterations": 7, "reps": 10,
+}
+SPORTY = {
+    "bieg": {"sportTypeId": 1, "sportTypeKey": "running"},
+    "sila": {"sportTypeId": 5, "sportTypeKey": "strength_training"},
 }
 TARGETS = {
     "no.target": 1, "heart.rate.zone": 4, "pace.zone": 6,
@@ -521,14 +545,18 @@ def _tempo_na_ms(tempo: str) -> float:
 
 
 def _krok(typ, lap=False, min=None, sek=None, km=None, m=None,
-          tempo=None, strefa_hr=None, notatka=None):
+          tempo=None, strefa_hr=None, notatka=None, powt=None):
     step = {
         "type": "ExecutableStepDTO",
         "stepType": {"stepTypeId": STEP_TYPES[typ], "stepTypeKey": typ},
     }
 
     # --- czas trwania ---
-    if km is not None or m is not None:
+    if powt is not None:
+        step["endCondition"] = {"conditionTypeId": CONDITIONS["reps"],
+                                "conditionTypeKey": "reps"}
+        step["endConditionValue"] = float(powt)
+    elif km is not None or m is not None:
         metry = km * 1000 if km is not None else m
         step["endCondition"] = {"conditionTypeId": CONDITIONS["distance"],
                                 "conditionTypeKey": "distance"}
@@ -567,6 +595,148 @@ def rozgrzewka(**kw):  return _krok("warmup", **kw)
 def bieg(**kw):        return _krok("interval", **kw)
 def odpoczynek(**kw):  return _krok("recovery", **kw)
 def schladzanie(**kw): return _krok("cooldown", **kw)
+def przerwa(**kw):     return _krok("rest", **kw)
+
+
+# ============================================================================
+#  ĆWICZENIA SIŁOWE (Garmin: kategoria + nazwa z katalogu Garmina)
+# ============================================================================
+# Polskie nazwy -> kandydaci (KATEGORIA, NAZWA). Skrypt bierze pierwszego, który
+# jest w katalogu Garmina; nazwy spoza katalogu Garmin pomija, więc ćwiczenie
+# zostaje wtedy opisane w notatce kroku. Własne nazwy: --cwiczenia SZUKAJ.
+ALIASY = {
+    "pompki": [("PUSH_UP", "PUSH_UP")],
+    "pompki_na_kolanach": [("PUSH_UP", "KNEELING_PUSH_UP")],
+    "przysiad": [("SQUAT", "AIR_SQUAT"), ("SQUAT", "BODY_WEIGHT_SQUAT"), ("SQUAT", "SQUAT")],
+    "przysiad_bulgarski": [("LUNGE", "BULGARIAN_SPLIT_SQUAT"), ("SQUAT", "BULGARIAN_SPLIT_SQUAT"),
+                           ("LUNGE", "DUMBBELL_BULGARIAN_SPLIT_SQUAT")],
+    "wykroki": [("LUNGE", "LUNGE"), ("LUNGE", "WALKING_LUNGE")],
+    "wykroki_wstecz": [("LUNGE", "REVERSE_LUNGE"), ("LUNGE", "BACKWARD_LUNGE"), ("LUNGE", "LUNGE")],
+    "wykroki_boczne": [("LUNGE", "SIDE_LUNGE"), ("LUNGE", "LATERAL_LUNGE")],
+    "plank": [("PLANK", "PLANK"), ("PLANK", "STRAIGHT_ARM_PLANK")],
+    "plank_boczny": [("PLANK", "SIDE_PLANK")],
+    "copenhagen": [("PLANK", "COPENHAGEN_PLANK"), ("HIP_STABILITY", "COPENHAGEN_ADDUCTION"),
+                   ("PLANK", "SIDE_PLANK")],
+    "mostek": [("HIP_RAISE", "HIP_RAISE"), ("HIP_RAISE", "GLUTE_BRIDGE"), ("HIP_RAISE", "BRIDGE")],
+    "mostek_jednonoz": [("HIP_RAISE", "SINGLE_LEG_HIP_RAISE"), ("HIP_RAISE", "SINGLE_LEG_GLUTE_BRIDGE")],
+    "martwy_jednonoz": [("DEADLIFT", "SINGLE_LEG_ROMANIAN_DEADLIFT"), ("DEADLIFT", "SINGLE_LEG_DEADLIFT"),
+                        ("HIP_STABILITY", "SINGLE_LEG_DEADLIFT")],
+    "dead_bug": [("HIP_STABILITY", "DEAD_BUG"), ("CORE", "DEAD_BUG"), ("PLANK", "DEAD_BUG")],
+    "bird_dog": [("CORE", "BIRD_DOG"), ("HIP_STABILITY", "QUADRUPED_HIP_EXTENSION"), ("PLANK", "BIRD_DOG")],
+    "brzuszki": [("CRUNCH", "CRUNCH"), ("SIT_UP", "SIT_UP")],
+    "rowerek": [("CRUNCH", "BICYCLE_CRUNCH")],
+    "unoszenie_nog": [("LEG_RAISE", "LYING_STRAIGHT_LEG_RAISE"), ("LEG_RAISE", "LEG_RAISE")],
+    "hollow": [("CORE", "HOLLOW_HOLD"), ("CORE", "HOLLOW_ROCK")],
+    "superman": [("HYPEREXTENSION", "SUPERMAN"), ("HYPEREXTENSION", "SUPERMAN_ON_FLOOR")],
+    "wspiecia": [("CALF_RAISE", "STANDING_CALF_RAISE"), ("CALF_RAISE", "CALF_RAISE")],
+    "wspiecia_jednonoz": [("CALF_RAISE", "SINGLE_LEG_STANDING_CALF_RAISE"),
+                          ("CALF_RAISE", "SINGLE_LEG_CALF_RAISE")],
+    "muszelka": [("HIP_STABILITY", "CLAMSHELL"), ("HIP_STABILITY", "SIDE_LYING_CLAM")],
+    "wymachy_bok": [("HIP_STABILITY", "SIDE_LYING_LEG_RAISE"), ("HIP_STABILITY", "LYING_ABDUCTION_STRETCH")],
+    "mountain_climber": [("PLANK", "MOUNTAIN_CLIMBER"), ("CARDIO", "MOUNTAIN_CLIMBER")],
+    "burpee": [("TOTAL_BODY", "BURPEE"), ("CARDIO", "BURPEE")],
+    "pajacyki": [("CARDIO", "JUMPING_JACKS"), ("CARDIO", "JUMPING_JACK")],
+    "podciaganie": [("PULL_UP", "PULL_UP")],
+    "dipy": [("TRICEPS_EXTENSION", "BENCH_DIP"), ("TRICEPS_EXTENSION", "BODY_WEIGHT_DIP")],
+    "wejscia_na_podwyzszenie": [("LUNGE", "STEP_UP"), ("SQUAT", "STEP_UP"), ("LUNGE", "BODY_WEIGHT_STEP_UP")],
+}
+KATALOG_URL = "https://connect.garmin.com/web-data/exercises/Exercises.json"
+KATALOG_PLIK = os.path.expanduser("~/.garmin_cwiczenia.json")
+_katalog_cache = None
+_ostrzezenia = set()
+
+
+def _katalog():
+    """{(KATEGORIA, NAZWA)} z katalogu Garmina; pusty zbiór, gdy niedostępny."""
+    global _katalog_cache
+    if _katalog_cache is not None:
+        return _katalog_cache
+    dane = None
+    try:
+        if os.path.exists(KATALOG_PLIK) and (os.path.getmtime(KATALOG_PLIK)
+                                             > __import__("time").time() - 30 * 86400):
+            with open(KATALOG_PLIK, encoding="utf-8") as f:
+                dane = json.load(f)
+    except Exception:
+        dane = None
+    if dane is None:
+        try:
+            req = urllib.request.Request(KATALOG_URL, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req, timeout=20) as r:
+                dane = json.loads(r.read().decode("utf-8"))
+            try:
+                with open(KATALOG_PLIK, "w", encoding="utf-8") as f:
+                    json.dump(dane, f)
+            except OSError:
+                pass
+        except Exception as e:
+            print(f"Uwaga: nie pobrałem katalogu ćwiczeń Garmina ({e}) – nazwy nie są sprawdzane.")
+            dane = {}
+    pary = set()
+    kategorie = dane.get("categories", dane) if isinstance(dane, dict) else {}
+    for kat, zawart in (kategorie.items() if isinstance(kategorie, dict) else []):
+        cw = zawart.get("exercises", zawart) if isinstance(zawart, dict) else {}
+        if isinstance(cw, dict):
+            pary |= {(str(kat).upper(), str(n).upper()) for n in cw}
+        elif isinstance(cw, list):
+            pary |= {(str(kat).upper(), str(n).upper()) for n in cw if isinstance(n, str)}
+    _katalog_cache = pary
+    return pary
+
+
+def _znajdz_cwiczenie(co=None, kategoria=None, nazwa=None):
+    """-> (kategoria, nazwa albo None, czy_rozpoznane)"""
+    katalog = _katalog()
+    if kategoria or nazwa:
+        kandydaci = [((kategoria or "").upper(), (nazwa or "").upper())]
+        if not kategoria and nazwa:   # sama nazwa – szukamy kategorii w katalogu
+            kandydaci = [(k, n) for k, n in katalog if n == nazwa.upper()] or kandydaci
+    else:
+        klucz = str(co).strip().lower().replace(" ", "_").replace("-", "_")
+        if klucz in ALIASY:
+            kandydaci = ALIASY[klucz]
+        else:  # nazwa Garmina wpisana wprost, np. SIDE_PLANK
+            n = klucz.upper()
+            kandydaci = [(k, x) for k, x in katalog if x == n] or [("", n)]
+    if not katalog:              # bez katalogu: pierwszy kandydat, niesprawdzony
+        k, n = kandydaci[0]
+        return k or None, n or None, None
+    for i, (k, n) in enumerate(kandydaci):
+        if (k, n) in katalog:
+            return k, n, (True if i == 0 else None)   # None = zamiennik, dopisz nazwę
+    kat = next((k for k, _ in kandydaci if k and any(k == kk for kk, _ in katalog)), None)
+    return kat, None, False
+
+
+def cwiczenie(co=None, kategoria=None, nazwa=None, notatka=None, **kw):
+    """Krok siłowy: powt=12 | sek=45 | min=1 | lap=True (domyślnie)."""
+    if not (co or kategoria or nazwa):
+        raise ValueError("ćwiczenie wymaga pola co (np. plank) albo kategoria/nazwa")
+    kat, naz, ok = _znajdz_cwiczenie(co, kategoria, nazwa)
+    opis_cw = str(co or nazwa or kategoria).replace("_", " ")
+    if ok is False and opis_cw not in _ostrzezenia:
+        _ostrzezenia.add(opis_cw)
+        print(f"Uwaga: '{opis_cw}' nie ma odpowiednika w katalogu Garmina"
+              f" – na zegarku będzie opisane w notatce kroku.")
+    tekst = notatka or ""
+    if ok is not True:  # brak w katalogu, zamiennik albo katalog niedostępny
+        tekst = f"{opis_cw.capitalize()}. {tekst}".strip()
+    step = _krok("interval", notatka=tekst or None, **kw)
+    step["category"] = kat
+    step["exerciseName"] = naz
+    return step
+
+
+def wypisz_cwiczenia(szukaj):
+    katalog = _katalog()
+    if not katalog:
+        sys.exit("Katalog Garmina niedostępny.")
+    s = (szukaj or "").upper().replace(" ", "_")
+    wynik = sorted((k, n) for k, n in katalog if s in n or s in k)
+    for k, n in wynik:
+        print(f"  {n:45} kategoria: {k}")
+    print(f"{len(wynik)} pozycji. W planie: cwiczenie: {{kategoria: KATEGORIA, nazwa: NAZWA, powt: 10}}")
+    print("Polskie skróty (co: ...): " + ", ".join(sorted(ALIASY)))
 
 
 def powtorz(n, kroki):
@@ -594,14 +764,14 @@ def _numeruj(kroki, licznik=None):
 
 
 def zbuduj_json(definicja):
-    running = {"sportTypeId": 1, "sportTypeKey": "running"}
+    sport = SPORTY[definicja.get("sport") or "bieg"]
     return {
         "workoutName": definicja["nazwa"],
         "description": definicja.get("opis", "")[:512],
-        "sportType": running,
+        "sportType": sport,
         "workoutSegments": [{
             "segmentOrder": 1,
-            "sportType": running,
+            "sportType": sport,
             "workoutSteps": _numeruj(definicja["kroki"]),
         }],
     }
@@ -847,12 +1017,17 @@ def main():
                    help="plik planu (YAML/JSON): ścieżka albo URL na GitHubie; włącza --plan")
     p.add_argument("--zawsze", action="store_true",
                    help="z --zrodlo: wykonaj, nawet jeśli plik się nie zmienił")
+    p.add_argument("--cwiczenia", nargs="?", const="", metavar="SZUKAJ",
+                   help="pokaż ćwiczenia z katalogu Garmina (np. --cwiczenia plank)")
     p.add_argument("--eksport-tokenow", action="store_true",
                    help="wypisz tokeny Garmina jako tekst do sekretu GARMIN_TOKENS")
     args = p.parse_args()
 
     if args.eksport_tokenow:
         eksportuj_tokeny()
+        return
+    if args.cwiczenia is not None:
+        wypisz_cwiczenia(args.cwiczenia)
         return
 
     global STARE_NAZWY
@@ -886,7 +1061,7 @@ def main():
             if args.bez_opcjonalnych and w.get("opcjonalny"):
                 continue
             payload = zbuduj_json({"nazwa": w["nazwa"], "opis": w["opis"],
-                                   "kroki": w["kroki"]()})
+                                   "kroki": w["kroki"](), "sport": w.get("sport")})
             zadania.append((w["data"], payload))
     else:
         zadania = [(args.data, zbuduj_json(TRENING()))]
@@ -990,8 +1165,11 @@ def main():
         print(f"\nGotowe z problemami: {bledy}")
         sys.exit(2)
     if odcisk:
-        with open(OSTATNI_PLAN, "w") as f:
-            f.write(odcisk)
+        try:
+            with open(OSTATNI_PLAN, "w") as f:
+                f.write(odcisk)
+        except OSError:
+            pass
     print("\nGotowe. Zsynchronizuj zegarek, żeby treningi pojawiły się w kalendarzu.")
 
 
