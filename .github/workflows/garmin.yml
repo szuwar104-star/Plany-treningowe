@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
     paths: [plan.yaml]
+  repository_dispatch:          # plan wysłany z telefonu (HTTP Shortcuts)
+    types: [nowy-plan]
   workflow_dispatch:
     inputs:
       podglad:
@@ -15,6 +17,9 @@ concurrency:
   group: garmin
   cancel-in-progress: false
 
+permissions:
+  contents: write               # zapis plan.yaml przysłanego z telefonu
+
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -22,14 +27,32 @@ jobs:
     env:
       TZ: Europe/Warsaw
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
       - name: Instalacja
         run: pip install --upgrade garminconnect curl_cffi pyyaml
+
+      - name: Zapis planu z telefonu
+        if: github.event_name == 'repository_dispatch'
+        env:
+          PLAN_B64: ${{ github.event.client_payload.plan_b64 }}
+        run: |
+          printf '%s' "$PLAN_B64" | base64 -d > plan.yaml
+          grep -q "data:" plan.yaml || { echo "Przysłany plan jest pusty – przerywam."; exit 1; }
+          python garmin_trening.py --zrodlo plan.yaml --dry-run > /dev/null
+          git config user.name "plan z telefonu"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add plan.yaml
+          if git diff --cached --quiet; then
+            echo "Plan identyczny jak w repo."
+          else
+            git commit -m "Plan z telefonu"
+            git push
+          fi
 
       - name: Synchronizacja z Garmin Connect
         env:
