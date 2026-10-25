@@ -1,6 +1,6 @@
 // Pliki aplikacji: najpierw sieć, bez sieci – kopia. Zapytania do GitHuba idą zawsze do sieci.
 // Udostępnienie z innej aplikacji (plik albo tekst) trafia tu jako POST ./udostepnij.
-const CACHE = "plan-garmin-v2";
+const CACHE = "plan-garmin-v3";
 const SCHOWEK = "plan-garmin-udostepnione";
 const PLIKI = ["./", "./index.html", "./manifest.webmanifest",
                "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png"];
@@ -42,7 +42,8 @@ self.addEventListener("fetch", e => {
   }
   if (e.request.method !== "GET") return;
   e.respondWith(
-    fetch(e.request)
+    // no-cache: zawsze pytaj serwer o aktualną wersję (GitHub Pages trzyma kopie do 10 min)
+    fetch(e.request, { cache: "no-cache" })
       .then(r => { const k = r.clone(); caches.open(CACHE).then(c => c.put(e.request, k)); return r; })
       .catch(() => caches.match(e.request, { ignoreSearch: true })
         .then(r => r || caches.match("./index.html")))
