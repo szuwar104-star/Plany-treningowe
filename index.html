@@ -10,14 +10,14 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #EEF2F6; --surface: #FFFFFF; --ink: #14243A; --muted: #5B6B80;
-  --line: #D5DDE7; --track: #1F4E8C; --on-track: #FFFFFF; --signal: #F2C230;
-  --on-signal: #14243A; --easy: #C9DAF1; --red: #C33A3A; --ok: #2E7D4F;
-  --cond: "Barlow Condensed", "Roboto Condensed", "Arial Narrow", system-ui, sans-serif;
-  --body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --bg: #E9EEF4; --surface: #FFFFFF; --sunk: #F3F6F9; --ink: #13233A; --muted: #5A6B81;
+  --line: #D3DCE7; --track: #1F4E8C; --track-2: #2C62A8; --on-track: #FFFFFF;
+  --signal: #F2C230; --on-signal: #13233A; --easy: #CCDCF1; --red: #C23B3B; --ok: #2E7D4F;
+  --cond: "Barlow Condensed", "Roboto Condensed", sans-serif-condensed, "Arial Narrow", system-ui, sans-serif;
+  --body: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, "Cascadia Mono", "Roboto Mono", Menlo, monospace;
   color-scheme: light;
   box-sizing: border-box;
@@ -26,86 +26,95 @@
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0D1726; --surface: #15233A; --ink: #E7EEF7; --muted: #93A3B8;
-    --line: #263955; --track: #4F86D1; --on-track: #0D1726; --signal: #F2C230;
-    --easy: #2A4569; --red: #E06666; --ok: #5DBB85;
+    --bg: #0B1524; --surface: #13223A; --sunk: #0F1C30; --ink: #E6EDF6; --muted: #91A2B8;
+    --line: #243753; --track: #1F4E8C; --track-2: #2C62A8; --on-track: #FFFFFF;
+    --easy: #2A4467; --red: #DD5A5A; --ok: #58B884;
     color-scheme: dark;
   }
 }
 *, *::before, *::after { box-sizing: inherit; }
 html { scroll-padding-top: env(safe-area-inset-top, 0px); }
-body {
-  margin: 0; background: var(--bg); color: var(--ink);
-  font: 16px/1.45 var(--body);
-}
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.45 var(--body); -webkit-tap-highlight-color: transparent; }
 button, input, textarea { font: inherit; color: inherit; }
 :focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
+[hidden] { display: none !important; }
+svg { flex: none; }
 
-header {
-  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
-  background: var(--track); color: var(--on-track);
-  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
-}
+/* ---------- nagłówek: bieżnia ---------- */
 body::before {
   content: ""; position: fixed; inset: 0 0 auto; z-index: 10;
   height: env(safe-area-inset-top, 0px); background: var(--track);
 }
-header h1 {
-  margin: 0; flex: 1; font: 700 26px/1 var(--cond); letter-spacing: .01em;
+header {
+  background: var(--track); color: var(--on-track);
+  padding: 18px 18px 26px; position: relative;
+  /* dwie linie torów u dołu */
+  background-image:
+    linear-gradient(transparent calc(100% - 13px), rgba(255,255,255,.55) calc(100% - 13px), rgba(255,255,255,.55) calc(100% - 11px), transparent calc(100% - 11px)),
+    linear-gradient(transparent calc(100% - 6px), rgba(255,255,255,.3) calc(100% - 6px), rgba(255,255,255,.3) calc(100% - 4px), transparent calc(100% - 4px));
 }
-header small { display: block; font: 500 14px/1.2 var(--body); opacity: .8; margin-top: 4px; }
+.naglowek { max-width: 640px; margin: 0 auto; display: flex; align-items: flex-start; gap: 12px; }
+header h1 { margin: 0; flex: 1; font: 700 30px/1 var(--cond); letter-spacing: .01em; }
+header h1 small { display: block; margin-top: 6px; font: 500 14px/1.2 var(--body); opacity: .78; letter-spacing: 0; }
 .ikonka {
-  border: 0; background: transparent; color: inherit; width: 44px; height: 44px;
+  border: 0; background: rgba(255,255,255,.12); color: inherit; width: 42px; height: 42px;
   border-radius: 50%; display: grid; place-items: center; cursor: pointer;
 }
-.ikonka:hover { background: rgba(255,255,255,.12); }
+.ikonka:active { background: rgba(255,255,255,.24); }
 
-main { max-width: 640px; margin: 0 auto; padding: 16px 16px 120px; }
+main { max-width: 640px; margin: 0 auto; padding: 16px 16px 128px; }
 
-.akcje { display: flex; gap: 8px; flex-wrap: wrap; }
-.btn {
-  border: 1px solid var(--line); background: var(--surface); border-radius: 10px;
-  padding: 10px 14px; cursor: pointer; font-weight: 600;
+/* ---------- źródła planu ---------- */
+.zrodla { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: -2px; }
+.zrodlo {
+  border: 1px solid var(--line); background: var(--surface); border-radius: 12px;
+  padding: 12px 6px 10px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px;
+  font: 600 15px/1.1 var(--body); color: var(--ink);
 }
-.btn.glowny {
-  background: var(--track); color: var(--on-track); border-color: var(--track);
-}
-.btn:disabled { opacity: .45; cursor: not-allowed; }
+.zrodlo svg { color: var(--track-2); }
+.zrodlo:active { transform: translateY(1px); background: var(--sunk); }
+#plik { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 
-textarea {
-  width: 100%; height: 140px; margin-top: 12px; padding: 12px;
-  border: 1px solid var(--line); border-radius: 10px; background: var(--surface);
-  font: 13px/1.5 var(--mono); resize: vertical; white-space: pre; overflow-x: auto;
-}
+.pasek { margin: 12px 0 0; padding: 10px 12px; border-radius: 10px; background: var(--surface);
+  border-left: 4px solid var(--muted); font-size: 15px; }
+.pasek.blad { border-left-color: var(--red); }
+.pasek.ok { border-left-color: var(--ok); }
+.pasek:empty { display: none; }
 
-.komunikat { margin: 12px 0 0; padding: 10px 12px; border-radius: 10px; background: var(--surface);
-  border-left: 4px solid var(--muted); }
-.komunikat.blad { border-left-color: var(--red); }
-.komunikat.ok { border-left-color: var(--ok); }
-.komunikat:empty { display: none; }
+/* ---------- pusty stan ---------- */
+.pusto { margin-top: 28px; text-align: center; color: var(--muted); padding: 0 12px; }
+.pusto svg { color: var(--line); }
+.pusto h2 { margin: 10px 0 6px; font: 700 26px/1.05 var(--cond); color: var(--ink); }
+.pusto p { margin: 0 auto; max-width: 34ch; }
 
-/* --- podgląd planu: bieżnia tygodni --- */
-#podglad { margin-top: 20px; }
-#podglad[hidden] { display: none; }
-.podsumowanie { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
-.podsumowanie strong { font: 700 34px/1 var(--cond); }
-.podsumowanie span { color: var(--muted); }
-.zmiany { font-weight: 600; color: var(--ink); }
+/* ---------- podsumowanie ---------- */
+.karta { background: var(--surface); border-radius: 14px; padding: 16px; margin-top: 16px; }
+.podsumowanie { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+.liczba { font: 700 46px/.9 var(--cond); }
+.liczba span { font: 600 20px/1 var(--cond); color: var(--muted); margin-left: 4px; }
+.zakres { text-align: right; font: 600 20px/1.1 var(--cond); white-space: nowrap; }
+.zakres small { display: block; font: 500 14px/1.3 var(--body); color: var(--muted); }
+.znaczki { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.znaczek { font-size: 14px; font-weight: 600; padding: 4px 10px; border-radius: 99px; background: var(--sunk); color: var(--muted); }
+.znaczek.zm { background: var(--signal); color: var(--on-signal); }
+.znaczek.ok { color: var(--ok); }
 
-.siatka { display: grid; grid-template-columns: 38px repeat(7, minmax(0, 1fr)); gap: 3px; }
-.siatka .dz { font: 600 13px/1 var(--cond); color: var(--muted); text-align: center; padding-bottom: 2px; }
-.siatka .tydz { font: 600 13px/1 var(--cond); color: var(--muted); align-self: center; }
+/* ---------- siatka tygodni ---------- */
+.siatka { display: grid; grid-template-columns: 34px repeat(7, minmax(0, 1fr)); gap: 3px; margin: 16px -4px 0; }
+.siatka .dz { font: 600 13px/1 var(--cond); color: var(--muted); text-align: center; padding-bottom: 4px; }
+.siatka .dz.weekend { color: var(--ink); }
+.siatka .tydz { font: 600 12px/1.05 var(--cond); color: var(--muted); align-self: center; }
 .dzien {
-  position: relative; border: 0; border-radius: 6px; min-height: 46px; padding: 4px 2px 3px;
+  position: relative; border: 0; border-radius: 7px; min-height: 50px; padding: 5px 2px 4px;
   background: transparent; display: flex; flex-direction: column; align-items: center;
-  justify-content: space-between; cursor: pointer; overflow: hidden;
+  justify-content: space-between; cursor: pointer; overflow: hidden; color: var(--ink);
 }
-.dzien .nr { font: 600 11px/1 var(--cond); opacity: .75; }
-.dzien .et.dluga { font-size: 11.5px; letter-spacing: -.02em; }
-.dzien .et.b-dluga { font-size: 10px; letter-spacing: -.03em; }
-.dzien .et { font: 700 14px/1.05 var(--cond); text-align: center; white-space: nowrap; max-width: 100%; overflow: hidden; }
-.dzien.pusty { cursor: default; background: transparent; }
-.dzien.spokojny { background: var(--easy); color: var(--ink); }
+.dzien .nr { font: 600 11px/1 var(--cond); opacity: .7; }
+.dzien .et { font: 700 15px/1 var(--cond); white-space: nowrap; max-width: 100%; overflow: hidden; }
+.dzien .et.m { font-size: 12.5px; }
+.dzien .et.s { font-size: 11px; letter-spacing: -.02em; }
+.dzien.pusty { cursor: default; }
+.dzien.spokojny { background: var(--easy); }
 .dzien.dlugi { background: var(--track); color: var(--on-track); }
 .dzien.akcent { background: var(--signal); color: var(--on-signal); }
 .dzien.test, .dzien.start { background: var(--red); color: #fff; }
@@ -113,87 +122,128 @@ textarea {
   background: repeating-linear-gradient(135deg, transparent 0 5px, var(--line) 5px 7px);
   color: var(--muted); box-shadow: inset 0 0 0 1px var(--line);
 }
-.dzien.minelo { opacity: .35; }
+.dzien.minelo { opacity: .3; }
 .dzien.zmiana::after, .dzien.nowy::after {
-  content: ""; position: absolute; top: 3px; right: 3px; width: 8px; height: 8px;
+  content: ""; position: absolute; top: 4px; right: 4px; width: 8px; height: 8px;
   border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 2px var(--surface);
 }
-.dzien[aria-pressed="true"] { outline: 3px solid var(--ink); outline-offset: 1px; }
+.dzien.dlugi.zmiana::after, .dzien.dlugi.nowy::after, .dzien.test.zmiana::after, .dzien.start.zmiana::after { background: var(--signal); }
+.dzien[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ink); z-index: 1; }
 
-.legenda { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; color: var(--muted); font-size: 14px; }
-.legenda i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 5px; }
-.szczegoly { margin-top: 12px; padding: 12px; background: var(--surface); border-radius: 10px; }
-.szczegoly:empty { display: none; }
-.szczegoly b { font: 700 20px/1.1 var(--cond); display: block; }
-.szczegoly p { margin: 4px 0 0; color: var(--muted); }
+.legenda { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 12px; color: var(--muted); font-size: 13px; }
+.legenda i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; vertical-align: -1px; margin-right: 5px; }
 
-/* --- wysyłka i postęp --- */
+.szczegoly { margin-top: 12px; padding: 12px 14px; background: var(--sunk); border-radius: 10px; display: flex; gap: 12px; align-items: center; }
+.szczegoly .tresc { flex: 1; min-width: 0; }
+.szczegoly b { font: 700 21px/1.1 var(--cond); display: block; }
+.szczegoly p { margin: 3px 0 0; color: var(--muted); font-size: 14px; }
+.maly {
+  border: 1px solid var(--line); background: var(--surface); border-radius: 8px;
+  padding: 7px 10px; font-weight: 600; font-size: 14px; cursor: pointer; display: inline-flex; gap: 6px; align-items: center;
+}
+
+/* ---------- edytor ---------- */
+details.edytor { margin-top: 16px; background: var(--surface); border-radius: 14px; }
+details.edytor summary {
+  list-style: none; cursor: pointer; padding: 14px 16px; display: flex; align-items: center; gap: 10px; font-weight: 600;
+}
+details.edytor summary::-webkit-details-marker { display: none; }
+details.edytor summary .str { margin-left: auto; transition: transform .15s; color: var(--muted); }
+details.edytor[open] summary .str { transform: rotate(180deg); }
+details.edytor summary small { color: var(--muted); font-weight: 500; }
+.edytor-wnetrze { padding: 0 12px 12px; }
+textarea {
+  width: 100%; height: 300px; padding: 12px; border: 1px solid var(--line); border-radius: 10px;
+  background: var(--sunk); font: 13px/1.55 var(--mono); resize: vertical; white-space: pre; overflow: auto; tab-size: 2;
+}
+.edytor-akcje { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; }
+
+/* ---------- postęp ---------- */
+.postep h2 { margin: 0 0 6px; font: 700 22px/1 var(--cond); }
+.postep ol { list-style: none; margin: 0; padding: 0; position: relative; }
+.postep li { display: flex; gap: 12px; align-items: center; padding: 9px 0; color: var(--muted); position: relative; }
+.postep li + li::before { content: ""; position: absolute; left: 7px; top: -9px; height: 18px; width: 2px; background: var(--line); }
+.postep .kropka { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--line); flex: none; background: var(--surface); position: relative; z-index: 1; }
+.postep li.trwa { color: var(--ink); }
+.postep li.trwa .kropka { border-color: var(--signal); border-top-color: transparent; animation: krec .9s linear infinite; }
+.postep li.zrobione { color: var(--ink); }
+.postep li.zrobione .kropka { background: var(--ok); border-color: var(--ok); }
+.postep li.blad { color: var(--red); }
+.postep li.blad .kropka { background: var(--red); border-color: var(--red); }
+@keyframes krec { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .postep li.trwa .kropka { animation: none; border-top-color: var(--signal); } }
+.postep .pasek { background: var(--sunk); }
+a { color: var(--track-2); font-weight: 600; }
+@media (prefers-color-scheme: dark) { a { color: #8DB4EA; } }
+
+/* ---------- dolny pasek ---------- */
 .dolny {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 4;
   padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
-  background: var(--bg); border-top: 1px solid var(--line);
+  background: linear-gradient(to top, var(--bg) 70%, transparent);
 }
-.dolny .btn { width: 100%; max-width: 608px; display: block; margin: 0 auto; padding: 14px;
-  font: 700 20px/1 var(--cond); letter-spacing: .02em; }
-
-#postep { margin-top: 20px; }
-#postep[hidden] { display: none; }
-#postep ol { list-style: none; margin: 0; padding: 0; }
-#postep li { display: flex; gap: 10px; align-items: center; padding: 8px 0; color: var(--muted); }
-#postep li .kropka { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--line); flex: none; }
-#postep li.trwa { color: var(--ink); }
-#postep li.trwa .kropka { border-color: var(--signal); border-top-color: transparent; animation: krec 1s linear infinite; }
-#postep li.zrobione { color: var(--ink); }
-#postep li.zrobione .kropka { background: var(--ok); border-color: var(--ok); }
-#postep li.blad { color: var(--red); }
-#postep li.blad .kropka { background: var(--red); border-color: var(--red); }
-@keyframes krec { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { #postep li.trwa .kropka { animation: none; } }
-a { color: var(--track); }
-
-/* --- ustawienia --- */
-dialog {
-  border: 0; border-radius: 14px; padding: 20px; width: min(92vw, 460px);
-  background: var(--surface); color: var(--ink);
+.wyslij {
+  width: 100%; max-width: 608px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 10px;
+  border: 0; border-radius: 14px; padding: 15px; cursor: pointer;
+  background: var(--track); color: var(--on-track); font: 700 22px/1 var(--cond); letter-spacing: .02em;
+  box-shadow: 0 6px 18px rgba(31,78,140,.35);
 }
-dialog::backdrop { background: rgba(0,0,0,.45); }
-dialog h2 { margin: 0 0 12px; font: 700 24px/1 var(--cond); }
-label { display: block; font-weight: 600; margin-top: 14px; }
+.wyslij:disabled { background: var(--line); color: var(--muted); box-shadow: none; cursor: not-allowed; }
+
+/* ---------- ustawienia ---------- */
+dialog { border: 0; border-radius: 16px; padding: 20px; width: min(92vw, 460px); background: var(--surface); color: var(--ink); }
+dialog::backdrop { background: rgba(5,12,24,.55); }
+dialog h2 { margin: 0 0 4px; font: 700 26px/1 var(--cond); }
+label { display: block; font-weight: 600; margin-top: 16px; }
 label span { display: block; font-weight: 400; color: var(--muted); font-size: 14px; }
-dialog input {
-  width: 100%; margin-top: 6px; padding: 10px; border: 1px solid var(--line);
-  border-radius: 8px; background: var(--bg);
-}
-.wiersz { display: flex; gap: 8px; margin-top: 18px; flex-wrap: wrap; }
-.wiersz .btn { flex: 1; }
-#test-wynik { margin: 12px 0 0; padding: 0; list-style: none; font-size: 14px; }
+dialog input { width: 100%; margin-top: 6px; padding: 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--sunk); }
+.wiersz { display: flex; gap: 8px; margin-top: 18px; }
+.wiersz button { flex: 1; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; border: 1px solid var(--line); background: var(--surface); }
+.wiersz button.glowny { background: var(--track); border-color: var(--track); color: var(--on-track); }
+#test-wynik { margin: 14px 0 0; padding: 0; list-style: none; font-size: 14px; }
 #test-wynik li { padding: 3px 0; }
 </style>
 </head>
 <body>
 <header>
-  <h1>Plan → Garmin<small id="repo-naglowek"></small></h1>
-  <button class="ikonka" id="otworz-ustawienia" aria-label="Ustawienia">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-  </button>
+  <div class="naglowek">
+    <h1>Plan → Garmin<small id="repo-naglowek"></small></h1>
+    <button class="ikonka" id="otworz-ustawienia" aria-label="Ustawienia">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </div>
 </header>
 
 <main>
-  <div class="akcje">
-    <button class="btn glowny" id="wklej">Wklej ze schowka</button>
-    <button class="btn" id="z-repo">Wczytaj plan z repo</button>
-    <button class="btn" id="wyczysc">Wyczyść</button>
+  <div class="zrodla">
+    <button class="zrodlo" id="wklej">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+      Wklej
+    </button>
+    <button class="zrodlo" id="wybierz-plik">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6"/><path d="m9 15 3-3 3 3"/></svg>
+      Plik
+    </button>
+    <button class="zrodlo" id="z-repo">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+      Z repo
+    </button>
   </div>
-  <textarea id="tekst" spellcheck="false" autocapitalize="off" autocomplete="off"
-    placeholder="Wklej tu plan.yaml (z linią treningi:)" aria-label="Treść planu"></textarea>
-  <p class="komunikat" id="komunikat" role="status"></p>
+  <input type="file" id="plik" tabindex="-1" aria-hidden="true">
+  <p class="pasek" id="komunikat" role="status"></p>
 
-  <section id="podglad" hidden aria-label="Podgląd planu">
+  <section class="pusto" id="pusto">
+    <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><rect x="6" y="14" width="52" height="36" rx="18"/><rect x="14" y="22" width="36" height="20" rx="10"/></svg>
+    <h2>Brak planu</h2>
+    <p>Wklej plan skopiowany z rozmowy, wybierz plik <b>plan.yaml</b> z telefonu albo wczytaj aktualny plan z repo.</p>
+  </section>
+
+  <section class="karta" id="podglad" hidden aria-label="Podgląd planu">
     <div class="podsumowanie">
-      <strong id="ile"></strong>
-      <span id="zakres"></span>
-      <span class="zmiany" id="zmiany"></span>
+      <div class="liczba" id="ile"></div>
+      <div class="zakres" id="zakres"></div>
     </div>
+    <div class="znaczki" id="znaczki"></div>
     <div class="siatka" id="siatka"></div>
     <div class="legenda">
       <span><i style="background:var(--easy)"></i>spokojny</span>
@@ -201,23 +251,49 @@ dialog input {
       <span><i style="background:var(--track)"></i>długi</span>
       <span><i style="background:var(--red)"></i>test / start</span>
       <span><i style="background:repeating-linear-gradient(135deg,transparent 0 3px,var(--muted) 3px 4px)"></i>opcjonalny</span>
-      <span id="leg-zmiana" hidden><i style="background:var(--ink);border-radius:50%"></i>zmiana względem repo</span>
+      <span id="leg-zmiana" hidden><i style="background:var(--ink);border-radius:50%"></i>inny niż w repo</span>
     </div>
-    <div class="szczegoly" id="szczegoly"></div>
+    <div class="szczegoly" id="szczegoly" hidden>
+      <div class="tresc"><b id="sz-nazwa"></b><p id="sz-info"></p></div>
+      <button class="maly" id="sz-pokaz">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+        Edytuj
+      </button>
+    </div>
   </section>
 
-  <section id="postep" hidden aria-live="polite">
+  <section class="karta postep" id="postep" hidden aria-live="polite">
+    <h2>Wysyłka</h2>
     <ol>
       <li id="e1"><span class="kropka"></span><span>Wysłany do GitHuba</span></li>
       <li id="e2"><span class="kropka"></span><span>Sprawdzony i zapisany w repo</span></li>
       <li id="e3"><span class="kropka"></span><span>Treningi w Garmin Connect</span></li>
     </ol>
-    <p class="komunikat" id="postep-info"></p>
+    <p class="pasek" id="postep-info"></p>
   </section>
+
+  <details class="edytor" id="edytor">
+    <summary>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      Tekst planu <small id="edytor-info"></small>
+      <svg class="str" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+    </summary>
+    <div class="edytor-wnetrze">
+      <textarea id="tekst" spellcheck="false" autocapitalize="off" autocomplete="off"
+        placeholder="treningi:&#10;  - {data: 2026-11-02, szablon: spokojny, km_txt: &quot;7-8&quot;, km: 7}" aria-label="Treść planu"></textarea>
+      <div class="edytor-akcje">
+        <button class="maly" id="pobierz">Zapisz jako plik</button>
+        <button class="maly" id="wyczysc">Wyczyść</button>
+      </div>
+    </div>
+  </details>
 </main>
 
 <div class="dolny">
-  <button class="btn glowny" id="wyslij" disabled>Wyślij do Garmina</button>
+  <button class="wyslij" id="wyslij" disabled>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg>
+    <span id="wyslij-tekst">Wyślij do Garmina</span>
+  </button>
 </div>
 
 <dialog id="ustawienia">
@@ -233,8 +309,8 @@ dialog input {
     </label>
     <ul id="test-wynik"></ul>
     <div class="wiersz">
-      <button type="button" class="btn" id="sprawdz">Sprawdź połączenie</button>
-      <button type="submit" class="btn glowny" value="zapisz">Zapisz</button>
+      <button type="button" id="sprawdz">Sprawdź połączenie</button>
+      <button type="submit" class="glowny" value="zapisz">Zapisz</button>
     </div>
   </form>
 </dialog>
@@ -245,6 +321,7 @@ const $ = s => document.querySelector(s);
 const DOMYSLNE_REPO = "szuwar104-star/Plany-treningowe";
 const PLIK = "plan.yaml";
 const DNI = ["Pn", "Wt", "Śr", "Cz", "Pt", "So", "Nd"];
+const DNI_PELNE = ["poniedziałek", "wtorek", "środa", "czwartek", "piątek", "sobota", "niedziela"];
 
 // ---------- ustawienia (tylko na tym urządzeniu) ----------
 function czytaj(k, d = "") { try { return localStorage.getItem(k) ?? d; } catch { return d; } }
@@ -268,7 +345,7 @@ function gh(sciezka, opcje = {}) {
 }
 
 function opisBledu(status) {
-  if (status === 401) return "GitHub odrzucił token. Wklej go ponownie w ustawieniach (ikona koła zębatego).";
+  if (status === 401) return "GitHub odrzucił token. Wklej go ponownie w ustawieniach (koło zębate).";
   if (status === 403) return "Token nie ma uprawnienia Contents: Read and write do tego repo.";
   if (status === 404) return "Nie widzę repozytorium " + ust.repo + ". Sprawdź nazwę w ustawieniach i czy token ma do niego dostęp.";
   return "GitHub odpowiedział kodem " + status + ".";
@@ -286,8 +363,7 @@ function krotkaSeria(nazwa) {
   const m = nazwa.match(/(\d+(?:-\d+)?)\s*x\s*(\d+)/i);
   if (!m) return nazwa.replace(/^T\d+\s+/, "").split(/\s+/)[0].slice(0, 6);
   const metry = +m[2];
-  const odc = metry >= 1000 ? (metry / 1000).toString().replace(".", ",") + "k" : String(metry);
-  return m[1] + "×" + odc;
+  return m[1] + "×" + (metry >= 1000 ? String(metry / 1000).replace(".", ",") + "k" : String(metry));
 }
 
 function rozbierz(tekst) {
@@ -298,35 +374,36 @@ function rozbierz(tekst) {
   const start = linie.findIndex(l => /^treningi:\s*(#.*)?$/.test(l));
   if (start < 0) { wynik.bledy.push("Brak linii treningi: – to nie wygląda na cały plan."); return wynik; }
 
-  let wciecie = null, biezaca = null;
+  let wciecie = null, biezacy = null;
   const bloki = [];
-  for (const l of linie.slice(start + 1)) {
+  for (let n = start + 1; n < linie.length; n++) {
+    const l = linie[n];
     if (!l.trim() || l.trim().startsWith("#")) continue;
     const w = l.length - l.trimStart().length;
-    if (w === 0) break;                       // koniec sekcji treningi
+    if (w === 0) break;
     if (l.trimStart().startsWith("- ") && (wciecie === null || w === wciecie)) {
-      wciecie = w; biezaca = [l]; bloki.push(biezaca);
-    } else if (biezaca) biezaca.push(l);
+      wciecie = w; biezacy = { linia: n, linie: [l] }; bloki.push(biezacy);
+    } else if (biezacy) biezacy.linie.push(l);
   }
 
   for (const b of bloki) {
-    const surowe = b.join("\n");
+    const surowe = b.linie.join("\n");
     const data = (surowe.match(/(?:^|[{,\s-])data:\s*["']?(\d{4}-\d{2}-\d{2})/) || [])[1];
-    if (!data) { wynik.bledy.push("Pozycja bez daty: " + b[0].trim().slice(0, 50)); continue; }
+    if (!data) { wynik.bledy.push("Pozycja bez daty: " + b.linie[0].trim().slice(0, 50)); continue; }
     const szablon = pole(surowe, "szablon");
     const nazwa = pole(surowe, "nazwa") || "";
     const km = pole(surowe, "km_txt") || "";
     const opc = /opcjonalny:\s*true/.test(surowe);
     let rodzaj, etykieta, pelna;
     if (szablon === "spokojny") {
-      rodzaj = "spokojny"; etykieta = km; pelna = "Spokojny " + km + " km" + (/przebiezki:\s*true/.test(surowe) ? " + przebieżki" : "");
+      rodzaj = "spokojny"; etykieta = km;
+      pelna = "Spokojny " + km + " km" + (/przebiezki:\s*true/.test(surowe) ? " + przebieżki" : "");
     } else if (szablon === "dlugi") {
       rodzaj = "dlugi"; etykieta = km; pelna = "Długi " + km + " km";
     } else if (szablon === "opcja_rozruch") {
       rodzaj = "opcja"; etykieta = "opc."; pelna = "Opcja: wolne lub 5-6 km";
     } else if (szablon === "akcent") {
-      rodzaj = "akcent"; pelna = nazwa;
-      etykieta = krotkaSeria(nazwa);
+      rodzaj = "akcent"; pelna = nazwa; etykieta = krotkaSeria(nazwa);
     } else {
       pelna = nazwa || "(bez nazwy)";
       rodzaj = /start/i.test(nazwa) ? "start" : /test/i.test(nazwa) ? "test" : opc ? "opcja" : "inny";
@@ -335,11 +412,18 @@ function rozbierz(tekst) {
     }
     if (szablon && !["spokojny", "dlugi", "opcja_rozruch", "akcent"].includes(szablon))
       wynik.bledy.push(data + ": nieznany szablon „" + szablon + "”.");
-    wynik.pozycje.push({ data, rodzaj, etykieta, pelna, opcjonalny: opc || rodzaj === "opcja",
+    wynik.pozycje.push({ data, rodzaj, etykieta, pelna, linia: b.linia, opcjonalny: opc || rodzaj === "opcja",
                          klucz: surowe.replace(/\s+/g, " ").trim() });
   }
   if (!wynik.pozycje.length && !wynik.bledy.length) wynik.bledy.push("Sekcja treningi jest pusta.");
   return wynik;
+}
+
+// usuwa znaczniki bloku kodu (```yaml) i tekst przed planem, gdy skopiowano całą odpowiedź
+function oczysc(t) {
+  const linie = t.replace(/^\uFEFF/, "").replace(/\r/g, "").split("\n").filter(l => !/^\s*```/.test(l));
+  const i = linie.findIndex(l => /^(#|stare_nazwy:|treningi:)/.test(l));
+  return (i > 0 ? linie.slice(i) : linie).join("\n").replace(/\s+$/, "") + "\n";
 }
 
 // ---------- daty ----------
@@ -347,20 +431,39 @@ const dzisiaj = (() => { const d = new Date(); return new Date(Date.UTC(d.getFul
 const naDate = s => new Date(s + "T00:00:00Z");
 const iso = d => d.toISOString().slice(0, 10);
 const krotko = d => String(d.getUTCDate()).padStart(2, "0") + "." + String(d.getUTCMonth() + 1).padStart(2, "0");
+const odmiana = (n, a, b, c) => n === 1 ? a : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) ? b : c;
 
 // ---------- stan ----------
 let plan = { pozycje: [], bledy: [] };
-let bazowy = null;            // Map data -> klucz (plan w repo), do zaznaczania zmian
+let bazowy = null;            // Map data -> klucz (plan w repo)
 let wybrany = null;
+
+function el(tag, klasa, tekst) {
+  const e = document.createElement(tag);
+  if (klasa) e.className = klasa;
+  if (tekst != null) e.textContent = tekst;
+  return e;
+}
+
+function komunikat(tekst, typ = "") {
+  const k = $("#komunikat"); k.className = "pasek " + typ; k.textContent = tekst;
+}
+
+function ustawTekst(t, zrodlo) {
+  $("#tekst").value = oczysc(t);
+  wybrany = null;
+  $("#postep").hidden = true;
+  odswiez();
+  if (!plan.bledy.length && plan.pozycje.length) komunikat(zrodlo + " Sprawdź podgląd i wyślij.", "ok");
+}
 
 function odswiez() {
   const tekst = $("#tekst").value;
   plan = rozbierz(tekst);
-  const kom = $("#komunikat");
-  kom.className = "komunikat";
-  if (!tekst.trim()) kom.textContent = "";
-  else if (plan.bledy.length) { kom.className = "komunikat blad"; kom.textContent = plan.bledy.join(" "); }
-  else kom.textContent = "";
+  if (tekst.trim() && plan.bledy.length) komunikat(plan.bledy.join(" "), "blad");
+  else if (!tekst.trim()) komunikat("");
+  $("#pusto").hidden = !!tekst.trim();
+  $("#edytor-info").textContent = tekst.trim() ? "– " + tekst.split("\n").length + " linii" : "";
   rysuj();
   $("#wyslij").disabled = !(plan.pozycje.length && !plan.bledy.length);
   try { sessionStorage.setItem("pg.szkic", tekst); } catch {}
@@ -372,11 +475,13 @@ function rysuj() {
   sek.hidden = false;
   const poz = [...plan.pozycje].sort((a, b) => a.data.localeCompare(b.data));
   const pierwsza = naDate(poz[0].data), ostatnia = naDate(poz[poz.length - 1].data);
-  const przyszle = poz.filter(p => naDate(p.data) >= dzisiaj).length;
+  const minione = poz.filter(p => naDate(p.data) < dzisiaj).length;
 
-  $("#ile").textContent = poz.length + (poz.length === 1 ? " trening" : poz.length % 10 >= 2 && poz.length % 10 <= 4 && (poz.length % 100 < 10 || poz.length % 100 >= 20) ? " treningi" : " treningów");
-  $("#zakres").textContent = krotko(pierwsza) + "–" + krotko(ostatnia) +
-    (przyszle < poz.length ? ", do wysłania " + przyszle + " (minione są pomijane)" : "");
+  $("#ile").innerHTML = "";
+  $("#ile").append(String(poz.length), el("span", "", odmiana(poz.length, "trening", "treningi", "treningów")));
+  const tyg = Math.round((ostatnia - pierwsza) / 864e5 / 7) + 1;
+  $("#zakres").innerHTML = "";
+  $("#zakres").append(krotko(pierwsza) + "–" + krotko(ostatnia), el("small", "", tyg + " " + odmiana(tyg, "tydzień", "tygodnie", "tygodni")));
 
   // porównanie z planem w repo
   const status = new Map();
@@ -390,18 +495,23 @@ function rysuj() {
     for (const d of bazowy.keys())
       if (!daty.has(d) && naDate(d) >= pierwsza && naDate(d) <= ostatnia) usuniete++;
   }
-  const opisZm = [];
-  if (zmienione) opisZm.push("zmienione: " + zmienione);
-  if (nowe) opisZm.push("nowe: " + nowe);
-  if (usuniete) opisZm.push("usunięte: " + usuniete);
-  $("#zmiany").textContent = !bazowy ? "" : opisZm.length ? opisZm.join(", ") : "bez zmian względem repo";
+  const zn = $("#znaczki");
+  zn.innerHTML = "";
+  if (bazowy) {
+    if (zmienione) zn.append(el("span", "znaczek zm", zmienione + " " + odmiana(zmienione, "zmieniony", "zmienione", "zmienionych")));
+    if (nowe) zn.append(el("span", "znaczek zm", nowe + " " + odmiana(nowe, "nowy dzień", "nowe dni", "nowych dni")));
+    if (usuniete) zn.append(el("span", "znaczek zm", usuniete + " do usunięcia"));
+    if (!zmienione && !nowe && !usuniete) zn.append(el("span", "znaczek ok", "✓ taki sam jak w repo"));
+  }
+  if (minione) zn.append(el("span", "znaczek", minione + " " + odmiana(minione, "minął", "minęły", "minęło") + " – nie zostaną wysłane"));
+  zn.hidden = !zn.children.length;
   $("#leg-zmiana").hidden = !(zmienione || nowe);
 
   // siatka tygodni (od poniedziałku)
   const s = $("#siatka");
   s.innerHTML = "";
   s.append(el("div", "dz", ""));
-  DNI.forEach(d => s.append(el("div", "dz", d)));
+  DNI.forEach((d, i) => s.append(el("div", "dz" + (i > 4 ? " weekend" : ""), d)));
   const wgDaty = new Map(poz.map(p => [p.data, p]));
   const od = new Date(pierwsza); od.setUTCDate(od.getUTCDate() - ((od.getUTCDay() + 6) % 7));
   for (let t = new Date(od); t <= ostatnia; t.setUTCDate(t.getUTCDate() + 7)) {
@@ -415,43 +525,46 @@ function rysuj() {
       b.className = "dzien " + p.rodzaj + (d < dzisiaj ? " minelo" : "") + (status.get(p.data) ? " " + status.get(p.data) : "");
       b.setAttribute("aria-pressed", String(wybrany === p.data));
       b.setAttribute("aria-label", p.data + ": " + p.pelna);
-      b.append(el("span", "nr", String(d.getUTCDate())), el("span", "et" + (p.etykieta.length > 5 ? " b-dluga" : p.etykieta.length > 4 ? " dluga" : ""), p.etykieta));
+      const dl = p.etykieta.length;
+      b.append(el("span", "nr", String(d.getUTCDate())), el("span", "et" + (dl > 5 ? " s" : dl > 4 ? " m" : ""), p.etykieta));
       b.addEventListener("click", () => { wybrany = wybrany === p.data ? null : p.data; rysuj(); });
       s.append(b);
     }
   }
 
-  const sz = $("#szczegoly");
-  sz.innerHTML = "";
+  // dopasowanie etykiet do szerokości komórki (zależy od czcionki i ekranu)
+  for (const e of s.querySelectorAll(".et")) {
+    let f = parseFloat(getComputedStyle(e).fontSize);
+    while (e.scrollWidth > e.clientWidth + 0.5 && f > 9) { f -= 0.5; e.style.fontSize = f + "px"; }
+  }
+
   const p = wybrany && wgDaty.get(wybrany);
+  $("#szczegoly").hidden = !p;
   if (p) {
     const d = naDate(p.data);
-    sz.append(el("b", "", p.pelna));
-    const info = [DNI[(d.getUTCDay() + 6) % 7] + " " + krotko(d)];
+    $("#sz-nazwa").textContent = p.pelna;
+    const info = [DNI_PELNE[(d.getUTCDay() + 6) % 7] + " " + krotko(d)];
     if (p.opcjonalny) info.push("opcjonalny");
-    if (d < dzisiaj) info.push("data minęła – nie zostanie wysłany");
+    if (d < dzisiaj) info.push("minął – nie zostanie wysłany");
     if (status.get(p.data) === "zmiana") info.push("inny niż w repo");
     if (status.get(p.data) === "nowy") info.push("nowy dzień");
-    sz.append(el("p", "", info.join(", ")));
+    $("#sz-info").textContent = info.join(", ");
   }
 }
 
-// usuwa znaczniki bloku kodu (```yaml) i tekst przed planem, gdy skopiowano całą odpowiedź
-function oczysc(t) {
-  const linie = t.replace(/\r/g, "").split("\n").filter(l => !/^\s*```/.test(l));
-  const i = linie.findIndex(l => /^(#|stare_nazwy:|treningi:)/.test(l));
-  return (i > 0 ? linie.slice(i) : linie).join("\n").replace(/\s+$/, "") + "\n";
-}
-
-function el(tag, klasa, tekst) {
-  const e = document.createElement(tag);
-  if (klasa) e.className = klasa;
-  e.textContent = tekst;
-  return e;
-}
-
-function komunikat(tekst, typ = "") {
-  const k = $("#komunikat"); k.className = "komunikat " + typ; k.textContent = tekst;
+function pokazWTekscie() {
+  const p = plan.pozycje.find(x => x.data === wybrany);
+  if (!p) return;
+  const ta = $("#tekst");
+  const linie = ta.value.split("\n");
+  let start = 0;
+  for (let i = 0; i < p.linia; i++) start += linie[i].length + 1;
+  $("#edytor").open = true;
+  ta.focus();
+  ta.setSelectionRange(start, start + linie[p.linia].length);
+  const wys = parseFloat(getComputedStyle(ta).lineHeight) || 20;
+  ta.scrollTop = Math.max(0, p.linia * wys - ta.clientHeight / 3);
+  $("#edytor").scrollIntoView({ block: "start", behavior: "smooth" });
 }
 
 // ---------- plan z repo ----------
@@ -479,16 +592,31 @@ function base64Utf8(tekst) {
   return btoa(s);
 }
 
-function etap(nr, stan) {
-  const li = $("#e" + nr);
-  li.className = stan || "";
+function etap(nr, stan) { $("#e" + nr).className = stan || ""; }
+
+function info(tekst, typ = "", link) {
+  const p = $("#postep-info");
+  p.className = "pasek " + typ;
+  p.textContent = tekst;
+  if (link) {
+    p.append(" ");
+    const a = document.createElement("a");
+    a.href = link; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Otwórz log";
+    p.append(a);
+  }
+}
+
+function przyciskWysylki(zajety) {
+  $("#wyslij").disabled = zajety || !(plan.pozycje.length && !plan.bledy.length);
+  $("#wyslij-tekst").textContent = zajety ? "Wysyłam…" : "Wyślij do Garmina";
 }
 
 async function wyslij() {
   if (!ust.token) { otworzUstawienia("Najpierw wklej token GitHuba."); return; }
   const tekst = $("#tekst").value;
-  $("#wyslij").disabled = true;
+  przyciskWysylki(true);
   $("#postep").hidden = false;
+  $("#postep").scrollIntoView({ block: "nearest", behavior: "smooth" });
   [1, 2, 3].forEach(n => etap(n, ""));
   etap(1, "trwa");
   info("");
@@ -502,28 +630,16 @@ async function wyslij() {
     });
   } catch {
     etap(1, "blad"); info("Brak połączenia z GitHubem. Sprawdź internet i spróbuj ponownie.", "blad");
-    $("#wyslij").disabled = false; return;
+    przyciskWysylki(false); return;
   }
   if (r.status !== 204) {
     etap(1, "blad"); info(opisBledu(r.status), "blad");
-    $("#wyslij").disabled = false; return;
+    przyciskWysylki(false); return;
   }
   etap(1, "zrobione");
   etap(2, "trwa");
   await sledz(wyslano, tekst);
-  $("#wyslij").disabled = !(plan.pozycje.length && !plan.bledy.length);
-}
-
-function info(tekst, typ = "", link) {
-  const p = $("#postep-info");
-  p.className = "komunikat " + typ;
-  p.textContent = tekst;
-  if (link) {
-    p.append(" ");
-    const a = document.createElement("a");
-    a.href = link; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Otwórz log";
-    p.append(a);
-  }
+  przyciskWysylki(false);
 }
 
 const czekaj = ms => new Promise(r => setTimeout(r, window.PG_TEST ? 50 : ms));
@@ -561,9 +677,9 @@ async function sledz(wyslano, tekst) {
     }
     if (sync && sync.status === "in_progress") etap(3, "trwa");
 
-    const odswiezony = await gh("/actions/runs/" + run.id).then(x => x.ok ? x.json() : run).catch(() => run);
-    if (odswiezony.status === "completed") {
-      if (odswiezony.conclusion === "success") {
+    const stan = await gh("/actions/runs/" + run.id).then(x => x.ok ? x.json() : run).catch(() => run);
+    if (stan.status === "completed") {
+      if (stan.conclusion === "success") {
         etap(2, "zrobione"); etap(3, "zrobione");
         info("Gotowe. Zsynchronizuj zegarek, żeby zobaczyć zmiany.", "ok", run.html_url);
         bazowy = new Map(rozbierz(tekst).pozycje.map(p => [p.data, p.klucz]));
@@ -571,7 +687,7 @@ async function sledz(wyslano, tekst) {
       } else {
         if (!zapis || zapis.conclusion !== "success") etap(2, "blad"); else etap(3, "blad");
         info(sync && sync.conclusion === "failure"
-          ? "Plan jest w repo, ale Garmin nie przyjął zmian. Najczęściej to wygasłe tokeny – szczegóły w logu."
+          ? "Plan jest w repo, ale Garmin nie przyjął wszystkich zmian. Szczegóły w logu – przy wygasłych tokenach odśwież sekret GARMIN_TOKENS."
           : "Synchronizacja zakończyła się błędem.", "blad", run.html_url);
       }
       return;
@@ -605,10 +721,32 @@ async function sprawdzPolaczenie() {
     wiersz(p.ok ? "✓ plan.yaml jest w repo" : p.status === 404 ? "• plan.yaml jeszcze nie istnieje – powstanie przy pierwszej wysyłce" : "✗ Nie mogę odczytać plan.yaml (" + p.status + ")");
     const a = await gh("/actions/runs?per_page=1");
     wiersz(a.ok ? "✓ Postęp synchronizacji będzie widoczny" : "• Bez uprawnienia Actions: Read-only – postęp sprawdzisz w Actions");
+    $("#repo-naglowek").textContent = ust.repo;
     wczytajBazowy();
   } catch {
     wiersz("✗ Brak połączenia z GitHubem.");
   }
+}
+
+// ---------- plik z telefonu ----------
+async function wczytajPlik(plik) {
+  if (!plik) return;
+  if (plik.size > 1024 * 1024) { komunikat("Plik " + plik.name + " jest za duży jak na plan (ponad 1 MB).", "blad"); return; }
+  const t = await plik.text();
+  if (!t.includes("treningi:")) {
+    komunikat("Plik " + plik.name + " nie zawiera linii treningi: – to nie wygląda na plan.", "blad");
+    return;
+  }
+  ustawTekst(t, "Wczytano plik " + plik.name + ".");
+}
+
+function zapiszJakoPlik() {
+  const blob = new Blob([$("#tekst").value], { type: "application/x-yaml" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = PLIK;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 
 // ---------- zdarzenia ----------
@@ -618,29 +756,34 @@ $("#wklej").addEventListener("click", async () => {
   try {
     const t = await navigator.clipboard.readText();
     if (!t.trim()) { komunikat("Schowek jest pusty. Skopiuj plan i spróbuj ponownie.", "blad"); return; }
-    $("#tekst").value = oczysc(t); wybrany = null; odswiez();
-    if (!plan.bledy.length) komunikat("Wklejono. Sprawdź podgląd i wyślij.", "ok");
+    if (!t.includes("treningi:")) { komunikat("W schowku nie ma planu (brak linii treningi:). Skopiuj cały plan.", "blad"); return; }
+    ustawTekst(t, "Wklejono ze schowka.");
   } catch {
+    $("#edytor").open = true;
     $("#tekst").focus();
     komunikat("Przeglądarka nie dała dostępu do schowka. Przytrzymaj pole tekstowe i wybierz Wklej.", "blad");
   }
 });
 
+$("#wybierz-plik").addEventListener("click", () => $("#plik").click());
+$("#plik").addEventListener("change", e => { wczytajPlik(e.target.files[0]); e.target.value = ""; });
+
 $("#z-repo").addEventListener("click", async () => {
   if (!ust.token) { otworzUstawienia("Najpierw wklej token GitHuba."); return; }
+  komunikat("Wczytuję plan z repo…");
   try {
     const t = await pobierzZRepo();
     if (t === null) { komunikat("W repo nie ma jeszcze pliku plan.yaml.", "blad"); return; }
-    $("#tekst").value = t; wybrany = null;
     bazowy = new Map(rozbierz(t).pozycje.map(p => [p.data, p.klucz]));
-    odswiez();
-    komunikat("Wczytano plan z repo. Możesz go poprawić i wysłać.", "ok");
+    ustawTekst(t, "Wczytano plan z repo. Popraw go w tekście planu albo wybierz dzień w siatce.");
   } catch (e) { komunikat(e.message, "blad"); }
 });
 
 $("#wyczysc").addEventListener("click", () => {
   $("#tekst").value = ""; wybrany = null; $("#postep").hidden = true; odswiez();
 });
+$("#pobierz").addEventListener("click", zapiszJakoPlik);
+$("#sz-pokaz").addEventListener("click", pokazWTekscie);
 
 $("#wyslij").addEventListener("click", wyslij);
 $("#otworz-ustawienia").addEventListener("click", () => otworzUstawienia());
@@ -653,21 +796,37 @@ $("#form-ustawien").addEventListener("submit", () => {
 });
 
 // ---------- start ----------
-$("#repo-naglowek").textContent = ust.repo;
-(() => {
-  // tekst udostępniony z innej aplikacji (np. z Claude) przez „Udostępnij”
+async function start() {
+  $("#repo-naglowek").textContent = ust.repo;
   const u = new URL(location.href);
-  const udostepniony = [u.searchParams.get("text"), u.searchParams.get("title")].filter(Boolean).join("\n");
-  if (udostepniony.includes("treningi:")) {
-    $("#tekst").value = oczysc(udostepniony);
-    history.replaceState(null, "", location.pathname);
-  } else {
-    try { $("#tekst").value = sessionStorage.getItem("pg.szkic") || ""; } catch {}
+  let wczytano = false;
+
+  // udostępnienie pliku lub tekstu z innej aplikacji (przez service workera)
+  if (u.searchParams.has("udostepniony") && "caches" in window) {
+    try {
+      const c = await caches.open("plan-garmin-udostepnione");
+      const r = await c.match("./__udostepniony");
+      if (r) {
+        const { tekst, nazwa } = await r.json();
+        await c.delete("./__udostepniony");
+        if (tekst && tekst.includes("treningi:")) { ustawTekst(tekst, nazwa ? "Wczytano udostępniony plik " + nazwa + "." : "Wczytano udostępniony plan."); wczytano = true; }
+        else komunikat("Udostępniona treść nie zawiera planu (brak linii treningi:).", "blad");
+      }
+    } catch {}
   }
-  odswiez();
+  // starszy sposób: tekst w adresie
+  const tekstUrl = [u.searchParams.get("text"), u.searchParams.get("title")].filter(Boolean).join("\n");
+  if (!wczytano && tekstUrl.includes("treningi:")) { ustawTekst(tekstUrl, "Wczytano udostępniony plan."); wczytano = true; }
+  if (u.search) history.replaceState(null, "", location.pathname);
+
+  if (!wczytano) {
+    try { $("#tekst").value = sessionStorage.getItem("pg.szkic") || ""; } catch {}
+    odswiez();
+  }
   wczytajBazowy();
   if (!ust.token) otworzUstawienia("Wklej token GitHuba, żeby zacząć.");
-})();
+}
+start();
 
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
 </script>

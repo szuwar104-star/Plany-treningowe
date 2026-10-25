@@ -3,6 +3,7 @@
   "short_name": "Plan Garmin",
   "description": "Wysyła plan treningowy (plan.yaml) do repozytorium Plany-treningowe, skąd trafia do Garmin Connect.",
   "lang": "pl",
+  "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -14,8 +15,16 @@
     {"src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
   ],
   "share_target": {
-    "action": "./",
-    "method": "GET",
-    "params": {"title": "title", "text": "text"}
+    "action": "./udostepnij",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "files": [{
+        "name": "plik",
+        "accept": ["text/*", ".yaml", ".yml", ".txt", "application/yaml", "application/x-yaml", "application/octet-stream"]
+      }]
+    }
   }
 }
