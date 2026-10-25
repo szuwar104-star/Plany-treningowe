@@ -691,14 +691,17 @@ def istniejace_treningi(client):
 def wpisy_kalendarza(client, daty):
     """Treningi zaplanowane w miesiącach obejmujących podane daty."""
     miesiace = sorted({(int(d[:4]), int(d[5:7])) for d in daty})
-    wpisy = []
+    wpisy, widziane = [], set()
     for rok, mies in miesiace:
         if hasattr(client, "get_scheduled_workouts"):
             dane = client.get_scheduled_workouts(rok, mies) or {}
         else:
             dane = _api(client, "GET", f"/calendar-service/year/{rok}/month/{mies - 1}") or {}
         for it in dane.get("calendarItems", []):
-            if it.get("itemType") == "workout":
+            # widok miesiąca obejmuje też dni sąsiednich miesięcy (pełne tygodnie),
+            # więc ten sam wpis może przyjść dwa razy – liczy się raz
+            if it.get("itemType") == "workout" and it.get("id") not in widziane:
+                widziane.add(it.get("id"))
                 wpisy.append({"id": it.get("id"), "data": it.get("date"),
                               "tytul": it.get("title"), "workoutId": it.get("workoutId")})
     return wpisy
