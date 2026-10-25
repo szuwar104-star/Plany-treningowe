@@ -38,13 +38,39 @@
 # Zmiana nazwy/opisu = trening w Garminie zostanie wymieniony. Pozycje usunięte
 # z pliku znikają z kalendarza (w zakresie dat planu).
 
-stare_nazwy:  # usuwane z "Moje treningi" (stary plan 20-30.10)
-  - Próg 4x1600
-  - Spokojny 9 km
-  - Interwały 5x1000
-  - Interwały 6x800
-  - Spokojny 8 km
-  - Próg 3x2000
+stare_nazwy:  # usuwane z "Moje treningi" przed wgraniem planu (stary plan + poprzednia wersja tego planu)
+  - "Próg 4x1600"
+  - "Spokojny 9 km"
+  - "Interwały 5x1000"
+  - "Interwały 6x800"
+  - "Spokojny 8 km"
+  - "Próg 3x2000"
+  - "Siła A: przywodziciele i core"
+  - "Siła B: jednonóż i pośladki"
+  - "Siła A2: przywodziciele i core+"
+  - "Siła B2: jednonóż i pośladki+"
+  - "Siła L: lekko"
+  - "Core + góra 10 min"
+  - "Spokojny 7 km"
+  - "T1 Próg 3x2000"
+  - "T1 VO2 5-6x1000"
+  - "T2 Próg 2x3000"
+  - "T2 VO2 5x1200"
+  - "T3 Próg 4x2000"
+  - "T3 Szybkość 8x400"
+  - "Spokojny 6 km"
+  - "T4 Próg 4x1000 lekko"
+  - "T4 TEST 5 km"
+  - "T5 Próg 2x4000"
+  - "T5 VO2 5x1000"
+  - "T6 Próg 3x3000"
+  - "T6 Tempo 5 km 4x1600"
+  - "T7 Tempo startowe 3x2000"
+  - "T7 VO2 5x1000"
+  - "T8 Wyostrzenie 4x1000"
+  - "Rozruch 4-5 km + przebieżki"
+  - "Opcja: wolne lub trucht 2-3 km"
+  - "START 10 km"
 
 zestawy_sily:
   # Tygodnie 1-3: A (pon) i B (czw). Tydzień 4 i 8: L (lekki). Tygodnie 5-7: A2 i B2 (trudniej).
