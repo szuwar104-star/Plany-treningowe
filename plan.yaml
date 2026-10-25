@@ -24,11 +24,13 @@
 #   Ten sam dzień może mieć bieg i siłę (dwa treningi w kalendarzu).
 #   Kroki siłowe: cwiczenie: {co: plank, sek: 45} albo {co: pompki, powt: 12}
 #                 przerwa: {sek: 60}; powtorz: 3 + kroki – obwody.
-#   Skróty co: pompki, przysiad, przysiad_bulgarski, wykroki, wykroki_wstecz,
-#     wykroki_boczne, plank, plank_boczny, copenhagen, mostek, mostek_jednonoz,
-#     martwy_jednonoz, dead_bug, bird_dog, brzuszki, rowerek, unoszenie_nog,
-#     hollow, superman, wspiecia, wspiecia_jednonoz, muszelka, wymachy_bok,
-#     mountain_climber, burpee, pajacyki, podciaganie, dipy, wejscia_na_podwyzszenie
+#   Skróty co: pompki, pompki_na_kolanach, przysiad, przysiad_jednonoz,
+#     przysiad_bulgarski, wykroki, wykroki_wstecz, wykroki_boczne, plank,
+#     plank_boczny, plank_boczny_noga, copenhagen, przywodziciele, mostek,
+#     mostek_jednonoz, mostek_marsz, martwy_jednonoz, dead_bug, bird_dog, brzuszki,
+#     rowerek, unoszenie_nog, hollow, superman, wspiecia, wspiecia_jednonoz,
+#     muszelka, wymachy_bok, mountain_climber, burpee, podciaganie, dipy,
+#     wejscia_na_podwyzszenie
 #   Inne ćwiczenia: nazwa z katalogu Garmina (python garmin_trening.py --cwiczenia SZUKAJ),
 #     np. cwiczenie: {kategoria: PLANK, nazwa: SIDE_PLANK, sek: 30}
 # Każda pozycja może mieć opcjonalny: true (pomijane z --bez-opcjonalnych).
@@ -45,17 +47,18 @@ stare_nazwy:  # usuwane z "Moje treningi" (stary plan 20-30.10)
   - Próg 3x2000
 
 zestawy_sily:
+  # Tygodnie 1-3: A (pon) i B (czw). Tydzień 4 i 8: L (lekki). Tygodnie 5-7: A2 i B2 (trudniej).
+  # C: krótki core + góra ciała w sobotę, opcjonalnie.
   A:
     nazwa: "Siła A: przywodziciele i core"
     opis: >-
-      15-20 min po spokojnym biegu. 3 obwody, przerwa 60 s po każdym. Ruch
-      kontrolowany, bez bólu pachwiny. Copenhagen w wersji łatwej (kolano na
-      ławce), dopóki pełna wersja nie jest komfortowa.
+      15-20 min po spokojnym biegu. 3 obwody, przerwa 60 s. Ruch kontrolowany,
+      bez bólu pachwiny. Copenhagen w wersji łatwej (kolano na ławce).
     kroki:
       - rozgrzewka: {min: 3, notatka: "Krążenia bioder, wymachy nóg przód-tył i w bok"}
       - powtorz: 3
         kroki:
-          - cwiczenie: {co: copenhagen, sek: 20, notatka: "Na każdą stronę. Łatwiej: kolano na ławce"}
+          - cwiczenie: {co: copenhagen, sek: 20, notatka: "Copenhagen, na każdą stronę. Kolano na ławce"}
           - cwiczenie: {co: mostek_jednonoz, powt: 10, notatka: "Na każdą nogę, 2 s w górze"}
           - cwiczenie: {co: plank_boczny, sek: 30, notatka: "Na każdą stronę, biodra wysoko"}
           - cwiczenie: {co: dead_bug, powt: 10, notatka: "Na stronę, lędźwie przy podłodze"}
@@ -63,18 +66,79 @@ zestawy_sily:
   B:
     nazwa: "Siła B: jednonóż i pośladki"
     opis: >-
-      15-20 min po spokojnym biegu. 2 obwody, przerwa 60 s po każdym. Wolne
-      tempo, kolano nad stopą, bez bólu pachwiny i biodra.
+      15-20 min po spokojnym biegu. 2 obwody, przerwa 60 s. Wolne tempo,
+      kolano nad stopą, bez bólu pachwiny i biodra.
     kroki:
       - rozgrzewka: {min: 3, notatka: "Krążenia bioder, wymachy nóg, 10 przysiadów"}
       - powtorz: 2
         kroki:
-          - cwiczenie: {co: przysiad_bulgarski, powt: 8, notatka: "Na każdą nogę, tylna stopa na krześle"}
-          - cwiczenie: {co: martwy_jednonoz, powt: 8, notatka: "Na każdą nogę, plecy proste"}
+          - cwiczenie: {co: przysiad_bulgarski, powt: 8, notatka: "Bez hantli. Na każdą nogę, tylna stopa na krześle"}
+          - cwiczenie: {co: martwy_jednonoz, powt: 8, notatka: "Bez obciążenia. Na każdą nogę, plecy proste"}
           - cwiczenie: {co: wspiecia_jednonoz, powt: 12, notatka: "Na każdą nogę, 3 s w dół"}
-          - cwiczenie: {co: copenhagen, sek: 20, notatka: "Na każdą stronę. Łatwiej: kolano na ławce"}
-          - cwiczenie: {co: plank, sek: 45}
+          - cwiczenie: {co: copenhagen, sek: 20, notatka: "Copenhagen, na każdą stronę. Kolano na ławce"}
+          - cwiczenie: {co: plank, sek: 45, notatka: "Albo na przedramionach"}
           - przerwa: {sek: 60}
+  A2:
+    nazwa: "Siła A2: przywodziciele i core+"
+    opis: >-
+      Wersja trudniejsza A (tygodnie 5-7). 3 obwody, przerwa 60 s. Copenhagen
+      pełny (stopa na ławce) tylko jeśli łatwa wersja była bez dyskomfortu.
+    kroki:
+      - rozgrzewka: {min: 3, notatka: "Krążenia bioder, wymachy nóg przód-tył i w bok"}
+      - powtorz: 3
+        kroki:
+          - cwiczenie: {co: copenhagen, sek: 25, notatka: "Copenhagen, na każdą stronę. Stopa na ławce albo kolano, jeśli pachwina czuje"}
+          - cwiczenie: {co: mostek_jednonoz, powt: 12, notatka: "Na każdą nogę, 3 s w górze"}
+          - cwiczenie: {co: plank_boczny_noga, sek: 35, notatka: "Na każdą stronę"}
+          - cwiczenie: {co: dead_bug, powt: 12, notatka: "Na stronę, wolno, wydech przy wyproście"}
+          - cwiczenie: {co: muszelka, powt: 15, notatka: "Na każdą stronę"}
+          - przerwa: {sek: 60}
+  B2:
+    nazwa: "Siła B2: jednonóż i pośladki+"
+    opis: >-
+      Wersja trudniejsza B (tygodnie 5-7). 2-3 obwody (trzeci tylko przy
+      świeżych nogach), przerwa 60 s. Bez bólu pachwiny i biodra.
+    kroki:
+      - rozgrzewka: {min: 3, notatka: "Krążenia bioder, wymachy nóg, 10 przysiadów"}
+      - powtorz: 2
+        kroki:
+          - cwiczenie: {co: przysiad_bulgarski, powt: 10, notatka: "Bez hantli. Na każdą nogę, 3 s w dół"}
+          - cwiczenie: {co: martwy_jednonoz, powt: 10, notatka: "Bez obciążenia. Na każdą nogę, plecy proste"}
+          - cwiczenie: {co: wykroki_boczne, powt: 8, notatka: "Na każdą stronę, płytko, bez bólu pachwiny"}
+          - cwiczenie: {co: wspiecia_jednonoz, powt: 15, notatka: "Na każdą nogę, 3 s w dół"}
+          - cwiczenie: {co: copenhagen, sek: 25, notatka: "Copenhagen, na każdą stronę"}
+          - cwiczenie: {co: plank, sek: 60, notatka: "Albo na przedramionach"}
+          - przerwa: {sek: 60}
+      - cwiczenie: {co: plank, lap: true, notatka: "OPCJONALNIE 3. obwód przy świeżych nogach. Inaczej zakończ trening"}
+  L:
+    nazwa: "Siła L: lekko"
+    opis: >-
+      Tydzień odciążenia i przedstartowy. 2 obwody, przerwa 45 s. Ma być
+      łatwo - podtrzymanie, nie trening.
+    kroki:
+      - rozgrzewka: {min: 2, notatka: "Krążenia bioder, wymachy nóg"}
+      - powtorz: 2
+        kroki:
+          - cwiczenie: {co: copenhagen, sek: 15, notatka: "Copenhagen, na każdą stronę. Kolano na ławce"}
+          - cwiczenie: {co: mostek, powt: 12, notatka: "Obunóż, 2 s w górze"}
+          - cwiczenie: {co: plank_boczny, sek: 20, notatka: "Na każdą stronę"}
+          - cwiczenie: {co: dead_bug, powt: 8, notatka: "Na stronę"}
+          - przerwa: {sek: 45}
+  C:
+    nazwa: "Core + góra 10 min"
+    opis: >-
+      Opcjonalnie, w dzień wolny albo po rozruchu. 2 obwody bez przerw między
+      ćwiczeniami, 45 s po obwodzie. Pomiń przy zmęczeniu przed długim biegiem.
+    kroki:
+      - powtorz: 2
+        kroki:
+          - cwiczenie: {co: plank, sek: 40, notatka: "Albo na przedramionach"}
+          - cwiczenie: {co: pompki, powt: 10, notatka: "Na kolanach, jeśli technika się psuje"}
+          - cwiczenie: {co: bird_dog, powt: 10, notatka: "Na stronę, 2 s w wyproście"}
+          - cwiczenie: {co: plank_boczny, sek: 25, notatka: "Na każdą stronę"}
+          - cwiczenie: {co: superman, powt: 12}
+          - cwiczenie: {co: hollow, sek: 20, notatka: "Hollow hold. Łatwiej: kolana ugięte"}
+          - przerwa: {sek: 45}
 
 treningi:
   # --- Tydzień 1/8 ---
@@ -107,6 +171,7 @@ treningi:
     stop: "Zmniejsz/przerwij: 4. powtórzenie wolniejsze niż 3:58 - kończysz na 4."
     dodatkowe: "OPCJONALNIE 6. powtórzenie: tylko jeśli wtorek RPE <=17 i HRV w normie. Inaczej pomiń krok."
   - {data: 2026-10-31, szablon: opcja_rozruch}
+  - {data: 2026-10-31, sila: C, opcjonalny: true}
   - {data: 2026-11-01, szablon: dlugi, km_txt: "18-20", km: 18, opcja: 2}
 
   # --- Tydzień 2/8 ---
@@ -136,6 +201,7 @@ treningi:
     przerwa_txt: "2:45"
     stop: VO2
   - {data: 2026-11-07, szablon: opcja_rozruch}
+  - {data: 2026-11-07, sila: C, opcjonalny: true}
   - {data: 2026-11-08, szablon: dlugi, km_txt: "20", km: 20}
 
   # --- Tydzień 3/8 ---
@@ -167,11 +233,12 @@ treningi:
     stop: VO2
     uwaga: Ok. 1:30-1:32 na odcinek.
   - {data: 2026-11-14, szablon: opcja_rozruch}
+  - {data: 2026-11-14, sila: C, opcjonalny: true}
   - {data: 2026-11-15, szablon: dlugi, km_txt: "20", km: 20}
 
   # --- Tydzień 4/8 (odciążenie + test) ---
   - {data: 2026-11-16, szablon: spokojny, km_txt: "6-7", km: 6, opcja: 1}
-  - {data: 2026-11-16, sila: A}
+  - {data: 2026-11-16, sila: L}
   - data: 2026-11-17
     szablon: akcent
     nazwa: T4 Próg 4x1000 lekko
@@ -185,7 +252,6 @@ treningi:
     uwaga: Kontrolowane, RPE <=15.
   - {data: 2026-11-18, szablon: opcja_rozruch}
   - {data: 2026-11-19, szablon: spokojny, km_txt: "6", km: 6, przebiezki: true}
-  - {data: 2026-11-19, sila: B}
   - data: 2026-11-20
     nazwa: T4 TEST 5 km
     opis: >-
@@ -198,11 +264,12 @@ treningi:
     dopisz_stop: true
     kroki: test_5km
   - {data: 2026-11-21, szablon: opcja_rozruch}
+  - {data: 2026-11-21, sila: C, opcjonalny: true}
   - {data: 2026-11-22, szablon: dlugi, km_txt: "14-16", km: 14, opcja: 2, uwaga: Tydzień odciążenia - spokojnie.}
 
   # --- Tydzień 5/8 ---
   - {data: 2026-11-23, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
-  - {data: 2026-11-23, sila: A}
+  - {data: 2026-11-23, sila: A2}
   - data: 2026-11-24
     szablon: akcent
     nazwa: T5 Próg 2x4000
@@ -215,7 +282,7 @@ treningi:
     stop: PROG
   - {data: 2026-11-25, szablon: opcja_rozruch}
   - {data: 2026-11-26, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
-  - {data: 2026-11-26, sila: B}
+  - {data: 2026-11-26, sila: B2}
   - data: 2026-11-27
     szablon: akcent
     nazwa: T5 VO2 5x1000
@@ -228,11 +295,12 @@ treningi:
     stop: VO2
     uwaga: Tempo = 5 km z testu minus 2-3 s/km.
   - {data: 2026-11-28, szablon: opcja_rozruch}
+  - {data: 2026-11-28, sila: C, opcjonalny: true}
   - {data: 2026-11-29, szablon: dlugi, km_txt: "20", km: 20}
 
   # --- Tydzień 6/8 ---
   - {data: 2026-11-30, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
-  - {data: 2026-11-30, sila: A}
+  - {data: 2026-11-30, sila: A2}
   - data: 2026-12-01
     szablon: akcent
     nazwa: T6 Próg 3x3000
@@ -246,7 +314,7 @@ treningi:
     stop_dodatek: Po 2. serii RPE >17 - kończysz na dwóch.
   - {data: 2026-12-02, szablon: opcja_rozruch}
   - {data: 2026-12-03, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
-  - {data: 2026-12-03, sila: B}
+  - {data: 2026-12-03, sila: B2}
   - data: 2026-12-04
     szablon: akcent
     nazwa: T6 Tempo 5 km 4x1600
@@ -258,11 +326,12 @@ treningi:
     przerwa_txt: "2:30"
     stop: VO2
   - {data: 2026-12-05, szablon: opcja_rozruch}
+  - {data: 2026-12-05, sila: C, opcjonalny: true}
   - {data: 2026-12-06, szablon: dlugi, km_txt: "20", km: 20}
 
   # --- Tydzień 7/8 ---
   - {data: 2026-12-07, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
-  - {data: 2026-12-07, sila: A}
+  - {data: 2026-12-07, sila: A2}
   - data: 2026-12-08
     szablon: akcent
     nazwa: T7 Tempo startowe 3x2000
@@ -277,7 +346,7 @@ treningi:
     uwaga: "Jeśli test 5 km nie wskazuje na sub-40: 4:06-4:08."
   - {data: 2026-12-09, szablon: opcja_rozruch}
   - {data: 2026-12-10, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
-  - {data: 2026-12-10, sila: B}
+  - {data: 2026-12-10, sila: B2}
   - data: 2026-12-11
     szablon: akcent
     nazwa: T7 VO2 5x1000
@@ -289,11 +358,12 @@ treningi:
     przerwa_txt: "2:45"
     stop: VO2
   - {data: 2026-12-12, szablon: opcja_rozruch}
+  - {data: 2026-12-12, sila: C, opcjonalny: true}
   - {data: 2026-12-13, szablon: dlugi, km_txt: "18", km: 18}
 
   # --- Tydzień 8/8 (start) ---
   - {data: 2026-12-14, szablon: spokojny, km_txt: "6-7", km: 6, opcja: 1}
-  - {data: 2026-12-14, sila: A}
+  - {data: 2026-12-14, sila: L}
   - data: 2026-12-15
     szablon: akcent
     nazwa: T8 Wyostrzenie 4x1000

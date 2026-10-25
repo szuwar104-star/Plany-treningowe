@@ -605,40 +605,40 @@ def przerwa(**kw):     return _krok("rest", **kw)
 # jest w katalogu Garmina; nazwy spoza katalogu Garmin pomija, więc ćwiczenie
 # zostaje wtedy opisane w notatce kroku. Własne nazwy: --cwiczenia SZUKAJ.
 ALIASY = {
-    "pompki": [("PUSH_UP", "PUSH_UP")],
-    "pompki_na_kolanach": [("PUSH_UP", "KNEELING_PUSH_UP")],
-    "przysiad": [("SQUAT", "AIR_SQUAT"), ("SQUAT", "BODY_WEIGHT_SQUAT"), ("SQUAT", "SQUAT")],
-    "przysiad_bulgarski": [("LUNGE", "BULGARIAN_SPLIT_SQUAT"), ("SQUAT", "BULGARIAN_SPLIT_SQUAT"),
-                           ("LUNGE", "DUMBBELL_BULGARIAN_SPLIT_SQUAT")],
-    "wykroki": [("LUNGE", "LUNGE"), ("LUNGE", "WALKING_LUNGE")],
-    "wykroki_wstecz": [("LUNGE", "REVERSE_LUNGE"), ("LUNGE", "BACKWARD_LUNGE"), ("LUNGE", "LUNGE")],
-    "wykroki_boczne": [("LUNGE", "SIDE_LUNGE"), ("LUNGE", "LATERAL_LUNGE")],
-    "plank": [("PLANK", "PLANK"), ("PLANK", "STRAIGHT_ARM_PLANK")],
-    "plank_boczny": [("PLANK", "SIDE_PLANK")],
-    "copenhagen": [("PLANK", "COPENHAGEN_PLANK"), ("HIP_STABILITY", "COPENHAGEN_ADDUCTION"),
-                   ("PLANK", "SIDE_PLANK")],
-    "mostek": [("HIP_RAISE", "HIP_RAISE"), ("HIP_RAISE", "GLUTE_BRIDGE"), ("HIP_RAISE", "BRIDGE")],
-    "mostek_jednonoz": [("HIP_RAISE", "SINGLE_LEG_HIP_RAISE"), ("HIP_RAISE", "SINGLE_LEG_GLUTE_BRIDGE")],
-    "martwy_jednonoz": [("DEADLIFT", "SINGLE_LEG_ROMANIAN_DEADLIFT"), ("DEADLIFT", "SINGLE_LEG_DEADLIFT"),
-                        ("HIP_STABILITY", "SINGLE_LEG_DEADLIFT")],
-    "dead_bug": [("HIP_STABILITY", "DEAD_BUG"), ("CORE", "DEAD_BUG"), ("PLANK", "DEAD_BUG")],
-    "bird_dog": [("CORE", "BIRD_DOG"), ("HIP_STABILITY", "QUADRUPED_HIP_EXTENSION"), ("PLANK", "BIRD_DOG")],
-    "brzuszki": [("CRUNCH", "CRUNCH"), ("SIT_UP", "SIT_UP")],
-    "rowerek": [("CRUNCH", "BICYCLE_CRUNCH")],
-    "unoszenie_nog": [("LEG_RAISE", "LYING_STRAIGHT_LEG_RAISE"), ("LEG_RAISE", "LEG_RAISE")],
-    "hollow": [("CORE", "HOLLOW_HOLD"), ("CORE", "HOLLOW_ROCK")],
-    "superman": [("HYPEREXTENSION", "SUPERMAN"), ("HYPEREXTENSION", "SUPERMAN_ON_FLOOR")],
-    "wspiecia": [("CALF_RAISE", "STANDING_CALF_RAISE"), ("CALF_RAISE", "CALF_RAISE")],
-    "wspiecia_jednonoz": [("CALF_RAISE", "SINGLE_LEG_STANDING_CALF_RAISE"),
-                          ("CALF_RAISE", "SINGLE_LEG_CALF_RAISE")],
-    "muszelka": [("HIP_STABILITY", "CLAMSHELL"), ("HIP_STABILITY", "SIDE_LYING_CLAM")],
-    "wymachy_bok": [("HIP_STABILITY", "SIDE_LYING_LEG_RAISE"), ("HIP_STABILITY", "LYING_ABDUCTION_STRETCH")],
-    "mountain_climber": [("PLANK", "MOUNTAIN_CLIMBER"), ("CARDIO", "MOUNTAIN_CLIMBER")],
-    "burpee": [("TOTAL_BODY", "BURPEE"), ("CARDIO", "BURPEE")],
-    "pajacyki": [("CARDIO", "JUMPING_JACKS"), ("CARDIO", "JUMPING_JACK")],
-    "podciaganie": [("PULL_UP", "PULL_UP")],
-    "dipy": [("TRICEPS_EXTENSION", "BENCH_DIP"), ("TRICEPS_EXTENSION", "BODY_WEIGHT_DIP")],
-    "wejscia_na_podwyzszenie": [("LUNGE", "STEP_UP"), ("SQUAT", "STEP_UP"), ("LUNGE", "BODY_WEIGHT_STEP_UP")],
+    # (KATEGORIA, NAZWA) sprawdzone w katalogu ćwiczeń Garmina
+    "pompki": ("PUSH_UP", "PUSH_UP"),
+    "pompki_na_kolanach": ("PUSH_UP", "KNEELING_PUSH_UP"),
+    "przysiad": ("SQUAT", "AIR_SQUAT"),
+    "przysiad_jednonoz": ("SQUAT", "PARTIAL_SINGLE_LEG_SQUAT"),
+    "przysiad_bulgarski": ("LUNGE", "DUMBBELL_BULGARIAN_SPLIT_SQUAT"),
+    "wykroki": ("LUNGE", "WALKING_LUNGE"),
+    "wykroki_wstecz": ("LUNGE", "REVERSE_LUNGE_WITH_REACH_BACK"),
+    "wykroki_boczne": ("LUNGE", "SIDE_LUNGE"),
+    "plank": ("PLANK", "STRAIGHT_ARM_PLANK"),
+    "plank_boczny": ("PLANK", "SIDE_PLANK"),
+    "plank_boczny_noga": ("PLANK", "SIDE_PLANK_WITH_LEG_LIFT"),
+    "copenhagen": ("PLANK", "SIDE_PLANK_WITH_FEET_ON_BENCH"),
+    "przywodziciele": ("HIP_STABILITY", "INNER_THIGH_LIFT"),
+    "mostek": ("HIP_RAISE", "HIP_RAISE"),
+    "mostek_jednonoz": ("HIP_RAISE", "SINGLE_LEG_HIP_RAISE"),
+    "mostek_marsz": ("HIP_RAISE", "MARCHING_HIP_RAISE"),
+    "martwy_jednonoz": ("DEADLIFT", "SINGLE_LEG_ROMANIAN_DEADLIFT_WITH_DUMBBELL"),
+    "dead_bug": ("HIP_STABILITY", "DEAD_BUG"),
+    "bird_dog": ("HYPEREXTENSION", "BACK_EXTENSION_WITH_OPPOSITE_ARM_AND_LEG_REACH"),
+    "brzuszki": ("CRUNCH", "CRUNCH"),
+    "rowerek": ("CORE", "BICYCLE"),
+    "unoszenie_nog": ("LEG_RAISE", "LYING_STRAIGHT_LEG_RAISE"),
+    "hollow": ("CRUNCH", "HOLLOW_ROCK"),
+    "superman": ("HYPEREXTENSION", "SUPERMAN_FROM_FLOOR"),
+    "wspiecia": ("CALF_RAISE", "STANDING_CALF_RAISE"),
+    "wspiecia_jednonoz": ("CALF_RAISE", "SINGLE_LEG_STANDING_CALF_RAISE"),
+    "muszelka": ("HIP_RAISE", "CLAMS"),
+    "wymachy_bok": ("HIP_STABILITY", "SIDE_LYING_LEG_RAISE"),
+    "mountain_climber": ("PLANK", "MOUNTAIN_CLIMBER"),
+    "burpee": ("TOTAL_BODY", "BURPEE"),
+    "podciaganie": ("PULL_UP", "PULL_UP"),
+    "dipy": ("TRICEPS_EXTENSION", "BENCH_DIP"),
+    "wejscia_na_podwyzszenie": ("STAIR_STEPPER", "STEP_UP"),
 }
 KATALOG_URL = "https://connect.garmin.com/web-data/exercises/Exercises.json"
 KATALOG_PLIK = os.path.expanduser("~/.garmin_cwiczenia.json")
@@ -685,27 +685,24 @@ def _katalog():
 
 
 def _znajdz_cwiczenie(co=None, kategoria=None, nazwa=None):
-    """-> (kategoria, nazwa albo None, czy_rozpoznane)"""
-    katalog = _katalog()
-    if kategoria or nazwa:
-        kandydaci = [((kategoria or "").upper(), (nazwa or "").upper())]
-        if not kategoria and nazwa:   # sama nazwa – szukamy kategorii w katalogu
-            kandydaci = [(k, n) for k, n in katalog if n == nazwa.upper()] or kandydaci
-    else:
+    """-> (kategoria, nazwa, rozpoznane). Nierozpoznane ćwiczenie idzie bez nazwy
+    (z opisem w notatce) – błędna nazwa potrafi zablokować trening na zegarku."""
+    if co is not None:
         klucz = str(co).strip().lower().replace(" ", "_").replace("-", "_")
         if klucz in ALIASY:
-            kandydaci = ALIASY[klucz]
-        else:  # nazwa Garmina wpisana wprost, np. SIDE_PLANK
-            n = klucz.upper()
-            kandydaci = [(k, x) for k, x in katalog if x == n] or [("", n)]
-    if not katalog:              # bez katalogu: pierwszy kandydat, niesprawdzony
-        k, n = kandydaci[0]
-        return k or None, n or None, None
-    for i, (k, n) in enumerate(kandydaci):
-        if (k, n) in katalog:
-            return k, n, (True if i == 0 else None)   # None = zamiennik, dopisz nazwę
-    kat = next((k for k, _ in kandydaci if k and any(k == kk for kk, _ in katalog)), None)
-    return kat, None, False
+            k, n = ALIASY[klucz]
+            return k, n, True
+        nazwa = klucz.upper()
+    katalog = _katalog()
+    n = (nazwa or "").upper().replace(" ", "_")
+    k = (kategoria or "").upper()
+    if katalog:
+        if k and (k, n) in katalog:
+            return k, n, True
+        trafienia = [kk for kk, nn in katalog if nn == n]
+        if n and not k and len(trafienia) == 1:
+            return trafienia[0], n, True
+    return None, None, False
 
 
 def cwiczenie(co=None, kategoria=None, nazwa=None, notatka=None, **kw):
@@ -714,16 +711,17 @@ def cwiczenie(co=None, kategoria=None, nazwa=None, notatka=None, **kw):
         raise ValueError("ćwiczenie wymaga pola co (np. plank) albo kategoria/nazwa")
     kat, naz, ok = _znajdz_cwiczenie(co, kategoria, nazwa)
     opis_cw = str(co or nazwa or kategoria).replace("_", " ")
-    if ok is False and opis_cw not in _ostrzezenia:
+    if not ok and opis_cw not in _ostrzezenia:
         _ostrzezenia.add(opis_cw)
         print(f"Uwaga: '{opis_cw}' nie ma odpowiednika w katalogu Garmina"
               f" – na zegarku będzie opisane w notatce kroku.")
     tekst = notatka or ""
-    if ok is not True:  # brak w katalogu, zamiennik albo katalog niedostępny
+    if not ok:  # bez nazwy Garmina – nazwa ćwiczenia trafia do notatki
         tekst = f"{opis_cw.capitalize()}. {tekst}".strip()
     step = _krok("interval", notatka=tekst or None, **kw)
-    step["category"] = kat
-    step["exerciseName"] = naz
+    if kat and naz:
+        step["category"] = kat
+        step["exerciseName"] = naz
     return step
 
 
@@ -765,9 +763,15 @@ def _numeruj(kroki, licznik=None):
 
 def zbuduj_json(definicja):
     sport = SPORTY[definicja.get("sport") or "bieg"]
+    opis = definicja.get("opis", "")
+    if definicja.get("sport") == "sila":
+        # krótki odcisk kroków: zmiana samych ćwiczeń też wymieni trening w Garminie
+        odc = hashlib.sha1(json.dumps(definicja["kroki"], sort_keys=True,
+                                      ensure_ascii=False).encode()).hexdigest()[:6]
+        opis = f"{opis[:500]} (v{odc})"
     return {
         "workoutName": definicja["nazwa"],
-        "description": definicja.get("opis", "")[:512],
+        "description": opis[:512],
         "sportType": sport,
         "workoutSegments": [{
             "segmentOrder": 1,
