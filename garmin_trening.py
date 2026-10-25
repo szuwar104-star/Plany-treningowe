@@ -517,6 +517,11 @@ def plan_z_tekstu(tekst, zrodlo):
             sys.exit(f"Błąd w pliku planu, pozycja {i} ({w.get('data', '?')}"
                      f" {w.get('nazwa', w.get('szablon', ''))}): {e}")
         plan.append(p)
+    # siła rozpisana jako osobne treningi – dopisek o sile znika z opisów biegów
+    if any(p.get("sport") == "sila" for p in plan):
+        for p in plan:
+            if p.get("sport") != "sila":
+                p["opis"] = p["opis"].replace(SILA, "")
     return plan, dane.get("stare_nazwy")
 
 
