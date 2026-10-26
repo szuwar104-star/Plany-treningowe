@@ -27,25 +27,24 @@
 #   Ten sam dzień może mieć bieg i siłę (dwa treningi w kalendarzu).
 #   Kroki siłowe: cwiczenie: {co: plank, sek: 45} albo {co: pompki, powt: 12}
 #                 przerwa: {sek: 60}; powtorz: 3 + kroki – obwody.
-#   Ćwiczenia jednostronne (plank_boczny, plank_boczny_noga, copenhagen,
-#     przywodziciele, muszelka, wymachy_bok, wykroki_boczne, *_jednonoz,
-#     przysiad_bulgarski, wejscia_na_podwyzszenie, a także notatka "na każdą
-#     stronę/nogę") są dzielone na dwa kroki: lewa i prawa. Wartość sek/powt
-#     dotyczy JEDNEJ strony. Przy krokach na czas między stronami jest 5 s
-#     przerwy "Zmień stronę" (zmiana: 10 = inna długość, zmiana: 0 = bez przerwy).
-#     strony: false – bez podziału (np. ćwiczenie naprzemienne),
-#     strony: true / noga / strona / reka – wymuszenie podziału.
-#   Przed każdym ćwiczeniem na czas (sek/min), przed którym nie ma przerwy,
-#     skrypt wstawia 10 s przerwy "Przygotuj: ..." na zmianę pozycji, więc
-#     ćwiczenie trwa pełny czas. W zestawie można zmienić: przejscie: 15,
-#     przejscie: lap (czeka na Lap, start kiedy jesteś gotowy), przejscie: 0 (bez).
-#   Skróty co: pompki, pompki_na_kolanach, przysiad, przysiad_jednonoz,
-#     przysiad_bulgarski, wykroki, wykroki_wstecz, wykroki_boczne, plank,
-#     plank_boczny, plank_boczny_noga, copenhagen, przywodziciele, mostek,
-#     mostek_jednonoz, mostek_marsz, martwy_jednonoz, dead_bug, bird_dog, brzuszki,
-#     rowerek, unoszenie_nog, hollow, superman, wspiecia, wspiecia_jednonoz,
-#     muszelka, wymachy_bok, mountain_climber, burpee, podciaganie, dipy,
-#     wejscia_na_podwyzszenie
+#   Ćwiczenia jednostronne podajesz RAZ, sek/powt na JEDNĄ stronę. Skrypt sam
+#     robi dwa kroki: lewa i prawa. Jednostronne: przysiad_jednonoz,
+#     przysiad_bulgarski, mostek_jednonoz, martwy_jednonoz, wspiecia_jednonoz,
+#     wejscia_na_podwyzszenie, plank_boczny, plank_boczny_noga, copenhagen,
+#     przywodziciele, muszelka, wymachy_bok, wykroki_boczne.
+#     Przy krokach na czas między stronami jest 5 s "Zmień stronę"
+#     (zmiana: 10 = inna długość, zmiana: 0 = bez przerwy).
+#     strony: noga / strona / reka / true – podział innego ćwiczenia (to samo
+#     robi notatka "na każdą stronę/nogę"); strony: false – bez podziału.
+#     Naprzemienne (dead_bug, bird_dog, mostek_marsz) nie są dzielone –
+#     w notatce napisz, czy powt to suma, czy liczba na stronę.
+#   Przed każdym ćwiczeniem na czas, przed którym nie ma przerwy (także
+#     pierwszym w obwodzie), skrypt wstawia 10 s "Przygotuj: ...". W zestawie
+#     lub ćwiczeniu: przejscie: 15, przejscie: lap (start po Lapie), przejscie: 0.
+#   Nie dopisuj ręcznie kroków lewa/prawa ani przerw na zmianę i przejście.
+#   Pozostałe skróty co: pompki, pompki_na_kolanach, przysiad, wykroki,
+#     wykroki_wstecz, plank, mostek, brzuszki, rowerek, unoszenie_nog, hollow,
+#     superman, wspiecia, mountain_climber, burpee, podciaganie, dipy
 #   Inne ćwiczenia: nazwa z katalogu Garmina (python garmin_trening.py --cwiczenia SZUKAJ),
 #     np. cwiczenie: {kategoria: PLANK, nazwa: SIDE_PLANK, sek: 30}
 # Każda pozycja może mieć opcjonalny: true (pomijane z --bez-opcjonalnych).
@@ -63,6 +62,7 @@ stare_nazwy:  # usuwane z "Moje treningi" (stary plan 20-30.10)
 zestawy_sily:
   # Tygodnie 1-3: A (pon) i B (czw). Tydzień 4 i 8: L (lekki). Tygodnie 5-7: A2 i B2 (trudniej).
   # C: krótki core + góra ciała w sobotę, opcjonalnie.
+  # sek/powt w ćwiczeniach jednostronnych = na jedną stronę.
   A:
     nazwa: "Siła A: przywodziciele i core"
     opis: >-
@@ -72,10 +72,10 @@ zestawy_sily:
       - rozgrzewka: {min: 3, notatka: "Krążenia bioder, wymachy nóg przód-tył i w bok"}
       - powtorz: 3
         kroki:
-          - cwiczenie: {co: copenhagen, sek: 20, notatka: "Copenhagen, na każdą stronę. Kolano na ławce"}
-          - cwiczenie: {co: mostek_jednonoz, powt: 10, notatka: "Na każdą nogę, 2 s w górze"}
-          - cwiczenie: {co: plank_boczny, sek: 30, notatka: "Na każdą stronę, biodra wysoko"}
-          - cwiczenie: {co: dead_bug, powt: 10, notatka: "Na stronę, lędźwie przy podłodze"}
+          - cwiczenie: {co: copenhagen, sek: 20, notatka: "Kolano na ławce"}
+          - cwiczenie: {co: mostek_jednonoz, powt: 10, notatka: "2 s w górze"}
+          - cwiczenie: {co: plank_boczny, sek: 30, notatka: "Biodra wysoko"}
+          - cwiczenie: {co: dead_bug, powt: 20, notatka: "Naprzemiennie, 10 na stronę. Lędźwie przy podłodze"}
           - przerwa: {sek: 60}
   B:
     nazwa: "Siła B: jednonóż i pośladki"
@@ -86,10 +86,10 @@ zestawy_sily:
       - rozgrzewka: {min: 3, notatka: "Krążenia bioder, wymachy nóg, 10 przysiadów"}
       - powtorz: 2
         kroki:
-          - cwiczenie: {co: przysiad_bulgarski, powt: 8, notatka: "Bez hantli. Na każdą nogę, tylna stopa na krześle"}
-          - cwiczenie: {co: martwy_jednonoz, powt: 8, notatka: "Bez obciążenia. Na każdą nogę, plecy proste"}
-          - cwiczenie: {co: wspiecia_jednonoz, powt: 12, notatka: "Na każdą nogę, 3 s w dół"}
-          - cwiczenie: {co: copenhagen, sek: 20, notatka: "Copenhagen, na każdą stronę. Kolano na ławce"}
+          - cwiczenie: {co: przysiad_bulgarski, powt: 8, notatka: "Bez hantli. Tylna stopa na krześle"}
+          - cwiczenie: {co: martwy_jednonoz, powt: 8, notatka: "Bez obciążenia. Plecy proste"}
+          - cwiczenie: {co: wspiecia_jednonoz, powt: 12, notatka: "3 s w dół"}
+          - cwiczenie: {co: copenhagen, sek: 20, notatka: "Kolano na ławce"}
           - cwiczenie: {co: plank, sek: 45, notatka: "Albo na przedramionach"}
           - przerwa: {sek: 60}
   A2:
@@ -101,11 +101,11 @@ zestawy_sily:
       - rozgrzewka: {min: 3, notatka: "Krążenia bioder, wymachy nóg przód-tył i w bok"}
       - powtorz: 3
         kroki:
-          - cwiczenie: {co: copenhagen, sek: 25, notatka: "Copenhagen, na każdą stronę. Stopa na ławce albo kolano, jeśli pachwina czuje"}
-          - cwiczenie: {co: mostek_jednonoz, powt: 12, notatka: "Na każdą nogę, 3 s w górze"}
-          - cwiczenie: {co: plank_boczny_noga, sek: 35, notatka: "Na każdą stronę"}
-          - cwiczenie: {co: dead_bug, powt: 12, notatka: "Na stronę, wolno, wydech przy wyproście"}
-          - cwiczenie: {co: muszelka, powt: 15, notatka: "Na każdą stronę"}
+          - cwiczenie: {co: copenhagen, sek: 25, notatka: "Stopa na ławce albo kolano, jeśli pachwina czuje"}
+          - cwiczenie: {co: mostek_jednonoz, powt: 12, notatka: "3 s w górze"}
+          - cwiczenie: {co: plank_boczny_noga, sek: 35}
+          - cwiczenie: {co: dead_bug, powt: 24, notatka: "Naprzemiennie, 12 na stronę. Wolno, wydech przy wyproście"}
+          - cwiczenie: {co: muszelka, powt: 15}
           - przerwa: {sek: 60}
   B2:
     nazwa: "Siła B2: jednonóż i pośladki+"
@@ -116,11 +116,11 @@ zestawy_sily:
       - rozgrzewka: {min: 3, notatka: "Krążenia bioder, wymachy nóg, 10 przysiadów"}
       - powtorz: 2
         kroki:
-          - cwiczenie: {co: przysiad_bulgarski, powt: 10, notatka: "Bez hantli. Na każdą nogę, 3 s w dół"}
-          - cwiczenie: {co: martwy_jednonoz, powt: 10, notatka: "Bez obciążenia. Na każdą nogę, plecy proste"}
-          - cwiczenie: {co: wykroki_boczne, powt: 8, notatka: "Na każdą stronę, płytko, bez bólu pachwiny"}
-          - cwiczenie: {co: wspiecia_jednonoz, powt: 15, notatka: "Na każdą nogę, 3 s w dół"}
-          - cwiczenie: {co: copenhagen, sek: 25, notatka: "Copenhagen, na każdą stronę"}
+          - cwiczenie: {co: przysiad_bulgarski, powt: 10, notatka: "Bez hantli. 3 s w dół"}
+          - cwiczenie: {co: martwy_jednonoz, powt: 10, notatka: "Bez obciążenia. Plecy proste"}
+          - cwiczenie: {co: wykroki_boczne, powt: 8, notatka: "Płytko, bez bólu pachwiny"}
+          - cwiczenie: {co: wspiecia_jednonoz, powt: 15, notatka: "3 s w dół"}
+          - cwiczenie: {co: copenhagen, sek: 25}
           - cwiczenie: {co: plank, sek: 60, notatka: "Albo na przedramionach"}
           - przerwa: {sek: 60}
       - cwiczenie: {co: plank, lap: true, notatka: "OPCJONALNIE 3. obwód przy świeżych nogach. Inaczej zakończ trening"}
@@ -133,10 +133,10 @@ zestawy_sily:
       - rozgrzewka: {min: 2, notatka: "Krążenia bioder, wymachy nóg"}
       - powtorz: 2
         kroki:
-          - cwiczenie: {co: copenhagen, sek: 15, notatka: "Copenhagen, na każdą stronę. Kolano na ławce"}
+          - cwiczenie: {co: copenhagen, sek: 15, notatka: "Kolano na ławce"}
           - cwiczenie: {co: mostek, powt: 12, notatka: "Obunóż, 2 s w górze"}
-          - cwiczenie: {co: plank_boczny, sek: 20, notatka: "Na każdą stronę"}
-          - cwiczenie: {co: dead_bug, powt: 8, notatka: "Na stronę"}
+          - cwiczenie: {co: plank_boczny, sek: 20}
+          - cwiczenie: {co: dead_bug, powt: 16, notatka: "Naprzemiennie, 8 na stronę"}
           - przerwa: {sek: 45}
   C:
     nazwa: "Core + góra 10 min"
@@ -148,8 +148,8 @@ zestawy_sily:
         kroki:
           - cwiczenie: {co: plank, sek: 40, notatka: "Albo na przedramionach"}
           - cwiczenie: {co: pompki, powt: 10, notatka: "Na kolanach, jeśli technika się psuje"}
-          - cwiczenie: {co: bird_dog, powt: 10, notatka: "Na stronę, 2 s w wyproście"}
-          - cwiczenie: {co: plank_boczny, sek: 25, notatka: "Na każdą stronę"}
+          - cwiczenie: {co: bird_dog, powt: 20, notatka: "Naprzemiennie, 10 na stronę. 2 s w wyproście"}
+          - cwiczenie: {co: plank_boczny, sek: 25}
           - cwiczenie: {co: superman, powt: 12}
           - cwiczenie: {co: hollow, sek: 20, notatka: "Hollow hold. Łatwiej: kolana ugięte"}
           - przerwa: {sek: 45}
