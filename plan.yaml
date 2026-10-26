@@ -1,10 +1,13 @@
 # Plan biegowy 10 km, 26.10 - 20.12 (8 tygodni)
+# Aktualizacja 26.10: tempa progowe T3-T6 skorygowane po 4x1600 z 20.10, T4 łagodniejszy,
+# długi 1.11 bez przyspieszeń, we wtorek 27.10 kontrola HR pod LTHR 167.
 # Zmiana tego pliku na GitHubie (main) = automatyczna synchronizacja z Garmin Connect.
 #
 # Tempa i czasy ZAWSZE w cudzysłowie: "4:11", "2:00".
 #
 # Szablony (szablon: ...):
-#   spokojny       km_txt, km, [opcja], [przebiezki: true], [sila: false]
+#   spokojny       km_txt, km, [opcja], [przebiezki: true],
+#                  [sila: false] = wersja przedstartowa: nazwa z dopiskiem "(przedstartowy)"
 #   dlugi          km_txt, km, [opcja], [uwaga]
 #   opcja_rozruch  (tylko data) – wolne lub 5-6 km
 #   akcent         nazwa, cel, powtorzenia, metry, tempo: ["od", "do"],
@@ -24,6 +27,18 @@
 #   Ten sam dzień może mieć bieg i siłę (dwa treningi w kalendarzu).
 #   Kroki siłowe: cwiczenie: {co: plank, sek: 45} albo {co: pompki, powt: 12}
 #                 przerwa: {sek: 60}; powtorz: 3 + kroki – obwody.
+#   Ćwiczenia jednostronne (plank_boczny, plank_boczny_noga, copenhagen,
+#     przywodziciele, muszelka, wymachy_bok, wykroki_boczne, *_jednonoz,
+#     przysiad_bulgarski, wejscia_na_podwyzszenie, a także notatka "na każdą
+#     stronę/nogę") są dzielone na dwa kroki: lewa i prawa. Wartość sek/powt
+#     dotyczy JEDNEJ strony. Przy krokach na czas między stronami jest 5 s
+#     przerwy "Zmień stronę" (zmiana: 10 = inna długość, zmiana: 0 = bez przerwy).
+#     strony: false – bez podziału (np. ćwiczenie naprzemienne),
+#     strony: true / noga / strona / reka – wymuszenie podziału.
+#   Przed każdym ćwiczeniem na czas (sek/min), przed którym nie ma przerwy,
+#     skrypt wstawia 10 s przerwy "Przygotuj: ..." na zmianę pozycji, więc
+#     ćwiczenie trwa pełny czas. W zestawie można zmienić: przejscie: 15,
+#     przejscie: lap (czeka na Lap, start kiedy jesteś gotowy), przejscie: 0 (bez).
 #   Skróty co: pompki, pompki_na_kolanach, przysiad, przysiad_jednonoz,
 #     przysiad_bulgarski, wykroki, wykroki_wstecz, wykroki_boczne, plank,
 #     plank_boczny, plank_boczny_noga, copenhagen, przywodziciele, mostek,
@@ -141,11 +156,11 @@ zestawy_sily:
 
 treningi:
   # --- Tydzień 1/8 ---
-  - {data: 2026-10-26, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1, sila: false}
+  - {data: 2026-10-26, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
   - {data: 2026-10-26, sila: A}
   - data: 2026-10-27
     nazwa: "T1 Próg 3x2000"
-    opis: "Wytrzymałość tempowa, tempo bliskie 10 km. Nie szybciej niż 4:10. Druga seria wolniejsza niż 4:16 - kończysz."
+    opis: "Wytrzymałość tempowa, tempo bliskie 10 km. Nie szybciej niż 4:10; druga seria wolniejsza niż 4:16 - kończysz. Zapisz średnie HR z 2. połowy każdej serii (weryfikacja LTHR 167)."
     dopisz_stop: true
     kroki:
       - rozgrzewka_std:
@@ -155,7 +170,7 @@ treningi:
           - odpoczynek: {min: 2}
       - schlodzenie_std:
   - {data: 2026-10-28, szablon: opcja_rozruch}
-  - {data: 2026-10-29, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1, sila: false}
+  - {data: 2026-10-29, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
   - {data: 2026-10-29, sila: B}
   - data: 2026-10-30
     nazwa: "T1 VO2 5-6x1000"
@@ -172,10 +187,10 @@ treningi:
       - schlodzenie_std:
   - {data: 2026-10-31, szablon: opcja_rozruch}
   - {data: 2026-10-31, sila: C, opcjonalny: true}
-  - {data: 2026-11-01, szablon: dlugi, km_txt: "18-20", km: 18, opcja: 2}
+  - {data: 2026-11-01, szablon: dlugi, km_txt: "18-20", km: 18, opcja: 2, uwaga: "Cały w 5:20-5:35, bez przyspieszeń na końcu."}
 
   # --- Tydzień 2/8 ---
-  - {data: 2026-11-02, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1, sila: false}
+  - {data: 2026-11-02, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
   - {data: 2026-11-02, sila: A}
   - data: 2026-11-03
     nazwa: "T2 Próg 2x3000"
@@ -189,7 +204,7 @@ treningi:
           - odpoczynek: {min: 2, sek: 30}
       - schlodzenie_std:
   - {data: 2026-11-04, szablon: opcja_rozruch}
-  - {data: 2026-11-05, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1, sila: false}
+  - {data: 2026-11-05, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
   - {data: 2026-11-05, sila: B}
   - data: 2026-11-06
     nazwa: "T2 VO2 5x1200"
@@ -207,21 +222,21 @@ treningi:
   - {data: 2026-11-08, szablon: dlugi, km_txt: "20", km: 20}
 
   # --- Tydzień 3/8 ---
-  - {data: 2026-11-09, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1, sila: false}
+  - {data: 2026-11-09, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
   - {data: 2026-11-09, sila: A}
   - data: 2026-11-10
     nazwa: "T3 Próg 4x2000"
-    opis: "Wytrzymałość tempowa - największa objętość progu w bloku (8 km). Po 3. serii RPE >17 - kończysz na 3."
+    opis: "Wytrzymałość tempowa - największa objętość progu w bloku (8 km). 4x1600 w ok. 4:12 dało RPE 17, więc nie szybciej niż 4:12. Po 3. serii RPE >17 - kończysz na 3."
     dopisz_stop: true
     kroki:
       - rozgrzewka_std:
       - powtorz: 4
         kroki:
-          - bieg: {m: 2000, tempo: ["4:10", "4:13"]}
+          - bieg: {m: 2000, tempo: ["4:12", "4:15"]}
           - odpoczynek: {min: 1, sek: 45}
       - schlodzenie_std:
   - {data: 2026-11-11, szablon: opcja_rozruch}
-  - {data: 2026-11-12, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1, sila: false}
+  - {data: 2026-11-12, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
   - {data: 2026-11-12, sila: B}
   - data: 2026-11-13
     nazwa: "T3 Szybkość 8x400"
@@ -239,17 +254,17 @@ treningi:
   - {data: 2026-11-15, szablon: dlugi, km_txt: "20", km: 20}
 
   # --- Tydzień 4/8 (odciążenie + test) ---
-  - {data: 2026-11-16, szablon: spokojny, km_txt: "6-7", km: 6, opcja: 1, sila: false}
+  - {data: 2026-11-16, szablon: spokojny, km_txt: "6-7", km: 6, opcja: 1}
   - {data: 2026-11-16, sila: L}
   - data: 2026-11-17
     nazwa: "T4 Próg 4x1000 lekko"
-    opis: "Utrzymanie progu w tygodniu odciążenia. Kontrolowane, RPE <=15."
+    opis: "Utrzymanie progu w tygodniu odciążenia, 3 dni przed testem. Kontrolowane, RPE <=15; jeśli wyżej - zwolnij, nie walcz o tempo."
     dopisz_stop: true
     kroki:
       - rozgrzewka_std:
       - powtorz: 4
         kroki:
-          - bieg: {m: 1000, tempo: ["4:08", "4:10"]}
+          - bieg: {m: 1000, tempo: ["4:12", "4:15"]}
           - odpoczynek: {sek: 90}
       - schlodzenie_std:
   - {data: 2026-11-18, szablon: opcja_rozruch}
@@ -270,21 +285,21 @@ treningi:
   - {data: 2026-11-22, szablon: dlugi, km_txt: "14-16", km: 14, opcja: 2, uwaga: Tydzień odciążenia - spokojnie.}
 
   # --- Tydzień 5/8 ---
-  - {data: 2026-11-23, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1, sila: false}
+  - {data: 2026-11-23, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
   - {data: 2026-11-23, sila: A2}
   - data: 2026-11-24
     nazwa: "T5 Próg 2x4000"
-    opis: "Wytrzymałość tempowa, długie odcinki. Tempo skoryguj po teście (próg ok. 6-7% wolniej niż 5 km)."
+    opis: "Wytrzymałość tempowa, długie odcinki. Tempo skoryguj po teście (próg ok. 6-7% wolniej niż 5 km); bez nowych danych nie szybciej niż 4:12."
     dopisz_stop: true
     kroki:
       - rozgrzewka_std:
       - powtorz: 2
         kroki:
-          - bieg: {m: 4000, tempo: ["4:10", "4:13"]}
+          - bieg: {m: 4000, tempo: ["4:12", "4:15"]}
           - odpoczynek: {min: 2, sek: 30}
       - schlodzenie_std:
   - {data: 2026-11-25, szablon: opcja_rozruch}
-  - {data: 2026-11-26, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1, sila: false}
+  - {data: 2026-11-26, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
   - {data: 2026-11-26, sila: B2}
   - data: 2026-11-27
     nazwa: "T5 VO2 5x1000"
@@ -302,21 +317,21 @@ treningi:
   - {data: 2026-11-29, szablon: dlugi, km_txt: "20", km: 20}
 
   # --- Tydzień 6/8 ---
-  - {data: 2026-11-30, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1, sila: false}
+  - {data: 2026-11-30, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
   - {data: 2026-11-30, sila: A2}
   - data: 2026-12-01
     nazwa: "T6 Próg 3x3000"
-    opis: "Wytrzymałość tempowa. Tempo skoryguj po teście 5 km. Po 2. serii RPE >17 - kończysz na dwóch."
+    opis: "Wytrzymałość tempowa. Tempo skoryguj po teście 5 km; bez nowych danych nie szybciej niż 4:11. Po 2. serii RPE >17 - kończysz na dwóch."
     dopisz_stop: true
     kroki:
       - rozgrzewka_std:
       - powtorz: 3
         kroki:
-          - bieg: {m: 3000, tempo: ["4:09", "4:12"]}
+          - bieg: {m: 3000, tempo: ["4:11", "4:14"]}
           - odpoczynek: {min: 2}
       - schlodzenie_std:
   - {data: 2026-12-02, szablon: opcja_rozruch}
-  - {data: 2026-12-03, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1, sila: false}
+  - {data: 2026-12-03, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
   - {data: 2026-12-03, sila: B2}
   - data: 2026-12-04
     nazwa: "T6 Tempo 5 km 4x1600"
@@ -334,7 +349,7 @@ treningi:
   - {data: 2026-12-06, szablon: dlugi, km_txt: "20", km: 20}
 
   # --- Tydzień 7/8 ---
-  - {data: 2026-12-07, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1, sila: false}
+  - {data: 2026-12-07, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
   - {data: 2026-12-07, sila: A2}
   - data: 2026-12-08
     nazwa: "T7 Tempo startowe 3x2000"
@@ -348,7 +363,7 @@ treningi:
           - odpoczynek: {min: 2}
       - schlodzenie_std:
   - {data: 2026-12-09, szablon: opcja_rozruch}
-  - {data: 2026-12-10, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1, sila: false}
+  - {data: 2026-12-10, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
   - {data: 2026-12-10, sila: B2}
   - data: 2026-12-11
     nazwa: "T7 VO2 5x1000"
@@ -366,7 +381,7 @@ treningi:
   - {data: 2026-12-13, szablon: dlugi, km_txt: "18", km: 18}
 
   # --- Tydzień 8/8 (start) ---
-  - {data: 2026-12-14, szablon: spokojny, km_txt: "6-7", km: 6, opcja: 1, sila: false}
+  - {data: 2026-12-14, szablon: spokojny, km_txt: "6-7", km: 6, opcja: 1}
   - {data: 2026-12-14, sila: L}
   - data: 2026-12-15
     nazwa: "T8 Wyostrzenie 4x1000"
