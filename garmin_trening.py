@@ -35,6 +35,9 @@ Plan z pliku (YAML/JSON) zamiast sekcji PLAN – lokalnie albo z GitHuba:
     puszczać z harmonogramu np. co godzinę.
 
 Treningi siłowe: sekcja zestawy_sily w pliku planu (opis w plan.yaml).
+    Ćwiczenia jednostronne są rozpisywane na lewą i prawą stronę (przy
+    ćwiczeniach na czas z 5 s "Zmień stronę"), a przed ćwiczeniem na czas
+    bez przerwy przed nim jest 10 s "Przygotuj" (przejscie: N | lap | 0).
     python garmin_trening.py --cwiczenia plank    # nazwy ćwiczeń z katalogu Garmina
 
 Tokeny dla GitHub Actions:
@@ -64,6 +67,7 @@ import hashlib
 import io
 import json
 import os
+import re
 import sys
 import tarfile
 import urllib.error
@@ -383,16 +387,22 @@ def _mmss(v):
     return str(v)
 
 
-def _kroki_z_pliku(lista):
+def _kroki_z_pliku(lista, przejscie=10, po_przerwie=False):
+    """Lista kroków z pliku. przejscie: sekundy przerwy "Przygotuj" przed
+    ćwiczeniem na czas (0 = bez, "lap" = start po Lapie); po_przerwie: czy
+    krok przed tą listą był przerwą."""
     rodzaje = {"rozgrzewka": rozgrzewka, "bieg": bieg,
                "odpoczynek": odpoczynek, "schladzanie": schladzanie,
-               "cwiczenie": cwiczenie, "przerwa": przerwa}
+               "przerwa": przerwa}
     wynik = []
+    poprz_przerwa = po_przerwie
     for k in lista:
         if not isinstance(k, dict) or not k:
             raise ValueError(f"krok musi być słownikiem, jest: {k!r}")
         if "powtorz" in k:
-            wynik.append(powtorz(k["powtorz"], _kroki_z_pliku(k.get("kroki") or [])))
+            wynik.append(powtorz(k["powtorz"], _kroki_z_pliku(
+                k.get("kroki") or [], przejscie, poprz_przerwa)))
+            poprz_przerwa = False
             continue
         if len(k) != 1:
             raise ValueError(f"krok ma mieć jeden klucz (rodzaj kroku): {k!r}")
@@ -403,9 +413,11 @@ def _kroki_z_pliku(lista):
             wynik += _rozgrzewka_std()
         elif typ == "schlodzenie_std":
             wynik.append(_schlodzenie_std())
-        elif typ in rodzaje:
-            if typ == "cwiczenie" and isinstance(par, str):
+        elif typ == "cwiczenie":
+            if isinstance(par, str):
                 par = {"co": par}
+            wynik += _cwiczenie_ze_stronami(dict(par or {}), przejscie, poprz_przerwa)
+        elif typ in rodzaje:
             par = dict(par or {})
             if "tempo" in par:
                 od, do_ = (_mmss(t) for t in par["tempo"])
@@ -413,6 +425,7 @@ def _kroki_z_pliku(lista):
             wynik.append(rodzaje[typ](**par))
         else:
             raise ValueError(f"nieznany rodzaj kroku: {typ}")
+        poprz_przerwa = wynik[-1]["stepType"]["stepTypeKey"] == "rest"
     return wynik
 
 
@@ -451,7 +464,8 @@ def _wpis_z_pliku(w, zestawy=None):
                 raise ValueError(f"nieznany zestaw kroków: {kroki}")
             fn = _GOTOWE_KROKI[kroki]
         else:
-            fn = (lambda k=kroki: _kroki_z_pliku(k))
+            prz = w.get("przejscie", 10)
+            fn = (lambda k=kroki, prz=prz: _kroki_z_pliku(k, przejscie=prz))
         opis = w.get("opis", "") + (STOP if w.get("dopisz_stop") else "")
         sport = str(w.get("sport", "bieg"))
         if sport not in SPORTY:
@@ -728,6 +742,86 @@ def cwiczenie(co=None, kategoria=None, nazwa=None, notatka=None, **kw):
         step["category"] = kat
         step["exerciseName"] = naz
     return step
+
+
+# Ćwiczenia jednostronne: skrypt rozpisuje je na lewą i prawą stronę.
+JEDNOSTRONNE = {
+    **dict.fromkeys(["przysiad_jednonoz", "przysiad_bulgarski", "mostek_jednonoz",
+                     "martwy_jednonoz", "wspiecia_jednonoz",
+                     "wejscia_na_podwyzszenie"], "noga"),
+    **dict.fromkeys(["plank_boczny", "plank_boczny_noga", "copenhagen",
+                     "przywodziciele", "muszelka", "wymachy_bok",
+                     "wykroki_boczne"], "strona"),
+}
+_STRONY_TXT = {"noga": ("Lewa noga", "Prawa noga"),
+               "strona": ("Lewa strona", "Prawa strona"),
+               "reka": ("Lewa ręka", "Prawa ręka")}
+_NA_KAZDA = re.compile(r",?\s*\bna\s+ka[żz]d[ąa]\s+(stron[ęe]|nog[ęe]|r[ęe]k[ęe])\b",
+                       re.IGNORECASE)
+
+
+def _klucz_co(co):
+    return str(co).strip().lower().replace(" ", "_").replace("-", "_") if co else None
+
+
+def _rodzaj_stron(par):
+    """-> "noga" / "strona" / "reka" albo None (bez podziału)."""
+    strony = par.pop("strony", None)
+    if strony is False or str(strony).lower() in ("false", "nie", "0"):
+        return None
+    if isinstance(strony, str):
+        s = strony.strip().lower().replace("ę", "e")
+        if s in _STRONY_TXT:
+            return s
+        if s not in ("true", "tak"):
+            raise ValueError(f"strony: {strony} – dozwolone: noga, strona, reka, true, false")
+    rodzaj = JEDNOSTRONNE.get(_klucz_co(par.get("co")))
+    trafienie = _NA_KAZDA.search(par.get("notatka") or "")
+    if not rodzaj and trafienie:
+        slowo = trafienie.group(1).lower()
+        rodzaj = "noga" if slowo.startswith("nog") else "reka" if slowo.startswith("r") else "strona"
+    if not rodzaj and strony is not None:  # strony: true dla ćwiczenia spoza listy
+        rodzaj = "strona"
+    return rodzaj
+
+
+def _oczysc_notatke(tekst):
+    """Usuwa z notatki "na każdą stronę/nogę/rękę" – strona jest w nazwie kroku."""
+    t = _NA_KAZDA.sub("", tekst or "")
+    t = re.sub(r"\.\s*[,.]", ".", t)
+    t = re.sub(r"\s{2,}", " ", t).strip(" ,.;")
+    t = re.sub(r"\.\s+(\w)", lambda m: ". " + m.group(1).upper(), t)
+    return t[:1].upper() + t[1:] if t else ""
+
+
+def _cwiczenie_ze_stronami(par, przejscie_domyslne=10, po_przerwie=False):
+    """Krok cwiczenie z pliku -> lista kroków: opcjonalne "Przygotuj",
+    a dla ćwiczeń jednostronnych lewa strona, "Zmień stronę", prawa strona."""
+    rodzaj = _rodzaj_stron(par)
+    zmiana = par.pop("zmiana", 5)
+    przejscie = par.pop("przejscie", przejscie_domyslne)
+    na_czas = par.get("sek") is not None or par.get("min") is not None
+    nazwa = str(par.get("co") or par.get("nazwa") or par.get("kategoria")).replace("_", " ").lower()
+    kroki = []
+
+    if na_czas and not po_przerwie and str(przejscie).lower() not in ("0", "false", "none"):
+        gdzie = f", {_STRONY_TXT[rodzaj][0].lower()}" if rodzaj else ""
+        notatka = f"Przygotuj: {nazwa}{gdzie}"
+        if str(przejscie).lower() == "lap":
+            kroki.append(przerwa(lap=True, notatka=notatka + ". Lap = start"))
+        else:
+            kroki.append(przerwa(sek=int(przejscie), notatka=notatka))
+
+    if not rodzaj:
+        return kroki + [cwiczenie(**par)]
+
+    reszta = _oczysc_notatke(par.pop("notatka", None))
+    lewa, prawa = _STRONY_TXT[rodzaj]
+    kroki.append(cwiczenie(**par, notatka=f"{lewa}. {reszta}".strip(" .") if reszta else lewa))
+    if na_czas and int(zmiana or 0) > 0:
+        kroki.append(przerwa(sek=int(zmiana), notatka=f"Zmień stronę: {prawa.lower()}"))
+    kroki.append(cwiczenie(**par, notatka=f"{prawa}. {reszta}".strip(" .") if reszta else prawa))
+    return kroki
 
 
 def wypisz_cwiczenia(szukaj):
