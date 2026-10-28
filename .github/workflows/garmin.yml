@@ -1,5 +1,12 @@
 name: Garmin – synchronizacja planu
 
+# Sekrety (Settings -> Secrets and variables -> Actions):
+#   GARMIN_TOKENS – wynik: python garmin_trening.py --tokeny-dla-ci
+#   GH_PAT        – fine-grained token GitHuba tylko do tego repo, uprawnienie
+#                   "Secrets: Read and write". Workflow zapisuje nim odświeżone
+#                   tokeny Garmina z powrotem do GARMIN_TOKENS. Bez niego sekret
+#                   przestanie działać po pierwszym odświeżeniu tokenu.
+
 on:
   push:
     branches: [main]
@@ -13,7 +20,7 @@ on:
         type: boolean
         default: false
 
-concurrency:
+concurrency:                    # nigdy dwa naraz – oba zużyłyby ten sam refresh token
   group: garmin
   cancel-in-progress: false
 
@@ -34,7 +41,8 @@ jobs:
           python-version: "3.12"
 
       - name: Instalacja
-        run: pip install --upgrade garminconnect curl_cffi pyyaml
+        # wersja przypięta – ta sama co lokalnie (format tokenów zależy od wersji)
+        run: pip install "garminconnect==0.3.20" pyyaml
 
       - name: Zapis planu z telefonu
         if: github.event_name == 'repository_dispatch'
@@ -55,8 +63,35 @@ jobs:
           fi
 
       - name: Synchronizacja z Garmin Connect
+        id: sync
         env:
           GARMIN_TOKENS: ${{ secrets.GARMIN_TOKENS }}
         run: >
           python garmin_trening.py --zrodlo plan.yaml --tak --zawsze
           ${{ inputs.podglad && '--dry-run' || '' }}
+
+      # Garmin przy odświeżeniu wydaje nowy refresh token, a stary unieważnia.
+      # Runner jest jednorazowy, więc nowe tokeny trzeba odłożyć do sekretu –
+      # także po błędzie synchronizacji (logowanie mogło już je odświeżyć).
+      - name: Zapis odświeżonych tokenów do sekretu
+        if: always() && !inputs.podglad
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          STARE: ${{ secrets.GARMIN_TOKENS }}
+        run: |
+          plik=~/.garminconnect/garmin_tokens.json
+          [ -f "$plik" ] || { echo "Brak tokenów na dysku – nic do zapisania."; exit 0; }
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::warning::Brak sekretu GH_PAT – odświeżone tokeny NIE zostały zapisane. Następne uruchomienie może się nie zalogować."
+            exit 0
+          fi
+          # zapis tylko, gdy treść tokenów się zmieniła
+          stary=$(printf '%s' "$STARE" | base64 -d 2>/dev/null | tar -xzO 2>/dev/null | sha256sum)
+          nowy=$(sha256sum < "$plik")
+          if [ "$stary" = "$nowy" ]; then
+            echo "Tokeny bez zmian."
+          else
+            python garmin_trening.py --eksport-tokenow \
+              | gh secret set GARMIN_TOKENS --repo "$GITHUB_REPOSITORY"
+            echo "Zapisano odświeżone tokeny do GARMIN_TOKENS."
+          fi
