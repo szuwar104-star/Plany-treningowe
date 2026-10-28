@@ -3,8 +3,8 @@
 Dodaje trening biegowy do Garmin Connect (Treningi -> Moje treningi)
 i opcjonalnie planuje go w kalendarzu.
 
-Instalacja:
-    pip install --upgrade garminconnect curl_cffi
+Instalacja (ta sama wersja co w workflow):
+    pip install "garminconnect==0.3.20" pyyaml
 
 Użycie:
     python garmin_trening.py                      # dodaje trening z sekcji TRENING
@@ -40,8 +40,16 @@ Treningi siłowe: sekcja zestawy_sily w pliku planu (opis w plan.yaml).
     bez przerwy przed nim jest 10 s "Przygotuj" (przejscie: N | lap | 0).
     python garmin_trening.py --cwiczenia plank    # nazwy ćwiczeń z katalogu Garmina
 
-Tokeny dla GitHub Actions:
-    python garmin_trening.py --eksport-tokenow    # wypisuje tekst do sekretu GARMIN_TOKENS
+Tokeny dla GitHub Actions (garminconnect >= 0.3):
+    python garmin_trening.py --tokeny-dla-ci      # osobne logowanie tylko dla GitHuba,
+                                                  # wynik wklej do sekretu GARMIN_TOKENS
+    python garmin_trening.py --eksport-tokenow    # wypisuje tokeny z ~/.garminconnect
+    Garmin przy każdym odświeżeniu wydaje NOWY refresh token, a stary przestaje
+    działać. Dlatego: (1) tokeny dla GitHuba bierz z --tokeny-dla-ci, nie z
+    lokalnego logowania – inaczej lokalne uruchomienie zużyje tokeny z sekretu;
+    (2) workflow po każdym uruchomieniu zapisuje odświeżone tokeny z powrotem
+    do sekretu (wymaga sekretu GH_PAT).
+    Inny katalog tokenów: zmienna GARMIN_TOKENSTORE.
 
 Wymiana starych treningów (przy --plan, po potwierdzeniu, albo od razu z --tak):
 - wpisy w kalendarzu w zakresie dat planu, których nie ma w planie, są usuwane,
@@ -76,7 +84,7 @@ import urllib.request
 from datetime import date
 from getpass import getpass
 
-TOKENSTORE = os.path.expanduser("~/.garminconnect")
+TOKENSTORE = os.path.expanduser(os.getenv("GARMIN_TOKENSTORE") or "~/.garminconnect")
 OSTATNI_PLAN = os.path.expanduser("~/.garmin_plan.sha256")
 
 # ============================================================================
@@ -880,54 +888,204 @@ def zbuduj_json(definicja):
     }
 
 
-def eksportuj_tokeny():
-    """Pakuje zapisane tokeny do jednego tekstu (sekret GARMIN_TOKENS)."""
-    if not os.path.exists(TOKENSTORE):
-        sys.exit(f"Brak tokenów w {TOKENSTORE} – najpierw zaloguj się zwykłym uruchomieniem.")
+TOKENY_PLIK = "garmin_tokens.json"          # format garminconnect >= 0.3
+STARE_PLIKI = ("oauth1_token.json", "oauth2_token.json")  # format garth (< 0.3)
+
+
+def _spakuj_tokeny(katalog):
+    """Katalog z garmin_tokens.json -> tekst base64 (tar.gz) do sekretu."""
+    plik = os.path.join(katalog, TOKENY_PLIK)
+    if not os.path.exists(plik):
+        if any(os.path.exists(os.path.join(katalog, p)) for p in STARE_PLIKI):
+            sys.exit(f"W {katalog} są tylko tokeny w starym formacie (garth). Zaktualizuj"
+                     " bibliotekę (pip install --upgrade garminconnect) i zaloguj się ponownie.")
+        sys.exit(f"Brak tokenów w {katalog} – najpierw zaloguj się zwykłym uruchomieniem.")
     buf = io.BytesIO()
     with tarfile.open(fileobj=buf, mode="w:gz") as tar:
-        tar.add(TOKENSTORE, arcname=os.path.basename(TOKENSTORE))
-    print(base64.b64encode(buf.getvalue()).decode())
+        tar.add(plik, arcname=f"{os.path.basename(TOKENSTORE)}/{TOKENY_PLIK}")
+    return base64.b64encode(buf.getvalue()).decode()
+
+
+def eksportuj_tokeny():
+    """Wypisuje tokeny z TOKENSTORE jako tekst do sekretu GARMIN_TOKENS
+    (używane też przez workflow do zapisu odświeżonych tokenów)."""
+    print(_spakuj_tokeny(TOKENSTORE))
+
+
+def tokeny_dla_ci():
+    """Osobne logowanie tylko dla GitHuba: nowe tokeny w katalogu tymczasowym,
+    niezależne od lokalnych. Lokalne uruchomienia nie unieważniają wtedy
+    tokenów w sekrecie (i odwrotnie)."""
+    import tempfile
+    from garminconnect import Garmin
+
+    if not sys.stdin.isatty():
+        sys.exit("--tokeny-dla-ci uruchom lokalnie, w terminalu.")
+    email = os.getenv("GARMIN_EMAIL") or _pytaj("E-mail Garmin: ")
+    haslo = os.getenv("GARMIN_PASSWORD") or getpass("Hasło Garmin: ")
+    with tempfile.TemporaryDirectory() as tmp:
+        katalog = os.path.join(tmp, os.path.basename(TOKENSTORE))
+        client = Garmin(email, haslo, prompt_mfa=lambda: _pytaj("Kod MFA: "))
+        client.login(katalog)
+        try:
+            client.client.dump(katalog)
+        except Exception:
+            pass
+        tekst = _spakuj_tokeny(katalog)
+    print("\nSkopiuj CAŁY tekst poniżej do sekretu GARMIN_TOKENS:\n", file=sys.stderr)
+    print(tekst)
+
+
+def _pytaj(tekst):
+    """input() z pytaniem na stderr – stdout zostaje czysty (do przekierowania)."""
+    print(tekst, end="", file=sys.stderr, flush=True)
+    return sys.stdin.readline().strip()
 
 
 def _tokeny_ze_zmiennej():
-    """Na serwerze (GitHub Actions): odtwarza tokeny z GARMIN_TOKENS."""
+    """Na serwerze (GitHub Actions): odtwarza tokeny z GARMIN_TOKENS.
+    Przyjmuje tekst z --eksport-tokenow / --tokeny-dla-ci (base64 tar.gz)
+    albo samą zawartość garmin_tokens.json. Zwraca opis albo None."""
     dane = os.getenv("GARMIN_TOKENS", "").strip()
-    if not dane or os.path.exists(TOKENSTORE):
-        return
-    with tarfile.open(fileobj=io.BytesIO(base64.b64decode(dane)), mode="r:gz") as tar:
+    if not dane:
+        return None
+    if os.path.exists(os.path.join(TOKENSTORE, TOKENY_PLIK)):
+        return "tokeny już są na dysku – sekret pominięty"
+    os.makedirs(TOKENSTORE, mode=0o700, exist_ok=True)
+    os.chmod(TOKENSTORE, 0o700)
+
+    if dane.startswith("{"):  # wklejony sam JSON
         try:
-            tar.extractall(os.path.dirname(TOKENSTORE), filter="data")
-        except TypeError:  # Python < 3.12
-            tar.extractall(os.path.dirname(TOKENSTORE))
+            json.loads(dane)
+        except ValueError as e:
+            sys.exit(f"Sekret GARMIN_TOKENS wygląda na JSON, ale jest uszkodzony: {e}")
+        with open(os.path.join(TOKENSTORE, TOKENY_PLIK), "w", encoding="utf-8") as f:
+            f.write(dane)
+        os.chmod(os.path.join(TOKENSTORE, TOKENY_PLIK), 0o600)
+        return "odtworzone z JSON"
+
+    try:
+        surowe = base64.b64decode("".join(dane.split()), validate=True)
+        tar = tarfile.open(fileobj=io.BytesIO(surowe), mode="r:gz")
+    except Exception as e:
+        sys.exit(f"Sekret GARMIN_TOKENS jest uszkodzony (nie base64/tar.gz: {e}). Wklej"
+                 " ponownie cały wynik --tokeny-dla-ci, bez cudzysłowów i ucięć.")
+    with tar:
+        nazwy = [os.path.basename(m.name) for m in tar.getmembers() if m.isfile()]
+        if TOKENY_PLIK not in nazwy:
+            if any(n in STARE_PLIKI for n in nazwy):
+                sys.exit("Sekret GARMIN_TOKENS zawiera tokeny w starym formacie (garth,"
+                         " garminconnect < 0.3) – obecna biblioteka ich nie czyta."
+                         " Wygeneruj nowe: python garmin_trening.py --tokeny-dla-ci")
+            sys.exit(f"W sekrecie GARMIN_TOKENS nie ma pliku {TOKENY_PLIK} (są: {nazwy}).")
+        for m in tar.getmembers():
+            if m.isfile() and os.path.basename(m.name) == TOKENY_PLIK:
+                tresc = tar.extractfile(m).read()
+                break
+    with open(os.path.join(TOKENSTORE, TOKENY_PLIK), "wb") as f:
+        f.write(tresc)
+    os.chmod(os.path.join(TOKENSTORE, TOKENY_PLIK), 0o600)
+    return "odtworzone z base64"
+
+
+def _stan_tokenow():
+    """Krótki opis tokenów na dysku (bez ich treści) – do diagnostyki."""
+    plik = os.path.join(TOKENSTORE, TOKENY_PLIK)
+    if not os.path.exists(plik):
+        if any(os.path.exists(os.path.join(TOKENSTORE, p)) for p in STARE_PLIKI):
+            return "tylko stary format (garth) – nieobsługiwany"
+        return "brak pliku z tokenami"
+    try:
+        with open(plik, encoding="utf-8") as f:
+            d = json.load(f)
+    except Exception as e:
+        return f"plik nieczytelny ({e})"
+    opis = []
+    tok = d.get("di_token")
+    if tok:
+        try:
+            czesc = tok.split(".")[1]
+            exp = json.loads(base64.urlsafe_b64decode(czesc + "=" * (-len(czesc) % 4)))["exp"]
+            import time
+            zostalo = int(exp - time.time())
+            opis.append(f"token dostępu {'ważny jeszcze ' + str(zostalo // 60) + ' min' if zostalo > 0 else 'wygasł ' + str(-zostalo // 3600) + ' h temu'}")
+        except Exception:
+            opis.append("token dostępu nieczytelny")
+    else:
+        opis.append("brak tokenu dostępu")
+    opis.append("refresh token jest" if d.get("di_refresh_token") else "BRAK refresh tokenu")
+    return ", ".join(opis)
+
+
+def _powod_odrzucenia():
+    """Po nieudanym logowaniu: czy Garmin odrzuca refresh token? (diagnostyka)"""
+    try:
+        from garminconnect import Garmin
+        c = Garmin()
+        c.client.load(TOKENSTORE)
+        c.client._refresh_di_token()
+        return None  # odświeżenie działa – problem gdzie indziej
+    except Exception as e:
+        return str(e)
 
 
 def zaloguj():
     from garminconnect import Garmin
 
-    _tokeny_ze_zmiennej()
-    try:  # zapisane tokeny
-        client = Garmin()
-        client.login(TOKENSTORE)
-        return client
-    except Exception as e:
-        if not sys.stdin.isatty():
-            print(f"Logowanie tokenami nie powiodło się: {e}")
+    na_serwerze = not sys.stdin.isatty()
+    zrodlo = _tokeny_ze_zmiennej()
+    if na_serwerze:
+        print(f"Tokeny: {zrodlo or 'sekret GARMIN_TOKENS pusty/nieustawiony'};"
+              f" {_stan_tokenow()}")
 
-    if not sys.stdin.isatty() and not (os.getenv("GARMIN_EMAIL")
-                                       and os.getenv("GARMIN_PASSWORD")):
-        sys.exit("Brak ważnych tokenów i brak terminala do logowania. Zaloguj się"
-                 " lokalnie i odśwież sekret GARMIN_TOKENS (--eksport-tokenow).")
+    email, haslo = os.getenv("GARMIN_EMAIL"), os.getenv("GARMIN_PASSWORD")
+    if os.path.exists(os.path.join(TOKENSTORE, TOKENY_PLIK)):
+        try:  # zapisane tokeny (biblioteka sama je odświeża i zapisuje)
+            client = Garmin(email, haslo, prompt_mfa=_mfa(na_serwerze))
+            client.login(TOKENSTORE)
+            return client
+        except Exception as e:
+            if na_serwerze:
+                powod = _powod_odrzucenia()
+                if powod and "refresh" in powod.lower():
+                    sys.exit(
+                        f"Logowanie tokenami nie powiodło się: {e}\n"
+                        f"Przyczyna: Garmin odrzucił refresh token ({powod}).\n"
+                        "Tokeny w sekrecie są nieaktualne – zwykle dlatego, że zostały"
+                        " zużyte przez inne uruchomienie (lokalne albo wcześniejsze na"
+                        " GitHubie, którego tokenów nie zapisano). Wygeneruj nowe:\n"
+                        "  python garmin_trening.py --tokeny-dla-ci\n"
+                        "i wklej wynik do sekretu GARMIN_TOKENS. Żeby się to nie"
+                        " powtarzało, ustaw sekret GH_PAT (opis w workflow).")
+                sys.exit(
+                    f"Logowanie tokenami nie powiodło się: {e}\n"
+                    + ("Odświeżenie tokenu działa, więc to raczej chwilowy problem"
+                       " z Garmin Connect – uruchom ponownie za kilka minut."
+                       if powod is None else f"Szczegóły: {powod}"))
+            print(f"Zapisane tokeny nie działają ({e}) – loguję hasłem.")
 
-    email = os.getenv("GARMIN_EMAIL") or input("E-mail Garmin: ")
-    haslo = os.getenv("GARMIN_PASSWORD") or getpass("Hasło Garmin: ")
-    client = Garmin(email, haslo, prompt_mfa=lambda: input("Kod MFA: "))
+    if na_serwerze and not (email and haslo):
+        sys.exit("Brak tokenów Garmina na serwerze. Ustaw sekret GARMIN_TOKENS"
+                 " (python garmin_trening.py --tokeny-dla-ci).")
+
+    email = email or input("E-mail Garmin: ")
+    haslo = haslo or getpass("Hasło Garmin: ")
+    client = Garmin(email, haslo, prompt_mfa=_mfa(na_serwerze))
     client.login(TOKENSTORE)
-    try:  # starsze wersje biblioteki nie zapisują tokenów same
-        client.garth.dump(TOKENSTORE)
+    try:  # na wypadek wersji, która nie zapisuje tokenów sama
+        client.client.dump(TOKENSTORE)
     except Exception:
         pass
     return client
+
+
+def _mfa(na_serwerze):
+    def pytaj():
+        if na_serwerze:
+            raise RuntimeError("Garmin żąda kodu MFA, a na serwerze nie da się go"
+                               " wpisać – odnów sekret GARMIN_TOKENS (--tokeny-dla-ci).")
+        return input("Kod MFA: ")
+    return pytaj
 
 
 def _api(client, metoda, sciezka, **kw):
@@ -1123,11 +1281,17 @@ def main():
     p.add_argument("--cwiczenia", nargs="?", const="", metavar="SZUKAJ",
                    help="pokaż ćwiczenia z katalogu Garmina (np. --cwiczenia plank)")
     p.add_argument("--eksport-tokenow", action="store_true",
-                   help="wypisz tokeny Garmina jako tekst do sekretu GARMIN_TOKENS")
+                   help="wypisz zapisane tokeny jako tekst do sekretu GARMIN_TOKENS")
+    p.add_argument("--tokeny-dla-ci", action="store_true",
+                   help="osobne logowanie dla GitHuba – wypisuje nowe tokeny do sekretu"
+                        " GARMIN_TOKENS, nie ruszając lokalnych")
     args = p.parse_args()
 
     if args.eksport_tokenow:
         eksportuj_tokeny()
+        return
+    if args.tokeny_dla_ci:
+        tokeny_dla_ci()
         return
     if args.cwiczenia is not None:
         wypisz_cwiczenia(args.cwiczenia)
