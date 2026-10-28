@@ -1,6 +1,7 @@
 # Plan biegowy 10 km, 26.10 - 20.12 (8 tygodni)
 # Aktualizacja 26.10: tempa progowe T3-T6 skorygowane po 4x1600 z 20.10, T4 łagodniejszy,
 # długi 1.11 bez przyspieszeń, we wtorek 27.10 kontrola HR pod LTHR 167.
+# Aktualizacja 28.10: długie 8.11 i 15.11 skrócone z 20 do 18 km.
 # Zmiana tego pliku na GitHubie (main) = automatyczna synchronizacja z Garmin Connect.
 #
 # Tempa i czasy ZAWSZE w cudzysłowie: "4:11", "2:00".
@@ -219,7 +220,7 @@ treningi:
       - schlodzenie_std:
   - {data: 2026-11-07, szablon: opcja_rozruch}
   - {data: 2026-11-07, sila: C, opcjonalny: true}
-  - {data: 2026-11-08, szablon: dlugi, km_txt: "20", km: 20}
+  - {data: 2026-11-08, szablon: dlugi, km_txt: "18", km: 18}
 
   # --- Tydzień 3/8 ---
   - {data: 2026-11-09, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
@@ -251,7 +252,7 @@ treningi:
       - schlodzenie_std:
   - {data: 2026-11-14, szablon: opcja_rozruch}
   - {data: 2026-11-14, sila: C, opcjonalny: true}
-  - {data: 2026-11-15, szablon: dlugi, km_txt: "20", km: 20}
+  - {data: 2026-11-15, szablon: dlugi, km_txt: "18", km: 18}
 
   # --- Tydzień 4/8 (odciążenie + test) ---
   - {data: 2026-11-16, szablon: spokojny, km_txt: "6-7", km: 6, opcja: 1}
