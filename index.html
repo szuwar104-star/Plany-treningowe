@@ -159,8 +159,6 @@ dialog input { width: 100%; margin-top: 6px; padding: 11px; border: 1px solid va
 .naglowek { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .naglowek h1 { margin: 0; font: 700 31px/1.02 var(--cond); letter-spacing: -.005em; }
 .naglowek p { margin: 6px 0 0; color: var(--muted); font-size: 15px; }
-.naglowek p#minione { font-size: 13.5px; margin-top: 2px; }
-.naglowek p#minione:empty { display: none; }
 .naglowek .maly { flex: none; }
 
 /* najbliższy trening – pas startowy */
@@ -206,7 +204,12 @@ dialog input { width: 100%; margin-top: 6px; padding: 11px; border: 1px solid va
 /* ---------- tygodnie ---------- */
 #tygodnie { margin-top: 14px; scroll-margin-top: 12px; }
 .tydzien { border-top: 1px solid var(--line); scroll-margin-top: 12px; }
-.tydzien.biezacy { border-top: 3px solid var(--signal); }
+.tydzien.biezacy {
+  border-top: 0; margin: 4px -10px 6px; padding: 0 10px 2px; border-radius: 12px;
+  background: color-mix(in srgb, var(--signal) 16%, var(--surface)); box-shadow: inset 0 0 0 2px var(--signal);
+}
+.tydzien.biezacy + .tydzien { border-top: 0; }
+.tydz-nag .tn .teraz { font: 700 13px/1 var(--cond); color: var(--on-signal); background: var(--signal); padding: 4px 8px; border-radius: 99px; }
 .tydz-nag {
   width: 100%; border: 0; background: transparent; cursor: pointer; padding: 11px 2px 9px; text-align: left; color: var(--ink);
   display: flex; justify-content: space-between; align-items: flex-end; gap: 10px;
@@ -250,7 +253,10 @@ dialog input { width: 100%; margin-top: 6px; padding: 11px; border: 1px solid va
 }
 .dzien.sila { background: var(--sila); color: var(--on-sila); }
 .dzien.minelo { opacity: .35; }
-.dzien.dzis { box-shadow: inset 0 0 0 2px var(--ink); }
+.dzien.dzis { box-shadow: 0 0 0 3px var(--signal), 0 0 0 5px var(--ink); z-index: 1; }
+.dzien.dzis .nr { opacity: 1; font-weight: 700; text-transform: none; }
+.dzien.dzis[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--signal), 0 0 0 6px var(--ink); }
+.dzis-znak { font: 700 13px/1 var(--cond); background: var(--signal); color: var(--on-signal); padding: 4px 8px; border-radius: 99px; }
 .dzien.zmiana::after {
   content: ""; position: absolute; top: 4px; right: 4px; width: 8px; height: 8px;
   border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 2px var(--surface);
@@ -305,6 +311,13 @@ ol.kroki li .co { font-weight: 600; font-size: 14.5px; }
 ol.kroki li .cel { font: 600 15px/1.3 var(--cond); text-align: right; white-space: nowrap; }
 ol.kroki li .not { grid-column: 1 / -1; font-size: 13.5px; color: var(--muted); }
 ol.kroki li.opc { border-left-style: dashed; }
+ol.kroki li.auto { padding-top: 3px; padding-bottom: 3px; }
+ol.kroki li.auto .co, ol.kroki li.auto .cel { font-weight: 500; font-size: 13.5px; color: var(--muted); font-family: var(--body); }
+.jak-btn { border: 0; background: none; padding: 0; text-align: left; cursor: pointer; color: inherit; font: inherit; font-weight: 600; font-size: 14.5px; display: inline-flex; align-items: center; gap: 6px; }
+.jak-btn::after { content: "?"; flex: none; width: 17px; height: 17px; border-radius: 50%; border: 1.5px solid var(--track-2); color: var(--track-2); font: 700 11px/14px var(--body); text-align: center; }
+.jak-btn[aria-expanded="true"]::after { background: var(--track-2); color: var(--on-track); }
+.jak { grid-column: 1 / -1; margin-top: 6px; padding: 8px 10px; border-radius: 8px; background: var(--sunk); font-size: 14px; }
+.jak p { margin: 0 0 6px; max-width: 65ch; }
 ol.kroki li.opc .co::after { content: " (opcjonalnie)"; font-weight: 400; color: var(--muted); }
 ol.kroki li.powt { display: block; border-left-color: var(--track-2); }
 ol.kroki li.powt > .ile { font: 700 17px/1 var(--cond); color: var(--track-2); }
@@ -370,7 +383,6 @@ ol.kroki li.powt > ol { margin-top: 4px; }
       <div>
         <h1 id="tytul"></h1>
         <p id="podtytul"></p>
-        <p id="minione"></p>
       </div>
       <button class="maly" id="zapisz-plan">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
@@ -697,14 +709,10 @@ function opisKroku(k) {
     case "schlodzenie_std": return { co: "Schłodzenie 2 km", cel: "spokojnie", notatka: "" };
     case "przebiezki": return { co: "Przebieżki 4× 100 m", cel: "", notatka: "40 s truchtu między nimi" };
     case "cwiczenie": {
-      const nazwa = p.co ? (NAZWY_CWICZEN[p.co] || p.co[0].toUpperCase() + p.co.slice(1).replace(/_/g, " "))
-        : String(p.nazwa || "Ćwiczenie").toLowerCase().replace(/_/g, " ").replace(/^./, c => c.toUpperCase());
-      let ile = p.powt ? p.powt + " powt." : p.sek ? p.sek + " s" : "do Lap";
-      const strony = p.strony === "false" ? null : JEDNOSTRONNE_NOGA.includes(p.co) || p.strony === "noga" ? "na nogę"
-        : JEDNOSTRONNE_STRONA.includes(p.co) || p.strony === "strona" || p.strony === "true" ? "na stronę" : p.strony === "reka" ? "na rękę" : null;
-      if (strony && ile !== "do Lap") ile += " " + strony;
-      return { co: nazwa, cel: ile, notatka: p.notatka || "" };
+      const ile = p.powt ? p.powt + " powt." : p.sek ? p.sek + " s" : p.min ? p.min + " min" : "do Lap";
+      return { co: nazwaCwiczenia(p), cel: ile, notatka: [p.strona, p.notatka].filter(Boolean).join(". ") };
     }
+    case "auto": return { co: p.co, cel: p.ile, notatka: p.notatka };
     default:
       if (NAZWY_KROKOW[k.typ]) return { co: NAZWY_KROKOW[k.typ] + " " + dlugosc(p), cel: cel(p), notatka: p.notatka || "" };
       return { co: k.typ.replace(/_/g, " "), cel: "", notatka: p.wartosc || "" };
@@ -714,18 +722,137 @@ function opisKroku(k) {
 function listaKrokow(lista) {
   const ol = el("ol", "kroki");
   for (const k of lista) {
-    const li = el("li", k.typ === "powtorz" ? "powt" : (/OPCJONALNIE/i.test(k.par?.notatka || "") ? "opc" : ""));
+    const li = el("li", k.typ === "powtorz" ? "powt" : k.typ === "auto" ? "auto" : (/OPCJONALNIE/i.test(k.par?.notatka || "") ? "opc" : ""));
     if (k.typ === "powtorz") {
       li.append(el("span", "ile", k.n + "×"), listaKrokow(k.dzieci));
+    } else if (k.typ === "cwiczenie") {
+      const o = opisKroku(k);
+      const b = el("button", "co jak-btn", o.co);
+      b.type = "button";
+      b.setAttribute("aria-expanded", "false");
+      b.title = "Jak wykonać";
+      b.addEventListener("click", () => {
+        const otw = b.getAttribute("aria-expanded") === "true";
+        b.setAttribute("aria-expanded", String(!otw));
+        const jest = li.querySelector(".jak");
+        if (jest) jest.remove(); else li.append(jakWykonac(k.par));
+      });
+      li.append(b);
+      if (o.cel) li.append(el("span", "cel", o.cel));
+      if (o.notatka) li.append(el("span", "not", o.notatka));
     } else {
       const o = opisKroku(k);
       li.append(el("span", "co", o.co));
       if (o.cel) li.append(el("span", "cel", o.cel));
-      if (o.notatka) li.append(el("span", "not", o.notatka));
+      const nt = String(o.notatka || "").replace(/^OPCJONALNIE\.?\s*/i, "");
+      if (nt) li.append(el("span", "not", nt[0].toUpperCase() + nt.slice(1)));
     }
     ol.append(li);
   }
   return ol;
+}
+
+// ---------- siła: strony, przejścia i opis wykonania (jak w garmin_trening.py) ----------
+const STRONY_TXT = { noga: ["Lewa noga", "Prawa noga"], strona: ["Lewa strona", "Prawa strona"], reka: ["Lewa ręka", "Prawa ręka"] };
+const NA_KAZDA = /,?\s*\bna\s+ka[żz]d[ąa]\s+(stron[ęe]|nog[ęe]|r[ęe]k[ęe])\b/i;
+
+function rodzajStron(par) {
+  const s = par.strony == null ? null : String(par.strony).toLowerCase().replace("ę", "e");
+  if (s === "false" || s === "nie" || s === "0") return null;
+  if (s && STRONY_TXT[s]) return s;
+  if (JEDNOSTRONNE_NOGA.includes(par.co)) return "noga";
+  if (JEDNOSTRONNE_STRONA.includes(par.co)) return "strona";
+  const m = String(par.notatka || "").match(NA_KAZDA);
+  if (m) return /^nog/i.test(m[1]) ? "noga" : /^r/i.test(m[1]) ? "reka" : "strona";
+  if (s === "true" || s === "tak") return "strona";
+  return null;
+}
+
+function oczyscNotatke(t) {
+  t = String(t || "").replace(NA_KAZDA, "").replace(/\.\s*[,.]/g, ".").replace(/\s{2,}/g, " ").replace(/^[\s,.;]+|[\s,.;]+$/g, "");
+  return t ? t[0].toUpperCase() + t.slice(1) : "";
+}
+
+// rozpisuje ćwiczenia na lewą/prawą stronę i dodaje automatyczne przerwy
+function rozwinStrony(lista, przejscie = 10, poPrzerwie = false) {
+  const out = [];
+  let pp = poPrzerwie;
+  for (const k of lista) {
+    if (k.typ === "powtorz") { out.push({ ...k, dzieci: rozwinStrony(k.dzieci, przejscie, pp) }); pp = false; continue; }
+    if (k.typ !== "cwiczenie") { out.push(k); pp = k.typ === "przerwa"; continue; }
+    const par = typeof k.par.wartosc === "string" && !k.par.co ? { co: k.par.wartosc } : { ...k.par };
+    const rodzaj = rodzajStron(par);
+    const zmiana = par.zmiana ?? 5;
+    const prz = String(par.przejscie ?? przejscie).toLowerCase();
+    const naCzas = par.sek != null || par.min != null;
+    const nazwa = nazwaCwiczenia(par).toLowerCase();
+    if (naCzas && !pp && !["0", "false", "none"].includes(prz)) {
+      const gdzie = rodzaj ? ", " + STRONY_TXT[rodzaj][0].toLowerCase() : "";
+      out.push({ typ: "auto", par: { co: "Przygotuj się", ile: prz === "lap" ? "do Lap" : prz + " s", notatka: nazwa + gdzie } });
+    }
+    if (!rodzaj) { out.push({ typ: "cwiczenie", par }); pp = false; continue; }
+    const reszta = oczyscNotatke(par.notatka);
+    const [lewa, prawa] = STRONY_TXT[rodzaj];
+    out.push({ typ: "cwiczenie", par: { ...par, strona: lewa, notatka: reszta } });
+    if (naCzas && +zmiana > 0) out.push({ typ: "auto", par: { co: "Zmień stronę", ile: zmiana + " s", notatka: prawa.toLowerCase() } });
+    out.push({ typ: "cwiczenie", par: { ...par, strona: prawa, notatka: reszta } });
+    pp = false;
+  }
+  return out;
+}
+
+function nazwaCwiczenia(p) {
+  return p.co ? (NAZWY_CWICZEN[p.co] || p.co[0].toUpperCase() + p.co.slice(1).replace(/_/g, " "))
+    : String(p.nazwa || "Ćwiczenie").toLowerCase().replace(/_/g, " ").replace(/^./, c => c.toUpperCase());
+}
+
+// jak wykonać: [wskazówki, fraza do wyszukania filmu]
+const JAK = {
+  przysiad_jednonoz: ["Stań na jednej nodze, drugą trzymaj przed sobą. Schodź biodrami w tył, kolano nad stopą, plecy proste. Możesz przytrzymać się ściany albo siadać na krzesło.", "single leg squat to box"],
+  przysiad_bulgarski: ["Tylna stopa na krześle, przednia ok. dwie stopy przed nim. Opuszczaj tylne kolano pionowo w dół, ciężar na pięcie przedniej nogi, kolano nad stopą, tułów lekko pochylony.", "bulgarian split squat"],
+  mostek_jednonoz: ["Leżenie na plecach, jedna stopa blisko pośladka, druga noga uniesiona. Wypchnij biodra w górę przez piętę, w górze napnij pośladek. Miednica nie opada na bok.", "single leg glute bridge"],
+  martwy_jednonoz: ["Stój na jednej nodze, kolano lekko ugięte. Pochylaj tułów, cofając biodra; wolna noga idzie w tył w linii z plecami. Biodra równolegle do podłogi, wracasz napinając pośladek.", "single leg romanian deadlift"],
+  wspiecia_jednonoz: ["Jedna stopa na krawędzi stopnia, trzymaj się ściany. Wznieś się wysoko na palce, opuszczaj powoli, aż pięta zejdzie pod poziom stopnia.", "single leg calf raise"],
+  wejscia_na_podwyzszenie: ["Cała stopa na stopniu do wysokości kolana. Wejdź, pchając przez piętę nogi na stopniu, bez odbijania się drugą. Schodź powoli.", "step up exercise"],
+  plank_boczny: ["Łokieć pod barkiem, nogi proste jedna na drugiej. Unieś biodra – ciało w jednej linii od głowy do stóp. Biodra nie opadają i nie uciekają w tył.", "side plank"],
+  plank_boczny_noga: ["Plank boczny, a do tego unieś wierzchnią prostą nogę i trzymaj albo unoś powoli. Biodra cały czas wysoko.", "side plank leg lift"],
+  copenhagen: ["Plank boczny, wierzchnia noga na ławce: łatwiej kolanem, trudniej stopą. Dolna noga w powietrzu albo lekko na ziemi. Ciało trzyma przywodziciel wierzchniej nogi. Przerwij przy bólu w pachwinie.", "copenhagen plank short lever"],
+  przywodziciele: ["Leżenie na boku, wierzchnia noga zgięta i oparta przed tobą. Unoś dolną, prostą nogę kilka centymetrów i opuszczaj powoli.", "side lying inner thigh lift"],
+  muszelka: ["Leżenie na boku, kolana zgięte, stopy razem. Unoś wierzchnie kolano, nie odchylając miednicy w tył. Z gumą nad kolanami trudniej.", "clamshell exercise"],
+  wymachy_bok: ["Leżenie na boku, nogi proste. Unoś wierzchnią nogę lekko w tył, palce do przodu, miednica nieruchoma.", "side lying leg raise"],
+  wykroki_boczne: ["Szeroki krok w bok, schodzisz na ugiętej nodze, druga prosta, biodra w tył, stopy przodem. Płytko, jeśli czujesz pachwinę.", "side lunge"],
+  dead_bug: ["Leżenie na plecach, ręce w górę, kolana nad biodrami. Prostuj przeciwną rękę i nogę nad podłogą, lędźwie cały czas przy podłodze. Wróć i zmień stronę.", "dead bug exercise"],
+  bird_dog: ["Klęk podparty, plecy neutralnie. Wyprostuj przeciwną rękę i nogę, przytrzymaj 2 s, biodra się nie przechylają.", "bird dog exercise"],
+  mostek_marsz: ["Mostek na obu nogach, biodra wysoko. Naprzemiennie unoś stopy kilka centymetrów, miednica nie opada.", "marching glute bridge"],
+  pompki: ["Dłonie pod barkami, ciało w linii. Opuść klatkę tuż nad podłogę, łokcie ok. 45° od tułowia.", "push up proper form"],
+  pompki_na_kolanach: ["Jak pompki, ale z podparciem na kolanach. Ciało w linii od kolan do głowy.", "knee push up"],
+  przysiad: ["Stopy na szerokość bioder. Schodź biodrami w tył i w dół do uda równoległego z podłogą, kolana w linii ze stopami, pięty na ziemi.", "bodyweight squat"],
+  wykroki: ["Krok w przód, oba kolana do ok. 90°, tylne kolano tuż nad podłogą, tułów prosto.", "walking lunge"],
+  wykroki_wstecz: ["Krok w tył, tylne kolano w dół, ciężar na przedniej nodze. Wracasz, pchając przez przednią piętę.", "reverse lunge"],
+  plank: ["Przedramiona pod barkami, ciało w linii, brzuch i pośladki napięte, biodra nie idą w górę ani w dół.", "forearm plank"],
+  mostek: ["Leżenie na plecach, stopy blisko pośladków. Wypchnij biodra w górę, przytrzymaj, napnij pośladki.", "glute bridge"],
+  brzuszki: ["Leżenie, kolana ugięte. Unieś łopatki napięciem brzucha, nie ciągnij głowy rękami.", "crunch exercise"],
+  rowerek: ["Łopatki uniesione. Łokieć do przeciwnego kolana, druga noga prostuje się nad podłogą.", "bicycle crunch"],
+  unoszenie_nog: ["Leżenie, lędźwie przy podłodze. Unoś proste nogi do pionu, opuszczaj powoli bez odrywania lędźwi.", "lying leg raise"],
+  hollow: ["Lędźwie przyciśnięte, łopatki i proste nogi nisko nad podłogą. Łatwiej: kolana ugięte, ręce przy tułowiu.", "hollow body hold"],
+  superman: ["Leżenie przodem. Unieś jednocześnie ręce, klatkę i nogi kilka centymetrów, wzrok w podłogę, przytrzymaj chwilę.", "superman exercise"],
+  wspiecia: ["Stopy na szerokość bioder, wznieś się wysoko na palce, opuszczaj powoli.", "calf raise"],
+  mountain_climber: ["Podpór na dłoniach, naprzemiennie przyciągaj kolana do klatki, biodra nisko.", "mountain climbers"],
+  burpee: ["Przysiad, dłonie na ziemi, wyrzut nóg do podporu, powrót do przysiadu i wyskok.", "burpee"],
+  podciaganie: ["Nachwyt nieco szerzej niż barki. Z pełnego zwisu podciągnij brodę nad drążek, opuszczaj kontrolowanie.", "pull up"],
+  dipy: ["Dłonie na krawędzi ławki za sobą, opuść się do łokci ok. 90°, wypchnij w górę.", "bench dip"],
+};
+
+function jakWykonac(p) {
+  const box = el("div", "jak");
+  const j = JAK[p.co];
+  if (j) box.append(el("p", "", j[0]));
+  const fraza = j ? j[1] : nazwaCwiczenia(p) + " ćwiczenie";
+  const a = el("a", "", "Zobacz film z techniką");
+  a.href = "https://www.youtube.com/results?search_query=" + encodeURIComponent(fraza);
+  a.target = "_blank"; a.rel = "noopener";
+  box.append(a);
+  return box;
 }
 
 // "T1 Próg 3x2000" -> "3×2k", "T3 Szybkość 8x400" -> "8×400"
@@ -751,7 +878,7 @@ function rozbierz(tekst) {
       if (!klucz) return;
       const { pola, kroki } = polaBloku(zb, 4);
       wynik.zestawy.set(klucz, { klucz, nazwa: pola.nazwa || "Siła " + klucz, opis: pola.opis || "",
-        kroki: drzewo(kroki), surowe: zb.join("\n") });
+        kroki: rozwinStrony(drzewo(kroki), pola.przejscie ?? 10), surowe: zb.join("\n") });
     };
     for (const l of linie.slice(zs + 1)) {
       if (/^\S/.test(l)) break;
@@ -798,7 +925,7 @@ function rozbierz(tekst) {
       etykieta = silaKlucz || "siła";
       pelna = zestaw ? zestaw.nazwa : silaKlucz ? "Siła " + silaKlucz + " (brak w zestawy_sily!)" : (nazwa || "Siła");
       if (silaKlucz && !zestaw) wynik.bledy.push(data + ": brak zestawu „" + silaKlucz + "” w sekcji zestawy_sily.");
-      lista = zestaw ? zestaw.kroki : drzewo(kroki);
+      lista = zestaw ? zestaw.kroki : rozwinStrony(drzewo(kroki));
       opis = zestaw ? zestaw.opis : opis;
     } else if (szablon === "spokojny") {
       rodzaj = "spokojny"; etykieta = km;
@@ -1031,7 +1158,6 @@ function rysuj() {
   const wgDaty = new Map();
   for (const p of poz) { if (!wgDaty.has(p.data)) wgDaty.set(p.data, []); wgDaty.get(p.data).push(p); }
   const biegi = poz.filter(p => p.sport === "bieg"), sily = poz.filter(p => p.sport === "sila");
-  const minione = poz.filter(p => naDate(p.data) < dzisiaj).length;
 
   // nagłówek planu
   const pn0 = plusDni(pierwsza, -dzienTyg(pierwsza));
@@ -1044,7 +1170,6 @@ function rysuj() {
   if (sily.length) pod.push(sily.length + " " + odmiana(sily.length, "trening siłowy", "treningi siłowe", "treningów siłowych"));
   if (sumMax) pod.push(kmTekst(sumMin, sumMax) + " biegu");
   $("#podtytul").textContent = pod.join(", ");
-  $("#minione").textContent = minione ? minione + " " + odmiana(minione, "trening już minął i nie zostanie wysłany", "treningi już minęły i nie zostaną wysłane", "treningów już minęło i nie zostanie wysłanych") + "." : "";
 
   // najbliższy trening
   const nast = poz.find(p => naDate(p.data) >= dzisiaj);
@@ -1080,7 +1205,8 @@ function rysuj() {
     nag.type = "button";
     nag.setAttribute("aria-expanded", String(otwarty));
     const lewa = el("span", "tn");
-    lewa.append(el("b", "", "Tydzień " + nr), el("span", "", zakresTyg(pn) + (biezacy ? ", ten tydzień" : "")));
+    lewa.append(el("b", "", "Tydzień " + nr), el("span", "", zakresTyg(pn)));
+    if (biezacy) lewa.append(el("span", "teraz", "ten tydzień"));
     const notka = wTyg.find(p => p.notka)?.notka;
     if (notka) lewa.append(el("em", "", notka));
     const prawa = el("span", "tp");
@@ -1105,7 +1231,7 @@ function rysuj() {
         if (!lista.length && !cel) {
           btn.className = "dzien pusty" + (dzis ? " dzis" : "");
           btn.tabIndex = -1;
-          btn.append(el("span", "nr", DNI[dzienTyg(dd)] + " " + dd.getUTCDate()));
+          btn.append(el("span", "nr", dzis ? "dziś" : DNI[dzienTyg(dd)] + " " + dd.getUTCDate()));
           siatka.append(btn); continue;
         }
         const glowny = lista.find(x => x.sport === "bieg") || lista[0];
@@ -1116,7 +1242,7 @@ function rysuj() {
           + (przenoszony && przenoszony.data === d ? " zrodlo" : "");
         btn.setAttribute("aria-pressed", String(wybrany === d));
         btn.setAttribute("aria-label", d + (lista.length ? ": " + lista.map(x => x.pelna).join(" i ") : ": wolne"));
-        btn.append(el("span", "nr", DNI[dzienTyg(dd)] + " " + dd.getUTCDate()));
+        btn.append(el("span", "nr", dzis ? "dziś" : DNI[dzienTyg(dd)] + " " + dd.getUTCDate()));
         if (glowny) {
           const dl = glowny.etykieta.length;
           btn.append(el("span", "et" + (dl > 5 ? " s" : dl > 4 ? " m" : ""), glowny.etykieta));
@@ -1188,7 +1314,7 @@ function panelDnia(d, lista) {
   const panel = el("div", "panel");
   const nag = el("div", "panel-nag");
   nag.append(el("b", "", DNI_PELNE[dzienTyg(dd)][0].toUpperCase() + DNI_PELNE[dzienTyg(dd)].slice(1) + ", " + dd.getUTCDate() + " " + MIESIACE[dd.getUTCMonth()]));
-  if (dd < dzisiaj) nag.append(el("span", "uwaga", "minął, nie zostanie wysłany"));
+  if (d === iso(dzisiaj)) nag.append(el("span", "dzis-znak", "dziś"));
   nag.append(przycisk("Zamknij", "maly zamknij", () => { wybrany = null; rysuj(); }));
   panel.append(nag);
   if (!lista.length) panel.append(el("p", "opis", "Dzień wolny."));

@@ -1,4 +1,4 @@
-# Plan biegowy 10 km, 26.10 - 20.12 (8 tygodni)
+# Plan biegowy: blok 1 (10 km, 26.10 - 20.12) + blok 2 (baza zimowa i próg, 21.12 - 14.02)
 # Aktualizacja 26.10: tempa progowe T3-T6 skorygowane po 4x1600 z 20.10, T4 łagodniejszy,
 # długi 1.11 bez przyspieszeń, we wtorek 27.10 kontrola HR pod LTHR 167.
 # Aktualizacja 28.10: długie 8.11 i 15.11 skrócone z 20 do 18 km.
@@ -63,6 +63,7 @@ stare_nazwy:  # usuwane z "Moje treningi" (stary plan 20-30.10)
 zestawy_sily:
   # Tygodnie 1-3: A (pon) i B (czw). Tydzień 4 i 8: L (lekki). Tygodnie 5-7: A2 i B2 (trudniej).
   # C: krótki core + góra ciała w sobotę, opcjonalnie.
+  # Blok 2: A3 i B3 (cięższe, B3 z hantlami), tygodnie odciążenia: L.
   # sek/powt w ćwiczeniach jednostronnych = na jedną stronę.
   A:
     nazwa: "Siła A: przywodziciele i core"
@@ -154,6 +155,37 @@ zestawy_sily:
           - cwiczenie: {co: superman, powt: 12}
           - cwiczenie: {co: hollow, sek: 20, notatka: "Hollow hold. Łatwiej: kolana ugięte"}
           - przerwa: {sek: 45}
+  A3:
+    nazwa: "Siła A3: przywodziciele i core++"
+    opis: >-
+      Blok 2, tygodnie 2-4 i 6-7. 3 obwody, przerwa 60 s. Copenhagen ze stopą
+      na ławce tylko bez dyskomfortu w pachwinie, inaczej kolano. Muszelka z gumą.
+    kroki:
+      - rozgrzewka: {min: 3, notatka: "Krążenia bioder, wymachy nóg przód-tył i w bok"}
+      - powtorz: 3
+        kroki:
+          - cwiczenie: {co: copenhagen, sek: 30, notatka: "Stopa na ławce albo kolano, jeśli pachwina czuje"}
+          - cwiczenie: {co: mostek_jednonoz, powt: 12, notatka: "3 s w górze"}
+          - cwiczenie: {co: plank_boczny_noga, sek: 40}
+          - cwiczenie: {co: dead_bug, powt: 24, notatka: "Naprzemiennie, 12 na stronę. Wolno, wydech przy wyproście"}
+          - cwiczenie: {co: muszelka, powt: 20, notatka: "Guma nad kolanami"}
+          - przerwa: {sek: 60}
+  B3:
+    nazwa: "Siła B3: jednonóż z obciążeniem"
+    opis: >-
+      Blok 2, tygodnie 2-4 i 6-7. 3 obwody, przerwa 90 s. Hantle albo plecak
+      z obciążeniem 2 x 6-10 kg; ciężar taki, żeby ostatnie 2 powtórzenia były
+      trudne, ale technicznie czyste. Bez bólu pachwiny i biodra.
+    kroki:
+      - rozgrzewka: {min: 3, notatka: "Krążenia bioder, wymachy nóg, 10 przysiadów"}
+      - powtorz: 3
+        kroki:
+          - cwiczenie: {co: przysiad_bulgarski, powt: 8, notatka: "Z hantlami. 3 s w dół"}
+          - cwiczenie: {co: martwy_jednonoz, powt: 8, notatka: "Hantel w przeciwnej ręce. Plecy proste"}
+          - cwiczenie: {co: wejscia_na_podwyzszenie, powt: 10, notatka: "Stopień do wysokości kolana, bez odbijania się drugą nogą"}
+          - cwiczenie: {co: wspiecia_jednonoz, powt: 15, notatka: "Z hantlem. 3 s w dół"}
+          - cwiczenie: {co: plank, sek: 60, notatka: "Albo na przedramionach"}
+          - przerwa: {sek: 90}
 
 treningi:
   # --- Tydzień 1/8 ---
@@ -421,3 +453,238 @@ treningi:
       nic nowego. Schłodzenie 2 km.
     dopisz_stop: true
     kroki: start_10km
+
+  # ===== Blok 2: baza zimowa i próg, 21.12 - 14.02 =====
+  # Tempa liczone z formy przed startem. Po starcie 20.12 i po teście 22.01
+  # popraw tempa progu i VO2 (próg ok. 6-7% wolniej niż tempo 5 km).
+
+  # --- Tydzień 1/8 (regeneracja po starcie) ---
+  - {data: 2026-12-21, szablon: opcja_rozruch}
+  - data: 2026-12-22
+    nazwa: "B1 Rozruch 6 km"
+    opis: "Pierwszy bieg po starcie. Bardzo spokojnie, 5:45-6:15/km albo wolniej. Bez zegarka na tempo, tylko na odczucia."
+    dopisz_stop: true
+    kroki:
+      - bieg: {km: 6, notatka: "Bardzo spokojnie"}
+  - {data: 2026-12-22, sila: L}
+  - {data: 2026-12-23, szablon: opcja_rozruch}
+  - {data: 2026-12-25, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1, przebiezki: true}
+  - {data: 2026-12-26, sila: C, opcjonalny: true}
+  - {data: 2026-12-27, szablon: dlugi, km_txt: "14-16", km: 14, opcja: 2, uwaga: "Tydzień regeneracji - luźno, bez przyspieszeń."}
+
+  # --- Tydzień 2/8 (baza) ---
+  - {data: 2026-12-28, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
+  - {data: 2026-12-28, sila: A3}
+  - data: 2026-12-29
+    nazwa: "B2 Próg 5x1600"
+    opis: "Powrót do progu po starcie: krótkie przerwy, kontrola, nie szybciej niż 4:12. RPE do 16. Jeśli nogi ciężkie po starcie - 4 odcinki."
+    dopisz_stop: true
+    kroki:
+      - rozgrzewka_std:
+      - powtorz: 5
+        kroki:
+          - bieg: {m: 1600, tempo: ["4:12", "4:15"]}
+          - odpoczynek: {min: 1}
+      - schlodzenie_std:
+  - {data: 2026-12-30, szablon: opcja_rozruch}
+  - {data: 2026-12-31, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
+  - {data: 2026-12-31, sila: B3}
+  - data: 2027-01-01
+    nazwa: "B2 Podbiegi 8x60 s"
+    opis: "Siła biegowa i ekonomia. Podbieg 4-6%, mocno, ale technicznie (RPE 16), wysoko kolano, praca ramion. Zbieg w truchcie jako przerwa. Bez podbiegu: 8x60 s szybko po płaskim."
+    dopisz_stop: true
+    kroki:
+      - rozgrzewka_std:
+      - powtorz: 8
+        kroki:
+          - bieg: {sek: 60, notatka: "Podbieg mocno, RPE 16"}
+          - odpoczynek: {lap: true, notatka: "Trucht w dół, Lap na dole"}
+      - schlodzenie_std:
+  - {data: 2027-01-02, szablon: opcja_rozruch}
+  - {data: 2027-01-02, sila: C, opcjonalny: true}
+  - {data: 2027-01-03, szablon: dlugi, km_txt: "18-20", km: 18, opcja: 2}
+
+  # --- Tydzień 3/8 (baza) ---
+  - {data: 2027-01-04, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
+  - {data: 2027-01-04, sila: A3}
+  - data: 2027-01-05
+    nazwa: "B3 Próg 4x2000 r60"
+    opis: "Wytrzymałość tempowa z krótszą przerwą niż w bloku 1 (60 s zamiast 1:45). Tempo bez zmian - postęp to krótsza przerwa. 4. seria wolniejsza niż 4:16 - kończysz."
+    dopisz_stop: true
+    kroki:
+      - rozgrzewka_std:
+      - powtorz: 4
+        kroki:
+          - bieg: {m: 2000, tempo: ["4:12", "4:15"]}
+          - odpoczynek: {min: 1}
+      - schlodzenie_std:
+  - {data: 2027-01-06, szablon: opcja_rozruch}
+  - {data: 2027-01-07, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
+  - {data: 2027-01-07, sila: B3}
+  - data: 2027-01-08
+    nazwa: "B3 Podbiegi 10x60 s"
+    opis: "Jak w tygodniu 2, o dwa podbiegi więcej. Ostatnie dwa tak samo mocne jak pierwsze - jeśli nie, kończysz na 8."
+    dopisz_stop: true
+    kroki:
+      - rozgrzewka_std:
+      - powtorz: 10
+        kroki:
+          - bieg: {sek: 60, notatka: "Podbieg mocno, RPE 16"}
+          - odpoczynek: {lap: true, notatka: "Trucht w dół, Lap na dole"}
+      - schlodzenie_std:
+  - {data: 2027-01-09, szablon: opcja_rozruch}
+  - {data: 2027-01-09, sila: C, opcjonalny: true}
+  - {data: 2027-01-10, szablon: dlugi, km_txt: "20", km: 20}
+
+  # --- Tydzień 4/8 (baza) ---
+  - {data: 2027-01-11, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
+  - {data: 2027-01-11, sila: A3}
+  - data: 2027-01-12
+    nazwa: "B4 Próg ciągły 6 km"
+    opis: "6 km ciągłym tempem progowym - test, czy próg jest stabilny bez przerw. Pierwszy km nie szybciej niż 4:15. Od 4. km RPE >17 - zwolnij do 4:20 i dokończ."
+    dopisz_stop: true
+    kroki:
+      - rozgrzewka_std:
+      - bieg: {km: 6, tempo: ["4:13", "4:17"]}
+      - schlodzenie_std:
+  - {data: 2027-01-13, szablon: opcja_rozruch}
+  - {data: 2027-01-14, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
+  - {data: 2027-01-14, sila: B3}
+  - data: 2027-01-15
+    nazwa: "B4 Fartlek 8x2 min"
+    opis: "Zmiany tempa: 2 min w tempie 5-10 km, 1 min truchtu. Płynnie, bez sprintu."
+    dopisz_stop: true
+    kroki:
+      - rozgrzewka_std:
+      - powtorz: 8
+        kroki:
+          - bieg: {min: 2, tempo: ["3:58", "4:03"]}
+          - odpoczynek: {min: 1, notatka: "Trucht"}
+      - schlodzenie_std:
+  - {data: 2027-01-16, szablon: opcja_rozruch}
+  - {data: 2027-01-16, sila: C, opcjonalny: true}
+  - data: 2027-01-17
+    nazwa: "B4 Długi 20 km z końcówką"
+    opis: "17 km spokojnie, ostatnie 3 km w tempie maratońskim (4:35-4:45). Końcówka opcjonalna - przy ciężkich nogach całość spokojnie."
+    dopisz_stop: true
+    kroki:
+      - bieg: {km: 17, tempo: ["5:20", "5:35"]}
+      - bieg: {km: 3, tempo: ["4:35", "4:45"], notatka: "OPCJONALNIE szybciej. Inaczej dokończ spokojnie"}
+
+  # --- Tydzień 5/8 (odciążenie + test) ---
+  - {data: 2027-01-18, szablon: spokojny, km_txt: "6-7", km: 6, opcja: 1}
+  - {data: 2027-01-18, sila: L}
+  - data: 2027-01-19
+    nazwa: "B5 Próg 3x1600 lekko"
+    opis: "Podtrzymanie progu w tygodniu odciążenia, 3 dni przed testem. RPE do 15."
+    dopisz_stop: true
+    kroki:
+      - rozgrzewka_std:
+      - powtorz: 3
+        kroki:
+          - bieg: {m: 1600, tempo: ["4:12", "4:15"]}
+          - odpoczynek: {sek: 90}
+      - schlodzenie_std:
+  - {data: 2027-01-20, szablon: opcja_rozruch}
+  - {data: 2027-01-21, szablon: spokojny, km_txt: "6", km: 6, przebiezki: true}
+  - data: 2027-01-22
+    nazwa: "B5 TEST 5 km"
+    opis: >-
+      Test formy po bazie - porównanie z testem 20.11 i startem 20.12. Pierwsze
+      2 km nie szybciej niż 3:56, od 3. km utrzymaj, ostatni km dociśnij. Wynik
+      wyznacza tempa na tygodnie 6-7. Przy wietrze, lodzie albo złym
+      samopoczuciu przełóż o dzień.
+    dopisz_stop: true
+    kroki: test_5km
+  - {data: 2027-01-23, szablon: opcja_rozruch}
+  - {data: 2027-01-24, szablon: dlugi, km_txt: "14-16", km: 14, opcja: 2, uwaga: "Dzień po teście - spokojnie."}
+
+  # --- Tydzień 6/8 (rozwój) ---
+  - {data: 2027-01-25, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
+  - {data: 2027-01-25, sila: A3}
+  - data: 2027-01-26
+    nazwa: "B6 Próg 3x3000 r90"
+    opis: "Próg po teście: tempo 5 km z testu + 6-7%. Bez nowych danych 4:10-4:13. Przerwa krótsza niż w T6 (90 s). Po 2. serii RPE >17 - kończysz."
+    dopisz_stop: true
+    kroki:
+      - rozgrzewka_std:
+      - powtorz: 3
+        kroki:
+          - bieg: {m: 3000, tempo: ["4:10", "4:13"]}
+          - odpoczynek: {sek: 90}
+      - schlodzenie_std:
+  - {data: 2027-01-27, szablon: opcja_rozruch}
+  - {data: 2027-01-28, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
+  - {data: 2027-01-28, sila: B3}
+  - data: 2027-01-29
+    nazwa: "B6 VO2 6x1000"
+    opis: "VO2max: tempo 5 km z testu minus 2-3 s/km. Bez nowych danych 3:50-3:54. 5. odcinek wolniejszy niż 3:57 - kończysz na 5."
+    dopisz_stop: true
+    kroki:
+      - rozgrzewka_std:
+      - powtorz: 6
+        kroki:
+          - bieg: {m: 1000, tempo: ["3:50", "3:54"]}
+          - odpoczynek: {min: 2, sek: 30}
+      - schlodzenie_std:
+  - {data: 2027-01-30, szablon: opcja_rozruch}
+  - {data: 2027-01-30, sila: C, opcjonalny: true}
+  - {data: 2027-01-31, szablon: dlugi, km_txt: "20-22", km: 20, opcja: 2}
+
+  # --- Tydzień 7/8 (rozwój) ---
+  - {data: 2027-02-01, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
+  - {data: 2027-02-01, sila: A3}
+  - data: 2027-02-02
+    nazwa: "B7 Próg 2x5000"
+    opis: "Najdłuższe odcinki progowe w bloku. Równo od pierwszego km. Druga seria wolniejsza niż 4:16 - kończysz na 3 km."
+    dopisz_stop: true
+    kroki:
+      - rozgrzewka_std:
+      - powtorz: 2
+        kroki:
+          - bieg: {m: 5000, tempo: ["4:10", "4:13"]}
+          - odpoczynek: {min: 2, sek: 30}
+      - schlodzenie_std:
+  - {data: 2027-02-03, szablon: opcja_rozruch}
+  - {data: 2027-02-04, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1}
+  - {data: 2027-02-04, sila: B3}
+  - data: 2027-02-05
+    nazwa: "B7 VO2 5x1200"
+    opis: "VO2max, dłuższe odcinki. Tempo jak w B6. 4. odcinek wyraźnie wolniejszy - kończysz na 4."
+    dopisz_stop: true
+    kroki:
+      - rozgrzewka_std:
+      - powtorz: 5
+        kroki:
+          - bieg: {m: 1200, tempo: ["3:51", "3:55"]}
+          - odpoczynek: {min: 2, sek: 45}
+      - schlodzenie_std:
+  - {data: 2027-02-06, szablon: opcja_rozruch}
+  - {data: 2027-02-06, sila: C, opcjonalny: true}
+  - data: 2027-02-07
+    nazwa: "B7 Długi 22 km z końcówką"
+    opis: "18 km spokojnie, ostatnie 4 km w tempie maratońskim (4:35-4:45). Najdłuższy bieg bloku. Końcówka opcjonalna."
+    dopisz_stop: true
+    kroki:
+      - bieg: {km: 18, tempo: ["5:20", "5:35"]}
+      - bieg: {km: 4, tempo: ["4:35", "4:45"], notatka: "OPCJONALNIE szybciej. Inaczej dokończ spokojnie"}
+
+  # --- Tydzień 8/8 (odciążenie) ---
+  - {data: 2027-02-08, szablon: spokojny, km_txt: "6-7", km: 6, opcja: 1}
+  - {data: 2027-02-08, sila: L}
+  - data: 2027-02-09
+    nazwa: "B8 Próg 4x1000 lekko"
+    opis: "Odciążenie przed kolejnym blokiem. Kontrolowane, RPE do 15."
+    dopisz_stop: true
+    kroki:
+      - rozgrzewka_std:
+      - powtorz: 4
+        kroki:
+          - bieg: {m: 1000, tempo: ["4:10", "4:13"]}
+          - odpoczynek: {sek: 90}
+      - schlodzenie_std:
+  - {data: 2027-02-10, szablon: opcja_rozruch}
+  - {data: 2027-02-11, szablon: spokojny, km_txt: "7", km: 7, przebiezki: true}
+  - {data: 2027-02-12, szablon: opcja_rozruch}
+  - {data: 2027-02-13, sila: C, opcjonalny: true}
+  - {data: 2027-02-14, szablon: dlugi, km_txt: "14-16", km: 14, opcja: 2, uwaga: "Tydzień odciążenia - spokojnie."}
