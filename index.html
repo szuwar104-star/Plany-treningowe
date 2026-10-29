@@ -41,32 +41,18 @@ button, input, textarea { font: inherit; color: inherit; }
 [hidden] { display: none !important; }
 svg { flex: none; }
 
-/* ---------- nagłówek: bieżnia ---------- */
+/* ---------- pasek u góry ekranu (pod paskiem systemowym) ---------- */
 body::before {
   content: ""; position: fixed; inset: 0 0 auto; z-index: 10;
-  height: env(safe-area-inset-top, 0px); background: var(--track);
+  height: env(safe-area-inset-top, 0px); background: var(--bg);
 }
-header {
-  background: var(--track); color: var(--on-track);
-  padding: 18px 18px 26px; position: relative;
-  /* dwie linie torów u dołu */
-  background-image:
-    linear-gradient(transparent calc(100% - 13px), rgba(255,255,255,.55) calc(100% - 13px), rgba(255,255,255,.55) calc(100% - 11px), transparent calc(100% - 11px)),
-    linear-gradient(transparent calc(100% - 6px), rgba(255,255,255,.3) calc(100% - 6px), rgba(255,255,255,.3) calc(100% - 4px), transparent calc(100% - 4px));
-}
-.naglowek { max-width: 640px; margin: 0 auto; display: flex; align-items: flex-start; gap: 12px; }
-header h1 { margin: 0; flex: 1; font: 700 30px/1 var(--cond); letter-spacing: .01em; }
-header h1 small { display: block; margin-top: 6px; font: 500 14px/1.2 var(--body); opacity: .78; letter-spacing: 0; }
-.ikonka {
-  border: 0; background: rgba(255,255,255,.12); color: inherit; width: 42px; height: 42px;
-  border-radius: 50%; display: grid; place-items: center; cursor: pointer;
-}
-.ikonka:active { background: rgba(255,255,255,.24); }
 
 main { max-width: 640px; margin: 0 auto; padding: 16px 16px 128px; }
 
 /* ---------- źródła planu ---------- */
-.zrodla { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: -2px; }
+.zrodla { display: grid; grid-template-columns: repeat(3, 1fr) 52px; gap: 8px; }
+.zrodlo.ustaw { padding: 0; justify-content: center; }
+.zrodlo.ustaw svg { color: var(--muted); }
 .zrodlo {
   border: 1px solid var(--line); background: var(--surface); border-radius: 12px;
   padding: 12px 6px 10px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px;
@@ -83,6 +69,9 @@ main { max-width: 640px; margin: 0 auto; padding: 16px 16px 128px; }
 .pasek:empty { display: none; }
 
 /* ---------- pusty stan ---------- */
+.akcje-planu { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.akcje-planu .znaczki { flex: 0 1 auto; }
+.akcje-planu .maly { margin-top: 10px; margin-left: auto; }
 .pusto { margin-top: 28px; text-align: center; color: var(--muted); padding: 0 12px; }
 .pusto svg { color: var(--line); }
 .pusto h2 { margin: 10px 0 6px; font: 700 26px/1.05 var(--cond); color: var(--ink); }
@@ -99,54 +88,6 @@ main { max-width: 640px; margin: 0 auto; padding: 16px 16px 128px; }
 .znaczek { font-size: 14px; font-weight: 600; padding: 4px 10px; border-radius: 99px; background: var(--sunk); color: var(--muted); }
 .znaczek.zm { background: var(--signal); color: var(--on-signal); }
 .znaczek.ok { color: var(--ok); }
-
-/* ---------- siatka tygodni ---------- */
-.siatka { display: grid; grid-template-columns: 34px repeat(7, minmax(0, 1fr)); gap: 3px; margin: 16px -4px 0; }
-.siatka .dz { font: 600 13px/1 var(--cond); color: var(--muted); text-align: center; padding-bottom: 4px; }
-.siatka .dz.weekend { color: var(--ink); }
-.siatka .tydz { font: 600 12px/1.05 var(--cond); color: var(--muted); align-self: center; }
-.dzien {
-  position: relative; border: 0; border-radius: 7px; min-height: 50px; padding: 5px 2px 4px;
-  background: transparent; display: flex; flex-direction: column; align-items: center;
-  justify-content: space-between; cursor: pointer; overflow: hidden; color: var(--ink);
-}
-.dzien .nr { font: 600 11px/1 var(--cond); opacity: .7; }
-.dzien .et { font: 700 15px/1 var(--cond); white-space: nowrap; max-width: 100%; overflow: hidden; }
-.dzien .et.m { font-size: 12.5px; }
-.dzien .et.s { font-size: 11px; letter-spacing: -.02em; }
-.dzien.pusty { cursor: default; }
-.dzien.spokojny { background: var(--easy); }
-.dzien.dlugi { background: var(--track); color: var(--on-track); }
-.dzien.akcent { background: var(--signal); color: var(--on-signal); }
-.dzien.test, .dzien.start { background: var(--red); color: #fff; }
-.dzien.opcja, .dzien.inny {
-  background: repeating-linear-gradient(135deg, transparent 0 5px, var(--line) 5px 7px);
-  color: var(--muted); box-shadow: inset 0 0 0 1px var(--line);
-}
-.dzien.sila { background: var(--sila); color: var(--on-sila); }
-.dzien.plus-sila { box-shadow: inset 0 -5px 0 var(--sila); padding-bottom: 8px; }
-.dzien.opcja.plus-sila, .dzien.inny.plus-sila { box-shadow: inset 0 0 0 1px var(--line), inset 0 -5px 0 var(--sila); }
-.dzien.minelo { opacity: .3; }
-.dzien.zmiana::after, .dzien.nowy::after {
-  content: ""; position: absolute; top: 4px; right: 4px; width: 8px; height: 8px;
-  border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 2px var(--surface);
-}
-.dzien.dlugi.zmiana::after, .dzien.dlugi.nowy::after, .dzien.test.zmiana::after, .dzien.start.zmiana::after { background: var(--signal); }
-.dzien[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ink); z-index: 1; }
-
-.legenda { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 12px; color: var(--muted); font-size: 13px; }
-.legenda i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; vertical-align: -1px; margin-right: 5px; }
-
-.szczegoly { margin-top: 12px; padding: 12px 14px; background: var(--sunk); border-radius: 10px; display: flex; gap: 12px; align-items: center; }
-.szczegoly .tresc { flex: 1; min-width: 0; }
-.szczegoly b { font: 700 21px/1.1 var(--cond); display: block; }
-.szczegoly b + b { margin-top: 4px; }
-.szczegoly b.s { color: var(--sila); }
-.szczegoly p { margin: 3px 0 0; color: var(--muted); font-size: 14px; }
-.maly {
-  border: 1px solid var(--line); background: var(--surface); border-radius: 8px;
-  padding: 7px 10px; font-weight: 600; font-size: 14px; cursor: pointer; display: inline-flex; gap: 6px; align-items: center;
-}
 
 /* ---------- edytor ---------- */
 details.edytor { margin-top: 16px; background: var(--surface); border-radius: 14px; }
@@ -208,17 +149,194 @@ dialog input { width: 100%; margin-top: 6px; padding: 11px; border: 1px solid va
 .wiersz button.glowny { background: var(--track); border-color: var(--track); color: var(--on-track); }
 #test-wynik { margin: 14px 0 0; padding: 0; list-style: none; font-size: 14px; }
 #test-wynik li { padding: 3px 0; }
+.legenda { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 14px; color: var(--muted); font-size: 13px; }
+.legenda i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; vertical-align: -1px; margin-right: 5px; }
+.maly {
+  border: 1px solid var(--line); background: var(--surface); border-radius: 8px;
+  padding: 7px 10px; font-weight: 600; font-size: 14px; cursor: pointer; display: inline-flex; gap: 6px; align-items: center;
+}
+/* ---------- nagłówek planu ---------- */
+.naglowek { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.naglowek h1 { margin: 0; font: 700 31px/1.02 var(--cond); letter-spacing: -.005em; }
+.naglowek p { margin: 6px 0 0; color: var(--muted); font-size: 15px; }
+.naglowek p#minione { font-size: 13.5px; margin-top: 2px; }
+.naglowek p#minione:empty { display: none; }
+.naglowek .maly { flex: none; }
+
+/* najbliższy trening – pas startowy */
+.najblizszy {
+  margin-top: 14px; width: 100%; border: 0; cursor: pointer; text-align: left;
+  display: flex; align-items: baseline; gap: 10px; padding: 11px 14px; border-radius: 10px;
+  background: var(--track); color: var(--on-track);
+  background-image: repeating-linear-gradient(90deg, transparent 0 calc(25% - 1px), rgba(255,255,255,.14) calc(25% - 1px) 25%);
+}
+.najblizszy .nb-kiedy { font: 700 20px/1 var(--cond); color: var(--signal); flex: none; }
+.najblizszy .nb-co { font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* filtr */
+.filtr { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 14px; padding: 3px; background: var(--sunk); border-radius: 10px; }
+.filtr button {
+  border: 0; background: transparent; border-radius: 8px; padding: 8px 4px; cursor: pointer;
+  font: 600 15px/1 var(--body); color: var(--muted); display: inline-flex; justify-content: center; align-items: center; gap: 6px;
+}
+.filtr button i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.filtr button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(19,35,58,.18); }
+
+/* zmiany względem repo */
+.zmiany { margin-top: 14px; border-radius: 10px; background: var(--sunk); padding: 10px 12px; border-left: 4px solid var(--signal); }
+.zmiany.bez { border-left-color: var(--ok); color: var(--muted); font-size: 14px; }
+.zm-gora { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.zm-gora b { font: 700 19px/1.1 var(--cond); }
+.zmiany ul { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 2px; }
+.zm-link {
+  width: 100%; border: 0; background: transparent; padding: 6px 0; cursor: pointer; text-align: left;
+  display: grid; grid-template-columns: auto 1fr; gap: 0 8px; align-items: baseline; font-size: 15px; color: var(--ink);
+}
+.zm-link span:nth-child(2) { font-weight: 600; }
+.zm-link small { grid-column: 2; }
+.zmiany li { display: block; }
+.zmiany li:has(> .zt) { display: grid; grid-template-columns: auto 1fr; gap: 8px; font-size: 15px; padding: 6px 0; }
+.zm-link:disabled { cursor: default; opacity: .75; text-decoration: line-through; text-decoration-color: var(--muted); }
+.zt { font: 600 14px/1.2 var(--cond); color: var(--muted); }
+.zm-nowy .zt { color: var(--ok); }
+.zm-usun .zt { color: var(--red); }
+.zm-link small { color: var(--muted); font-size: 13.5px; }
+.zm-link:not(:disabled):hover span:nth-child(2) { text-decoration: underline; }
+
+/* ---------- tygodnie ---------- */
+#tygodnie { margin-top: 14px; scroll-margin-top: 12px; }
+.tydzien { border-top: 1px solid var(--line); scroll-margin-top: 12px; }
+.tydzien.biezacy { border-top: 3px solid var(--signal); }
+.tydz-nag {
+  width: 100%; border: 0; background: transparent; cursor: pointer; padding: 11px 2px 9px; text-align: left; color: var(--ink);
+  display: flex; justify-content: space-between; align-items: flex-end; gap: 10px;
+}
+.tydz-nag .tn { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; min-width: 0; }
+.tydz-nag .tn b { font: 700 19px/1 var(--cond); }
+.tydz-nag .tn span { color: var(--muted); font-size: 14px; }
+.tydz-nag .tn em { flex-basis: 100%; font-style: normal; font-size: 13.5px; color: var(--track-2); font-weight: 600; }
+.tydz-nag .tp { display: flex; gap: 6px; flex: none; align-items: center; }
+.tydz-nag .tp .km { font: 600 17px/1 var(--cond); }
+.tydz-nag .tp .ss { font: 600 14px/1 var(--cond); color: var(--sila); background: color-mix(in srgb, var(--sila) 14%, transparent); padding: 3px 7px; border-radius: 99px; }
+.tydz-nag::after {
+  content: ""; width: 8px; height: 8px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted);
+  transform: rotate(45deg) translate(-3px, -3px); flex: none; margin: 0 4px 6px 2px; transition: transform .15s;
+}
+.tydz-nag[aria-expanded="true"]::after { transform: rotate(-135deg); margin-bottom: 0; }
+.tydzien.minal .tydz-nag { color: var(--muted); }
+.tydzien.minal .tydz-nag .tn b { color: var(--muted); }
+
+.dni { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; padding-bottom: 12px; }
+.dzien {
+  position: relative; border: 0; border-radius: 7px; min-height: 56px; padding: 5px 2px 4px;
+  background: transparent; display: flex; flex-direction: column; align-items: center;
+  justify-content: space-between; cursor: pointer; overflow: hidden; color: var(--ink);
+}
+.dzien .nr { font: 600 11px/1 var(--cond); opacity: .75; white-space: nowrap; }
+.dzien .et { font: 700 15px/1 var(--cond); white-space: nowrap; max-width: 100%; overflow: hidden; }
+.dzien .et.m { font-size: 12.5px; }
+.dzien .et.s { font-size: 11px; letter-spacing: -.02em; }
+.dzien .sk { position: absolute; left: 0; right: 0; bottom: 0; height: 13px; background: var(--sila); color: var(--on-sila); font: 700 10px/13px var(--cond); text-align: center; }
+.dzien.plus-sila { padding-bottom: 15px; }
+.dzien.pusty { cursor: default; box-shadow: inset 0 0 0 1px var(--line); }
+.dzien.pusty .nr { opacity: .55; }
+.dzien.spokojny { background: var(--easy); }
+.dzien.dlugi { background: var(--track); color: var(--on-track); }
+.dzien.akcent { background: var(--signal); color: var(--on-signal); }
+.dzien.test, .dzien.start { background: var(--red); color: #fff; }
+.dzien.opcja, .dzien.inny {
+  background: repeating-linear-gradient(135deg, transparent 0 5px, var(--line) 5px 7px);
+  color: var(--muted); box-shadow: inset 0 0 0 1px var(--line);
+}
+.dzien.sila { background: var(--sila); color: var(--on-sila); }
+.dzien.minelo { opacity: .35; }
+.dzien.dzis { box-shadow: inset 0 0 0 2px var(--ink); }
+.dzien.zmiana::after {
+  content: ""; position: absolute; top: 4px; right: 4px; width: 8px; height: 8px;
+  border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 2px var(--surface);
+}
+.dzien.dlugi.zmiana::after, .dzien.test.zmiana::after, .dzien.start.zmiana::after { background: var(--signal); }
+.dzien[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ink); z-index: 1; }
+.dzien:not(.pusty):active { transform: scale(.96); }
+
+/* tryb przenoszenia */
+.przenoszenie .dzien.cel { cursor: copy; outline: 2px dashed var(--track-2); outline-offset: -2px; }
+.przenoszenie .dzien.cel.pusty { background: color-mix(in srgb, var(--track-2) 8%, transparent); box-shadow: none; }
+.przenoszenie .dzien.zrodlo { outline: 3px solid var(--signal); outline-offset: -3px; }
+.tryb {
+  position: fixed; left: 12px; right: 12px; bottom: calc(86px + env(safe-area-inset-bottom, 0px)); z-index: 6;
+  max-width: 616px; margin: 0 auto; background: var(--ink); color: var(--bg); border-radius: 12px; padding: 12px 14px;
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;
+  box-shadow: 0 10px 30px rgba(5,12,24,.35);
+}
+.tryb-tresc { min-width: 0; flex: 1 1 220px; }
+.tryb-tresc b { display: block; font-weight: 600; }
+.tryb-tresc span { font-size: 14px; opacity: .8; }
+.tryb-akcje { display: flex; flex-wrap: wrap; gap: 6px; }
+.tryb .maly { background: transparent; color: inherit; border-color: color-mix(in srgb, var(--bg) 35%, transparent); }
+.tryb .maly.glowny { background: var(--signal); color: var(--on-signal); border-color: var(--signal); }
+
+/* panel dnia */
+.panel { margin: 0 0 14px; padding: 12px; background: var(--sunk); border-radius: 12px; animation: wysun .18s ease-out; }
+@keyframes wysun { from { opacity: 0; transform: translateY(-4px); } }
+@media (prefers-reduced-motion: reduce) { .panel { animation: none; } }
+.panel-nag { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.panel-nag b { font: 700 21px/1.1 var(--cond); }
+.panel-nag .uwaga { color: var(--muted); font-size: 14px; }
+.panel-nag .zamknij { margin-left: auto; }
+.wpis { margin-top: 10px; background: var(--surface); border-radius: 10px; padding: 12px; border-left: 5px solid var(--easy); }
+.wpis.r-dlugi { border-left-color: var(--track); }
+.wpis.r-akcent { border-left-color: var(--signal); }
+.wpis.r-test, .wpis.r-start { border-left-color: var(--red); }
+.wpis.r-sila { border-left-color: var(--sila); }
+.wpis.r-opcja, .wpis.r-inny { border-left-color: var(--line); }
+.wpis-nag { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.wpis-nag h3 { margin: 0; font: 700 21px/1.1 var(--cond); flex: 1 1 auto; min-width: 0; }
+.znak { font: 600 13px/1 var(--cond); color: var(--muted); }
+.wpis-km { font: 600 16px/1 var(--cond); color: var(--muted); }
+.wpis .meta { margin: 4px 0 0; font-size: 14px; color: var(--muted); }
+.opis { margin: 6px 0 0; font-size: 14.5px; max-width: 70ch; }
+.kroki-box { margin-top: 10px; }
+.kroki-box > summary { cursor: pointer; font-weight: 600; font-size: 14px; color: var(--track-2); }
+ol.kroki { list-style: none; margin: 6px 0 0; padding: 0; counter-reset: krok; }
+ol.kroki li { display: grid; grid-template-columns: 1fr auto; column-gap: 10px; padding: 6px 0 6px 10px; border-left: 2px solid var(--line); }
+ol.kroki li + li { margin-top: 2px; }
+ol.kroki li .co { font-weight: 600; font-size: 14.5px; }
+ol.kroki li .cel { font: 600 15px/1.3 var(--cond); text-align: right; white-space: nowrap; }
+ol.kroki li .not { grid-column: 1 / -1; font-size: 13.5px; color: var(--muted); }
+ol.kroki li.opc { border-left-style: dashed; }
+ol.kroki li.opc .co::after { content: " (opcjonalnie)"; font-weight: 400; color: var(--muted); }
+ol.kroki li.powt { display: block; border-left-color: var(--track-2); }
+ol.kroki li.powt > .ile { font: 700 17px/1 var(--cond); color: var(--track-2); }
+ol.kroki li.powt > ol { margin-top: 4px; }
+.akcje { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.maly.glowny { background: var(--track); border-color: var(--track); color: var(--on-track); }
+.maly.link, .pasek .link { border: 0; background: none; padding: 0 2px; color: var(--track-2); text-decoration: underline; font-weight: 600; cursor: pointer; }
+
+/* zestawy siłowe */
+#zestawy h2 { margin: 18px 0 6px; font: 700 22px/1 var(--cond); }
+.zestaw { border-top: 1px solid var(--line); padding: 4px 0; }
+.zestaw > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 8px 0; }
+.zestaw > summary::-webkit-details-marker { display: none; }
+.zestaw .zk { flex: none; min-width: 34px; height: 30px; padding: 0 6px; border-radius: 7px; background: var(--sila); color: var(--on-sila); font: 700 17px/30px var(--cond); text-align: center; }
+.zestaw .zn { font-weight: 600; flex: 1; min-width: 0; }
+.zestaw summary small { color: var(--muted); font: 600 15px/1 var(--cond); }
+.zestaw[open] { padding-bottom: 12px; }
+.daty { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 4px 10px; font-size: 13.5px; cursor: pointer; }
+.chip.minelo { opacity: .5; }
+
+/* legenda zależna od filtra */
+.legenda[data-f="bieg"] .l-sila, .legenda[data-f="sila"] .l-bieg { display: none; }
+
+@media (max-width: 380px) {
+  .naglowek h1 { font-size: 29px; }
+  .dzien { min-height: 52px; }
+}
+
 </style>
 </head>
 <body>
-<header>
-  <div class="naglowek">
-    <h1>Plan → Garmin<small id="repo-naglowek"></small></h1>
-    <button class="ikonka" id="otworz-ustawienia" aria-label="Ustawienia">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    </button>
-  </div>
-</header>
 
 <main>
   <div class="zrodla">
@@ -234,6 +352,9 @@ dialog input { width: 100%; margin-top: 6px; padding: 11px; border: 1px solid va
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
       Z repo
     </button>
+    <button class="zrodlo ustaw" id="otworz-ustawienia" aria-label="Ustawienia" title="Ustawienia">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
   </div>
   <input type="file" id="plik" tabindex="-1" aria-hidden="true">
   <p class="pasek" id="komunikat" role="status"></p>
@@ -244,33 +365,40 @@ dialog input { width: 100%; margin-top: 6px; padding: 11px; border: 1px solid va
     <p>Wklej plan skopiowany z rozmowy, wybierz plik <b>plan.yaml</b> z telefonu albo wczytaj aktualny plan z repo.</p>
   </section>
 
-  <section class="karta" id="podglad" hidden aria-label="Podgląd planu">
-    <div class="podsumowanie">
-      <div class="liczba" id="ile"></div>
-      <div class="zakres" id="zakres"></div>
-    </div>
-    <div class="znaczki" id="znaczki"></div>
-    <div class="siatka" id="siatka"></div>
-    <div class="legenda">
-      <span><i style="background:var(--easy)"></i>spokojny</span>
-      <span><i style="background:var(--signal)"></i>akcent</span>
-      <span><i style="background:var(--track)"></i>długi</span>
-      <span><i style="background:var(--red)"></i>test / start</span>
-      <span><i style="background:repeating-linear-gradient(135deg,transparent 0 3px,var(--muted) 3px 4px)"></i>opcjonalny</span>
-      <span><i style="background:var(--sila)"></i>siła (pasek u dołu = bieg + siła)</span>
-      <span id="leg-zmiana" hidden><i style="background:var(--ink);border-radius:50%"></i>inny niż w repo</span>
-    </div>
-    <div class="szczegoly" id="szczegoly" hidden>
-      <div class="tresc"><div id="sz-nazwa"></div><p id="sz-info"></p></div>
-      <button class="maly" id="sz-pokaz">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
-        Edytuj
+  <section class="karta" id="podglad" hidden aria-label="Kalendarz planu">
+    <div class="naglowek">
+      <div>
+        <h1 id="tytul"></h1>
+        <p id="podtytul"></p>
+        <p id="minione"></p>
+      </div>
+      <button class="maly" id="zapisz-plan">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+        <span id="zapisz-plan-tekst">Zapisz plik</span>
       </button>
+    </div>
+    <button class="najblizszy" id="najblizszy" type="button" hidden></button>
+    <div class="filtr" id="filtr" role="group" aria-label="Pokaż">
+      <button type="button" data-f="wszystko">Wszystko</button>
+      <button type="button" data-f="bieg"><i style="background:var(--track-2)"></i>Bieganie</button>
+      <button type="button" data-f="sila"><i style="background:var(--sila)"></i>Siła</button>
+    </div>
+    <div class="zmiany" id="zmiany" hidden aria-live="polite"></div>
+    <div id="tygodnie"></div>
+    <div id="zestawy" hidden></div>
+    <div class="legenda" id="legenda">
+      <span class="l-bieg"><i style="background:var(--easy)"></i>spokojny</span>
+      <span class="l-bieg"><i style="background:var(--signal)"></i>akcent</span>
+      <span class="l-bieg"><i style="background:var(--track)"></i>długi</span>
+      <span class="l-bieg"><i style="background:var(--red)"></i>test / start</span>
+      <span class="l-bieg"><i style="background:repeating-linear-gradient(135deg,transparent 0 3px,var(--muted) 3px 4px)"></i>opcjonalny</span>
+      <span class="l-sila"><i style="background:var(--sila)"></i>siła (pasek pod biegiem = ten sam dzień)</span>
+      <span><i style="background:var(--ink);border-radius:50%"></i>inaczej niż w repo</span>
     </div>
   </section>
 
   <section class="karta postep" id="postep" hidden aria-live="polite">
-    <h2>Wysyłka</h2>
+    <h2>Wysyłanie do Garmina</h2>
     <ol>
       <li id="e1"><span class="kropka"></span><span>Wysłany do GitHuba</span></li>
       <li id="e2"><span class="kropka"></span><span>Sprawdzony i zapisany w repo</span></li>
@@ -282,7 +410,7 @@ dialog input { width: 100%; margin-top: 6px; padding: 11px; border: 1px solid va
   <details class="edytor" id="edytor">
     <summary>
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-      Tekst planu <small id="edytor-info"></small>
+      Edytuj plik planu (YAML) <small id="edytor-info"></small>
       <svg class="str" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
     </summary>
     <div class="edytor-wnetrze">
@@ -302,6 +430,8 @@ dialog input { width: 100%; margin-top: 6px; padding: 11px; border: 1px solid va
     <span id="wyslij-tekst">Wyślij do Garmina</span>
   </button>
 </div>
+
+<div class="tryb" id="tryb" hidden role="status" aria-live="polite"></div>
 
 <dialog id="ustawienia">
   <form method="dialog" id="form-ustawien">
@@ -358,11 +488,244 @@ function opisBledu(status) {
   return "GitHub odpowiedział kodem " + status + ".";
 }
 
+
+// usuwa znaczniki bloku kodu (```yaml) i tekst przed planem, gdy skopiowano całą odpowiedź
+function oczysc(t) {
+  const linie = t.replace(/^\uFEFF/, "").replace(/\r/g, "").split("\n").filter(l => !/^\s*```/.test(l));
+  const i = linie.findIndex(l => /^(#|stare_nazwy:|treningi:)/.test(l));
+  return (i > 0 ? linie.slice(i) : linie).join("\n").replace(/\s+$/, "") + "\n";
+}
+
+
 // ---------- odczyt planu (lekki, tylko do podglądu; pełną kontrolę robi GitHub) ----------
-function pole(tekst, klucz) {
-  const m = tekst.match(new RegExp("(?:^|[{,\\s-])" + klucz + ":\\s*(\"([^\"]*)\"|'([^']*)'|([^,}\\n#]+))"));
-  if (!m) return null;
-  return (m[2] ?? m[3] ?? m[4] ?? "").trim();
+const MIESIACE = ["sty", "lut", "mar", "kwi", "maj", "cze", "lip", "sie", "wrz", "paź", "lis", "gru"];
+const wciecie = l => l.length - l.trimStart().length;
+
+function bezKomentarza(v) {
+  v = v.trim();
+  if (/^["']/.test(v)) return v;
+  const i = v.search(/\s#/);
+  return (i >= 0 ? v.slice(0, i) : v).trim();
+}
+
+// dzieli "a: 1, b: [x, y], c: {d: 2}" po przecinkach najwyższego poziomu
+function dziel(s) {
+  const czesci = []; let gl = 0, cudz = null, biez = "";
+  for (const z of s) {
+    if (cudz) { biez += z; if (z === cudz) cudz = null; continue; }
+    if (z === '"' || z === "'") { cudz = z; biez += z; continue; }
+    if (z === "[" || z === "{") gl++;
+    if (z === "]" || z === "}") gl--;
+    if (z === "," && gl === 0) { czesci.push(biez); biez = ""; continue; }
+    biez += z;
+  }
+  if (biez.trim()) czesci.push(biez);
+  return czesci.map(x => x.trim()).filter(Boolean);
+}
+
+function wartosc(v) {
+  v = bezKomentarza(String(v));
+  if (v.startsWith("{")) return mapa(v);
+  if (v.startsWith("[")) return dziel(v.slice(1, v.lastIndexOf("]"))).map(wartosc);
+  const m = v.match(/^"(.*)"$|^'(.*)'$/);
+  return m ? (m[1] ?? m[2]) : v;
+}
+
+function mapa(s) {
+  s = s.trim();
+  if (s.startsWith("{")) s = s.slice(1, s.lastIndexOf("}"));
+  const out = {};
+  for (const c of dziel(s)) {
+    const i = c.indexOf(":");
+    if (i < 0) continue;
+    out[c.slice(0, i).trim()] = wartosc(c.slice(i + 1));
+  }
+  return out;
+}
+
+// pola mapy blokowej na danym wcięciu (+ linie kroków)
+function polaBloku(linie, baza) {
+  const pola = {}; let kroki = null;
+  for (let i = 0; i < linie.length; i++) {
+    if (wciecie(linie[i]) !== baza) continue;
+    const m = linie[i].trim().match(/^([\w]+):\s*(.*)$/);
+    if (!m) continue;
+    const k = m[1], v = bezKomentarza(m[2]);
+    const gl = [];
+    for (let j = i + 1; j < linie.length && wciecie(linie[j]) > baza; j++) gl.push(linie[j]);
+    if (k === "kroki") { if (v) pola.kroki = wartosc(v); else kroki = gl; }
+    else if (/^[>|]/.test(v)) pola[k] = gl.map(x => x.trim()).join(v[0] === ">" ? " " : "\n");
+    else if (v === "" && gl.length) pola[k] = mapa(gl.map(x => x.trim()).join(", "));
+    else pola[k] = wartosc(v);
+  }
+  return { pola, kroki };
+}
+
+function rozbierzWpis(linie) {
+  const ind = wciecie(linie[0]);
+  const tresc = linie[0].trimStart().slice(2);
+  if (tresc.trim().startsWith("{")) return { pola: mapa(linie.map(l => l.trim()).join(" ").replace(/^-\s*/, "")), kroki: null };
+  return polaBloku([" ".repeat(ind + 2) + tresc, ...linie.slice(1)], ind + 2);
+}
+
+// lista kroków -> drzewo {typ, par} / {typ: "powtorz", n, dzieci}
+function drzewo(linie) {
+  const out = [];
+  if (!linie || !linie.length) return out;
+  const w0 = Math.min(...linie.filter(l => l.trim().startsWith("-")).map(wciecie));
+  for (let i = 0; i < linie.length; i++) {
+    const l = linie[i];
+    if (wciecie(l) !== w0 || !l.trim().startsWith("-")) continue;
+    const tresc = l.trim().replace(/^-\s*/, "");
+    const gl = [];
+    for (let j = i + 1; j < linie.length && wciecie(linie[j]) > w0; j++) gl.push(linie[j]);
+    const m = tresc.match(/^([\w]+):\s*(.*)$/);
+    if (!m) { out.push({ typ: "?", par: { wartosc: tresc } }); continue; }
+    const typ = m[1], v = bezKomentarza(m[2]);
+    if (typ === "powtorz") {
+      const ki = gl.findIndex(x => /^\s*kroki:\s*$/.test(x));
+      out.push({ typ, n: +v || 1, dzieci: drzewo(ki >= 0 ? gl.slice(ki + 1) : []) });
+      continue;
+    }
+    let par = {};
+    if (v.startsWith("{")) par = mapa(v);
+    else if (v) par = { wartosc: wartosc(v) };
+    else if (gl.length) par = mapa(gl.map(x => x.trim()).join(", "));
+    out.push({ typ, par });
+  }
+  return out;
+}
+
+// treść szablonów odtworzona tak jak w garmin_trening.py (tylko do podglądu)
+function krokiSzablonu(p) {
+  const opcja = +p.opcja || 0;
+  if (p.szablon === "spokojny") return [
+    { typ: "bieg", par: { km: p.km, tempo: ["5:30", "6:00"] } },
+    ...(opcja ? [{ typ: "bieg", par: { km: opcja, notatka: "OPCJONALNIE" } }] : []),
+    ...(p.przebiezki === "true" ? [{ typ: "przebiezki", par: {} }] : []),
+  ];
+  if (p.szablon === "dlugi") return [
+    { typ: "bieg", par: { km: p.km, tempo: ["5:20", "5:35"] } },
+    ...(opcja ? [{ typ: "bieg", par: { km: opcja, notatka: "OPCJONALNIE" } }] : []),
+  ];
+  if (p.szablon === "opcja_rozruch") return [
+    { typ: "bieg", par: { km: 5, notatka: "Spokojnie" } },
+    { typ: "bieg", par: { km: 1, notatka: "OPCJONALNIE 6. km" } },
+  ];
+  if (p.szablon === "akcent") {
+    const przerwa = typeof p.przerwa === "object" ? p.przerwa : {};
+    return [
+      { typ: "rozgrzewka_std", par: {} },
+      { typ: "powtorz", n: +p.powtorzenia || 1, dzieci: [
+        { typ: "bieg", par: { m: p.metry, tempo: p.tempo } },
+        { typ: "odpoczynek", par: { ...przerwa, notatka: "Trucht" } },
+      ] },
+      ...(p.dodatkowe ? [{ typ: "bieg", par: { m: p.metry, tempo: p.tempo, notatka: "OPCJONALNIE " + p.dodatkowe } }] : []),
+      { typ: "schlodzenie_std", par: {} },
+    ];
+  }
+  if (p.kroki === "test_5km") return [
+    { typ: "rozgrzewka_std", par: {} }, { typ: "przerwa", par: { min: 5 } },
+    { typ: "bieg", par: { km: 5, tempo: ["3:56", "3:58"] } }, { typ: "schlodzenie_std", par: {} },
+  ];
+  if (p.kroki === "start_10km") return [
+    { typ: "rozgrzewka_std", par: {} },
+    { typ: "bieg", par: { km: 10, tempo: ["4:00", "4:05"] } }, { typ: "schlodzenie_std", par: {} },
+  ];
+  return [];
+}
+
+function opisSzablonu(p) {
+  if (p.szablon === "spokojny") return "Spokojnie, 5:30–6:00/km." + (p.sila === "false" ? " Wersja przedstartowa." : "");
+  if (p.szablon === "dlugi") return p.uwaga || "Bez mocnej końcówki.";
+  if (p.szablon === "opcja_rozruch") return "Wolne albo krótki rozruch, zależnie od samopoczucia.";
+  if (p.szablon === "akcent") return [p.cel, p.uwaga, p.stop_dodatek].filter(Boolean).join(" ");
+  return "";
+}
+
+function kmDrzewa(lista) {
+  let min = 0, max = 0;
+  for (const k of lista) {
+    let a = 0, b = 0;
+    if (k.typ === "powtorz") { [a, b] = kmDrzewa(k.dzieci); a *= k.n; b *= k.n; }
+    else if (k.typ === "rozgrzewka_std") a = b = 3.4;
+    else if (k.typ === "schlodzenie_std") a = b = 2;
+    else if (k.typ === "przebiezki") a = b = 0.4;
+    else if (k.par) {
+      const d = k.par.km ? +k.par.km : k.par.m ? +k.par.m / 1000 : 0;
+      b = d; a = /OPCJONALNIE/i.test(k.par.notatka || "") ? 0 : d;
+    }
+    min += a; max += b;
+  }
+  return [min, max];
+}
+
+const JEDNOSTRONNE_NOGA = ["przysiad_jednonoz", "przysiad_bulgarski", "mostek_jednonoz", "martwy_jednonoz", "wspiecia_jednonoz", "wejscia_na_podwyzszenie"];
+const JEDNOSTRONNE_STRONA = ["plank_boczny", "plank_boczny_noga", "copenhagen", "przywodziciele", "muszelka", "wymachy_bok", "wykroki_boczne"];
+const NAZWY_CWICZEN = {
+  przysiad_jednonoz: "Przysiad jednonóż", przysiad_bulgarski: "Przysiad bułgarski", mostek_jednonoz: "Mostek jednonóż",
+  martwy_jednonoz: "Martwy ciąg jednonóż", wspiecia_jednonoz: "Wspięcia jednonóż", wejscia_na_podwyzszenie: "Wejścia na podwyższenie",
+  plank_boczny: "Plank boczny", plank_boczny_noga: "Plank boczny z unoszeniem nogi", copenhagen: "Copenhagen",
+  przywodziciele: "Przywodziciele", muszelka: "Muszelka", wymachy_bok: "Wymachy w bok", wykroki_boczne: "Wykroki boczne",
+  dead_bug: "Dead bug", bird_dog: "Bird dog", mostek_marsz: "Mostek z marszem", pompki_na_kolanach: "Pompki na kolanach",
+  wykroki_wstecz: "Wykroki wstecz", unoszenie_nog: "Unoszenie nóg", mountain_climber: "Mountain climber", podciaganie: "Podciąganie",
+  wspiecia: "Wspięcia na palce", hollow: "Hollow hold",
+};
+const NAZWY_KROKOW = { bieg: "Bieg", rozgrzewka: "Rozgrzewka", odpoczynek: "Trucht", przerwa: "Przerwa", schladzanie: "Schłodzenie" };
+
+function czas(par) {
+  const min = +par.min || 0, sek = +par.sek || 0;
+  if (!min && !sek) return "";
+  if (min && sek) return min + ":" + String(sek).padStart(2, "0") + " min";
+  return min ? min + " min" : sek + " s";
+}
+function dlugosc(par) {
+  if (par.km) return String(par.km).replace(".", ",") + " km";
+  if (par.m) return +par.m >= 1000 && +par.m % 100 === 0 ? String(par.m / 1000).replace(".", ",") + " km" : par.m + " m";
+  return czas(par) || "do przycisku Lap";
+}
+function cel(par) {
+  if (Array.isArray(par.tempo)) return par.tempo.join("–") + "/km";
+  if (par.strefa_hr) return "strefa tętna " + par.strefa_hr;
+  return "";
+}
+
+function opisKroku(k) {
+  const p = k.par || {};
+  switch (k.typ) {
+    case "rozgrzewka_std": return { co: "Rozgrzewka 3 km", cel: "", notatka: "Potem 4× 100 m przebieżki i 2 min przerwy" };
+    case "schlodzenie_std": return { co: "Schłodzenie 2 km", cel: "spokojnie", notatka: "" };
+    case "przebiezki": return { co: "Przebieżki 4× 100 m", cel: "", notatka: "40 s truchtu między nimi" };
+    case "cwiczenie": {
+      const nazwa = p.co ? (NAZWY_CWICZEN[p.co] || p.co[0].toUpperCase() + p.co.slice(1).replace(/_/g, " "))
+        : String(p.nazwa || "Ćwiczenie").toLowerCase().replace(/_/g, " ").replace(/^./, c => c.toUpperCase());
+      let ile = p.powt ? p.powt + " powt." : p.sek ? p.sek + " s" : "do Lap";
+      const strony = p.strony === "false" ? null : JEDNOSTRONNE_NOGA.includes(p.co) || p.strony === "noga" ? "na nogę"
+        : JEDNOSTRONNE_STRONA.includes(p.co) || p.strony === "strona" || p.strony === "true" ? "na stronę" : p.strony === "reka" ? "na rękę" : null;
+      if (strony && ile !== "do Lap") ile += " " + strony;
+      return { co: nazwa, cel: ile, notatka: p.notatka || "" };
+    }
+    default:
+      if (NAZWY_KROKOW[k.typ]) return { co: NAZWY_KROKOW[k.typ] + " " + dlugosc(p), cel: cel(p), notatka: p.notatka || "" };
+      return { co: k.typ.replace(/_/g, " "), cel: "", notatka: p.wartosc || "" };
+  }
+}
+
+function listaKrokow(lista) {
+  const ol = el("ol", "kroki");
+  for (const k of lista) {
+    const li = el("li", k.typ === "powtorz" ? "powt" : (/OPCJONALNIE/i.test(k.par?.notatka || "") ? "opc" : ""));
+    if (k.typ === "powtorz") {
+      li.append(el("span", "ile", k.n + "×"), listaKrokow(k.dzieci));
+    } else {
+      const o = opisKroku(k);
+      li.append(el("span", "co", o.co));
+      if (o.cel) li.append(el("span", "cel", o.cel));
+      if (o.notatka) li.append(el("span", "not", o.notatka));
+    }
+    ol.append(li);
+  }
+  return ol;
 }
 
 // "T1 Próg 3x2000" -> "3×2k", "T3 Szybkość 8x400" -> "8×400"
@@ -374,83 +737,129 @@ function krotkaSeria(nazwa) {
 }
 
 function rozbierz(tekst) {
-  const wynik = { pozycje: [], bledy: [] };
+  const wynik = { pozycje: [], bledy: [], zestawy: new Map() };
   if (!tekst.trim()) return wynik;
   if (/\t/.test(tekst)) wynik.bledy.push("Plik zawiera tabulatory – YAML ich nie przyjmie. Użyj spacji.");
   const linie = tekst.replace(/\r/g, "").split("\n");
   const start = linie.findIndex(l => /^treningi:\s*(#.*)?$/.test(l));
 
-  // nazwy zestawów z sekcji zestawy_sily (tylko do podglądu)
-  const zestawy = new Map();
+  // zestawy siłowe
   const zs = linie.findIndex(l => /^zestawy_sily:\s*(#.*)?$/.test(l));
   if (zs >= 0) {
-    let klucz = null;
+    let klucz = null, zb = [];
+    const zamknij = () => {
+      if (!klucz) return;
+      const { pola, kroki } = polaBloku(zb, 4);
+      wynik.zestawy.set(klucz, { klucz, nazwa: pola.nazwa || "Siła " + klucz, opis: pola.opis || "",
+        kroki: drzewo(kroki), surowe: zb.join("\n") });
+    };
     for (const l of linie.slice(zs + 1)) {
       if (/^\S/.test(l)) break;
+      if (!l.trim() || l.trim().startsWith("#")) continue;
       const k = l.match(/^  ([^\s:#][^:]*):\s*(#.*)?$/);
-      if (k) { klucz = k[1].trim(); zestawy.set(klucz, "Siła " + klucz); continue; }
-      const n = klucz && l.match(/^\s{4,}nazwa:\s*["']?(.+?)["']?\s*$/);
-      if (n && zestawy.get(klucz) === "Siła " + klucz) zestawy.set(klucz, n[1]);
+      if (k) { zamknij(); klucz = k[1].trim(); zb = []; continue; }
+      if (klucz) zb.push(l);
     }
+    zamknij();
   }
   if (start < 0) { wynik.bledy.push("Brak linii treningi: – to nie wygląda na cały plan."); return wynik; }
 
-  let wciecie = null, biezacy = null;
+  let wc = null, biezacy = null, notka = null;
   const bloki = [];
   for (let n = start + 1; n < linie.length; n++) {
     const l = linie[n];
-    if (!l.trim() || l.trim().startsWith("#")) continue;
-    const w = l.length - l.trimStart().length;
+    if (!l.trim()) continue;
+    if (l.trim().startsWith("#")) {
+      const m = l.match(/Tydzie[nń]\s*\d+(?:\/\d+)?\s*\(([^)]+)\)/i);
+      if (m) notka = m[1].trim(); else if (/Tydzie[nń]\s*\d+/i.test(l)) notka = null;
+      continue;
+    }
+    const w = wciecie(l);
     if (w === 0) break;
-    if (l.trimStart().startsWith("- ") && (wciecie === null || w === wciecie)) {
-      wciecie = w; biezacy = { linia: n, linie: [l] }; bloki.push(biezacy);
-    } else if (biezacy) biezacy.linie.push(l);
+    if (l.trimStart().startsWith("- ") && (wc === null || w === wc)) {
+      wc = w; biezacy = { linia: n, ost: n, linie: [l], notka }; bloki.push(biezacy);
+    } else if (biezacy) { biezacy.linie.push(l); biezacy.ost = n; }
   }
 
   for (const b of bloki) {
     const surowe = b.linie.join("\n");
-    const data = (surowe.match(/(?:^|[{,\s-])data:\s*["']?(\d{4}-\d{2}-\d{2})/) || [])[1];
+    const { pola, kroki } = rozbierzWpis(b.linie);
+    const data = String(pola.data || "").match(/^\d{4}-\d{2}-\d{2}$/) ? pola.data : null;
     if (!data) { wynik.bledy.push("Pozycja bez daty: " + b.linie[0].trim().slice(0, 50)); continue; }
-    const szablon = pole(surowe, "szablon");
-    const nazwa = pole(surowe, "nazwa") || "";
-    const km = pole(surowe, "km_txt") || "";
-    const opc = /opcjonalny:\s*true/.test(surowe);
-    let rodzaj, etykieta, pelna;
-    const silaKlucz = !szablon ? pole(surowe, "sila") : null;
-    const sport = pole(surowe, "sport");
-    if (silaKlucz || sport === "sila") {
-      rodzaj = "sila"; etykieta = "siła";
-      pelna = silaKlucz ? (zestawy.get(silaKlucz) || "Siła " + silaKlucz + " (brak w zestawy_sily!)") : (nazwa || "Siła");
-      if (silaKlucz && !zestawy.has(silaKlucz)) wynik.bledy.push(data + ": brak zestawu „" + silaKlucz + "” w sekcji zestawy_sily.");
+    const szablon = pola.szablon || null;
+    const nazwa = String(pola.nazwa || "");
+    const km = String(pola.km_txt || pola.km || "");
+    const opc = String(pola.opcjonalny) === "true";
+    const silaKlucz = !szablon && pola.sila && pola.sila !== "false" ? String(pola.sila) : null;
+    let rodzaj, etykieta, pelna, lista = [], opis = pola.opis || "", zestaw = null;
+    if (silaKlucz || pola.sport === "sila") {
+      rodzaj = "sila";
+      zestaw = silaKlucz ? wynik.zestawy.get(silaKlucz) : null;
+      etykieta = silaKlucz || "siła";
+      pelna = zestaw ? zestaw.nazwa : silaKlucz ? "Siła " + silaKlucz + " (brak w zestawy_sily!)" : (nazwa || "Siła");
+      if (silaKlucz && !zestaw) wynik.bledy.push(data + ": brak zestawu „" + silaKlucz + "” w sekcji zestawy_sily.");
+      lista = zestaw ? zestaw.kroki : drzewo(kroki);
+      opis = zestaw ? zestaw.opis : opis;
     } else if (szablon === "spokojny") {
       rodzaj = "spokojny"; etykieta = km;
-      pelna = "Spokojny " + km + " km" + (/przebiezki:\s*true/.test(surowe) ? " + przebieżki" : "");
+      pelna = "Spokojny " + km + " km" + (pola.przebiezki === "true" ? " + przebieżki" : "") + (pola.sila === "false" ? " (przedstartowy)" : "");
     } else if (szablon === "dlugi") {
       rodzaj = "dlugi"; etykieta = km; pelna = "Długi " + km + " km";
     } else if (szablon === "opcja_rozruch") {
-      rodzaj = "opcja"; etykieta = "opc."; pelna = "Opcja: wolne lub 5-6 km";
+      rodzaj = "opcja"; etykieta = "opc."; pelna = "Wolne lub 5-6 km";
     } else if (szablon === "akcent") {
       rodzaj = "akcent"; pelna = nazwa; etykieta = krotkaSeria(nazwa);
     } else {
       pelna = nazwa || "(bez nazwy)";
-      rodzaj = /start/i.test(nazwa) ? "start" : /test/i.test(nazwa) ? "test" : opc ? "opcja" : "inny";
+      rodzaj = /start/i.test(nazwa) ? "start" : /test/i.test(nazwa) ? "test" : opc ? "opcja" : /x\s*\d/i.test(nazwa) ? "akcent" : "inny";
       etykieta = rodzaj === "start" ? "START" : rodzaj === "test" ? "TEST" : rodzaj === "opcja" ? "opc."
-        : (nazwa.match(/\d+(?:-\d+)?/) || [nazwa.slice(0, 5)])[0];
+        : rodzaj === "akcent" ? krotkaSeria(nazwa) : (nazwa.match(/\d+(?:-\d+)?/) || [nazwa.slice(0, 5)])[0];
+      lista = kroki ? drzewo(kroki) : [];
     }
     if (szablon && !["spokojny", "dlugi", "opcja_rozruch", "akcent"].includes(szablon))
       wynik.bledy.push(data + ": nieznany szablon „" + szablon + "”.");
-    wynik.pozycje.push({ data, rodzaj, etykieta, pelna, linia: b.linia, opcjonalny: opc || rodzaj === "opcja",
-                         klucz: surowe.replace(/\s+/g, " ").trim() });
+    if (szablon || typeof pola.kroki === "string") { lista = krokiSzablonu({ ...pola }); opis = opis || opisSzablonu(pola); }
+    const sport = rodzaj === "sila" ? "sila" : "bieg";
+    let [kmMin, kmMax] = sport === "bieg" ? kmDrzewa(lista) : [0, 0];
+    const opcjonalny = opc || rodzaj === "opcja";
+    if (opcjonalny) kmMin = 0;
+    const klucz = surowe.replace(/\s+/g, " ").trim();
+    wynik.pozycje.push({
+      data, rodzaj, sport, etykieta, pelna, opis, lista, kmMin, kmMax, opcjonalny, notka: b.notka,
+      linia: b.linia, ost: b.ost, klucz,
+      kluczBez: klucz.replace(/data:\s*["']?\d{4}-\d{2}-\d{2}["']?\s*,?\s*/, ""),
+    });
   }
   if (!wynik.pozycje.length && !wynik.bledy.length) wynik.bledy.push("Sekcja treningi jest pusta.");
   return wynik;
 }
 
-// usuwa znaczniki bloku kodu (```yaml) i tekst przed planem, gdy skopiowano całą odpowiedź
-function oczysc(t) {
-  const linie = t.replace(/^\uFEFF/, "").replace(/\r/g, "").split("\n").filter(l => !/^\s*```/.test(l));
-  const i = linie.findIndex(l => /^(#|stare_nazwy:|treningi:)/.test(l));
-  return (i > 0 ? linie.slice(i) : linie).join("\n").replace(/\s+$/, "") + "\n";
+// ---------- porównanie z planem w repo ----------
+function porownaj(teraz, baza) {
+  const zmiany = [];
+  const pula = [...baza.pozycje];
+  const zostale = [];
+  for (const p of teraz.pozycje) {
+    const i = pula.findIndex(b => b.kluczBez === p.kluczBez && b.data === p.data);
+    if (i >= 0) pula.splice(i, 1); else zostale.push(p);
+  }
+  const dalej = [];
+  for (const p of zostale) {
+    const i = pula.findIndex(b => b.kluczBez === p.kluczBez);
+    if (i >= 0) { zmiany.push({ typ: "przeniesiony", p, z: pula[i].data }); pula.splice(i, 1); }
+    else dalej.push(p);
+  }
+  for (const p of dalej) {
+    const i = pula.findIndex(b => b.data === p.data && b.sport === p.sport);
+    if (i >= 0) { zmiany.push({ typ: "zmieniony", p, bylo: pula[i].pelna }); pula.splice(i, 1); }
+    else zmiany.push({ typ: "nowy", p });
+  }
+  for (const b of pula) zmiany.push({ typ: "usunięty", p: b });
+  for (const [k, z] of teraz.zestawy) {
+    const s = baza.zestawy.get(k);
+    if (s && s.surowe !== z.surowe) zmiany.push({ typ: "zestaw", nazwa: z.nazwa });
+  }
+  return zmiany.sort((a, b) => (a.p?.data || "9").localeCompare(b.p?.data || "9"));
 }
 
 // ---------- daty ----------
@@ -459,11 +868,36 @@ const naDate = s => new Date(s + "T00:00:00Z");
 const iso = d => d.toISOString().slice(0, 10);
 const krotko = d => String(d.getUTCDate()).padStart(2, "0") + "." + String(d.getUTCMonth() + 1).padStart(2, "0");
 const odmiana = (n, a, b, c) => n === 1 ? a : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) ? b : c;
+const dzienTyg = d => (d.getUTCDay() + 6) % 7;
+const plusDni = (d, n) => { const x = new Date(d); x.setUTCDate(x.getUTCDate() + n); return x; };
+function kiedy(s) {
+  const d = naDate(s), roz = Math.round((d - dzisiaj) / 864e5);
+  if (roz === 0) return "dziś";
+  if (roz === 1) return "jutro";
+  return DNI[dzienTyg(d)].toLowerCase() + " " + krotko(d);
+}
+function zakresTyg(pn) {
+  const nd = plusDni(pn, 6);
+  return pn.getUTCMonth() === nd.getUTCMonth()
+    ? pn.getUTCDate() + "–" + nd.getUTCDate() + " " + MIESIACE[nd.getUTCMonth()]
+    : pn.getUTCDate() + " " + MIESIACE[pn.getUTCMonth()] + " – " + nd.getUTCDate() + " " + MIESIACE[nd.getUTCMonth()];
+}
+function kmTekst(a, b) {
+  a = Math.round(a); b = Math.round(b);
+  if (!b) return "";
+  return (a === b ? "ok. " + a : a + "–" + b) + " km";
+}
 
 // ---------- stan ----------
-let plan = { pozycje: [], bledy: [] };
-let bazowy = null;            // Map data -> klucz (plan w repo)
-let wybrany = null;
+let plan = { pozycje: [], bledy: [], zestawy: new Map() };
+let tekstZRepo = null;      // plan.yaml dokładnie tak, jak pobrany z repo
+let bazowy = null;            // rozbiór planu z repo
+let wybrany = null;           // wybrana data
+let filtr = czytaj("pg.filtr", "wszystko");
+let przenoszony = null;       // pozycja w trybie przenoszenia
+let pytanie = null;           // {p, cel, naCelu} – zamienić czy dodać?
+const historia = [];
+const tygodnieOtwarte = new Map();
 
 function el(tag, klasa, tekst) {
   const e = document.createElement(tag);
@@ -471,17 +905,25 @@ function el(tag, klasa, tekst) {
   if (tekst != null) e.textContent = tekst;
   return e;
 }
+function przycisk(tekst, klasa, akcja) {
+  const b = el("button", klasa || "maly", tekst);
+  b.type = "button";
+  b.addEventListener("click", akcja);
+  return b;
+}
 
-function komunikat(tekst, typ = "") {
+function komunikat(tekst, typ = "", cofnij = false) {
   const k = $("#komunikat"); k.className = "pasek " + typ; k.textContent = tekst;
+  if (cofnij && historia.length) { k.append(" "); k.append(przycisk("Cofnij", "link", cofnijZmiane)); }
 }
 
 function ustawTekst(t, zrodlo) {
   $("#tekst").value = oczysc(t);
-  wybrany = null;
+  wybrany = null; przenoszony = null; pytanie = null;
+  historia.length = 0;
   $("#postep").hidden = true;
   odswiez();
-  if (!plan.bledy.length && plan.pozycje.length) komunikat(zrodlo + " Sprawdź podgląd i wyślij.", "ok");
+  if (!plan.bledy.length && plan.pozycje.length) komunikat(zrodlo + " Sprawdź kalendarz i wyślij.", "ok");
 }
 
 function odswiez() {
@@ -490,123 +932,348 @@ function odswiez() {
   if (tekst.trim() && plan.bledy.length) komunikat(plan.bledy.join(" "), "blad");
   else if (!tekst.trim()) komunikat("");
   $("#pusto").hidden = !!tekst.trim();
-  $("#edytor-info").textContent = tekst.trim() ? "– " + tekst.split("\n").length + " linii" : "";
+  $("#edytor-info").textContent = tekst.trim() ? tekst.split("\n").length + " " + odmiana(tekst.split("\n").length, "linia", "linie", "linii") : "";
   rysuj();
-  $("#wyslij").disabled = !(plan.pozycje.length && !plan.bledy.length);
+  przyciskWysylki(false);
   try { sessionStorage.setItem("pg.szkic", tekst); } catch {}
 }
 
+// ---------- edycja planu z kalendarza ----------
+function zastosuj(nowy, tekstKomunikatu, nowaData) {
+  historia.push($("#tekst").value);
+  if (historia.length > 40) historia.shift();
+  $("#tekst").value = nowy;
+  przenoszony = null; pytanie = null;
+  if (nowaData !== undefined) wybrany = nowaData;
+  odswiez();
+  komunikat(tekstKomunikatu, "ok", true);
+}
+
+function cofnijZmiane() {
+  if (!historia.length) return;
+  $("#tekst").value = historia.pop();
+  przenoszony = null; pytanie = null;
+  odswiez();
+  komunikat("Cofnięto ostatnią zmianę.", "ok", true);
+}
+
+function ustawDate(linie, p, d) {
+  for (let i = p.linia; i <= p.ost; i++) {
+    const r = linie[i].replace(/(data:\s*["']?)\d{4}-\d{2}-\d{2}/, "$1" + d);
+    if (r !== linie[i]) { linie[i] = r; return; }
+  }
+}
+
+function wybierzCel(d) {
+  const p = przenoszony;
+  if (!p) return;
+  if (d === p.data) { przenoszony = null; rysuj(); return; }
+  if (naDate(d) < dzisiaj) { komunikat("Ten dzień już minął – wybierz dziś albo późniejszy.", "blad"); return; }
+  const naCelu = plan.pozycje.filter(x => x.data === d && x.sport === p.sport);
+  if (naCelu.length) { pytanie = { p, cel: d, naCelu }; rysujTryb(); return; }
+  przenies(p, d, false);
+}
+
+function przenies(p, d, zamien) {
+  const linie = $("#tekst").value.split("\n");
+  ustawDate(linie, p, d);
+  let msg = p.pelna + ": " + kiedy(p.data) + " → " + kiedy(d) + ".";
+  if (zamien) {
+    pytanie.naCelu.forEach(x => ustawDate(linie, x, p.data));
+    msg = "Zamieniono dni: " + p.pelna + " na " + kiedy(d) + ", " + pytanie.naCelu.map(x => x.pelna).join(" i ") + " na " + kiedy(p.data) + ".";
+  }
+  zastosuj(linie.join("\n"), msg, d);
+}
+
+function usunPozycje(p) {
+  const linie = $("#tekst").value.split("\n");
+  linie.splice(p.linia, p.ost - p.linia + 1);
+  zastosuj(linie.join("\n"), "Usunięto: " + p.pelna + " (" + kiedy(p.data) + "). Po wysłaniu zniknie z kalendarza Garmina.");
+}
+
+function zacznijPrzenoszenie(p) {
+  przenoszony = p; pytanie = null;
+  rysuj();
+  $("#tygodnie").scrollIntoView({ block: "start", behavior: "smooth" });
+}
+
+function rysujTryb() {
+  const t = $("#tryb");
+  t.innerHTML = "";
+  t.hidden = !przenoszony;
+  document.body.classList.toggle("przenoszenie", !!przenoszony);
+  przyciskWysylki();
+  if (!przenoszony) return;
+  const tresc = el("div", "tryb-tresc");
+  if (pytanie) {
+    tresc.append(el("b", "", kiedy(pytanie.cel)[0].toUpperCase() + kiedy(pytanie.cel).slice(1) + " jest już " + pytanie.naCelu.map(x => x.pelna).join(" i ") + "."));
+    const a = el("div", "tryb-akcje");
+    a.append(
+      przycisk("Zamień dni", "maly glowny", () => przenies(pytanie.p, pytanie.cel, true)),
+      przycisk("Dodaj do tego dnia", "maly", () => przenies(pytanie.p, pytanie.cel, false)),
+      przycisk("Anuluj", "maly", () => { pytanie = null; rysujTryb(); }),
+    );
+    t.append(tresc, a);
+  } else {
+    tresc.append(el("b", "", "Gdzie przenieść: " + przenoszony.pelna + "?"), el("span", "", "Dotknij dnia w kalendarzu."));
+    t.append(tresc, przycisk("Anuluj", "maly", () => { przenoszony = null; rysuj(); }));
+  }
+}
+
+// ---------- rysowanie ----------
 function rysuj() {
   const sek = $("#podglad");
+  rysujTryb();
   if (!plan.pozycje.length) { sek.hidden = true; return; }
   sek.hidden = false;
-  const poz = [...plan.pozycje].sort((a, b) => a.data.localeCompare(b.data));
+  const poz = [...plan.pozycje].sort((a, b) => a.data.localeCompare(b.data) || (a.sport === "sila") - (b.sport === "sila"));
   const pierwsza = naDate(poz[0].data), ostatnia = naDate(poz[poz.length - 1].data);
-  const minione = poz.filter(p => naDate(p.data) < dzisiaj).length;
-  const silowych = poz.filter(p => p.rodzaj === "sila").length;
   const wgDaty = new Map();
   for (const p of poz) { if (!wgDaty.has(p.data)) wgDaty.set(p.data, []); wgDaty.get(p.data).push(p); }
-  const kluczDnia = l => l.map(p => p.klucz).join(" | ");
+  const biegi = poz.filter(p => p.sport === "bieg"), sily = poz.filter(p => p.sport === "sila");
+  const minione = poz.filter(p => naDate(p.data) < dzisiaj).length;
 
-  $("#ile").innerHTML = "";
-  $("#ile").append(String(poz.length), el("span", "", odmiana(poz.length, "trening", "treningi", "treningów")));
-  const tyg = Math.round((ostatnia - pierwsza) / 864e5 / 7) + 1;
-  $("#zakres").innerHTML = "";
-  $("#zakres").append(krotko(pierwsza) + "–" + krotko(ostatnia), el("small", "", tyg + " " + odmiana(tyg, "tydzień", "tygodnie", "tygodni")));
+  // nagłówek planu
+  const pn0 = plusDni(pierwsza, -dzienTyg(pierwsza));
+  const tygodni = Math.floor((ostatnia - pn0) / 864e5 / 7) + 1;
+  $("#tytul").textContent = pierwsza.getUTCDate() + " " + MIESIACE[pierwsza.getUTCMonth()] + " – " + ostatnia.getUTCDate() + " " + MIESIACE[ostatnia.getUTCMonth()];
+  const sumMin = biegi.reduce((s, p) => s + p.kmMin, 0), sumMax = biegi.reduce((s, p) => s + p.kmMax, 0);
+  const pod = [tygodni + " " + odmiana(tygodni, "tydzień", "tygodnie", "tygodni"),
+    biegi.length + " " + odmiana(biegi.length, "bieg", "biegi", "biegów")
+      + (biegi.some(p => p.opcjonalny) ? " (" + biegi.filter(p => p.opcjonalny).length + " opcjonalnie)" : "")];
+  if (sily.length) pod.push(sily.length + " " + odmiana(sily.length, "trening siłowy", "treningi siłowe", "treningów siłowych"));
+  if (sumMax) pod.push(kmTekst(sumMin, sumMax) + " biegu");
+  $("#podtytul").textContent = pod.join(", ");
+  $("#minione").textContent = minione ? minione + " " + odmiana(minione, "trening już minął i nie zostanie wysłany", "treningi już minęły i nie zostaną wysłane", "treningów już minęło i nie zostanie wysłanych") + "." : "";
 
-  // porównanie z planem w repo
-  const status = new Map();
-  let nowe = 0, zmienione = 0, usuniete = 0;
-  if (bazowy) {
-    for (const [d, l] of wgDaty) {
-      if (!bazowy.has(d)) { status.set(d, "nowy"); nowe++; }
-      else if (bazowy.get(d) !== kluczDnia(l)) { status.set(d, "zmiana"); zmienione++; }
+  // najbliższy trening
+  const nast = poz.find(p => naDate(p.data) >= dzisiaj);
+  const nb = $("#najblizszy");
+  nb.hidden = !nast;
+  if (nast) {
+    const dzien = wgDaty.get(nast.data);
+    nb.innerHTML = "";
+    nb.append(el("span", "nb-kiedy", kiedy(nast.data).replace(/^./, c => c.toUpperCase())), el("span", "nb-co", dzien.map(x => x.pelna).join(" + ")));
+    nb.onclick = () => { wybrany = nast.data; otworzTydzien(nast.data); rysuj(); przewinDo(nast.data); };
+  }
+
+  // filtr
+  for (const b of document.querySelectorAll("#filtr button")) b.setAttribute("aria-pressed", String(b.dataset.f === filtr));
+  const pasuje = p => filtr === "wszystko" || p.sport === filtr;
+
+  // zmiany względem repo
+  rysujZmiany();
+
+  // tygodnie
+  const tyg = $("#tygodnie");
+  tyg.innerHTML = "";
+  for (let pn = new Date(pn0), nr = 1; pn <= ostatnia; pn = plusDni(pn, 7), nr++) {
+    const nd = plusDni(pn, 6), klucz = iso(pn);
+    const dniTyg = [...Array(7)].map((_, i) => iso(plusDni(pn, i)));
+    const wTyg = dniTyg.flatMap(d => wgDaty.get(d) || []);
+    const minal = nd < dzisiaj, biezacy = pn <= dzisiaj && dzisiaj <= nd;
+    if (!tygodnieOtwarte.has(klucz)) tygodnieOtwarte.set(klucz, !minal);
+    const otwarty = tygodnieOtwarte.get(klucz) || !!przenoszony || (wybrany && dniTyg.includes(wybrany));
+
+    const s = el("section", "tydzien" + (biezacy ? " biezacy" : "") + (minal ? " minal" : ""));
+    const nag = el("button", "tydz-nag");
+    nag.type = "button";
+    nag.setAttribute("aria-expanded", String(otwarty));
+    const lewa = el("span", "tn");
+    lewa.append(el("b", "", "Tydzień " + nr), el("span", "", zakresTyg(pn) + (biezacy ? ", ten tydzień" : "")));
+    const notka = wTyg.find(p => p.notka)?.notka;
+    if (notka) lewa.append(el("em", "", notka));
+    const prawa = el("span", "tp");
+    const b = wTyg.filter(p => p.sport === "bieg"), si = wTyg.filter(p => p.sport === "sila");
+    const km = kmTekst(b.reduce((x, p) => x + p.kmMin, 0), b.reduce((x, p) => x + p.kmMax, 0));
+    if (filtr !== "sila" && km) prawa.append(el("span", "km", km));
+    if (filtr !== "bieg" && si.length) prawa.append(el("span", "ss", si.length + "× siła"));
+    nag.append(lewa, prawa);
+    nag.addEventListener("click", () => { tygodnieOtwarte.set(klucz, !otwarty); rysuj(); });
+    s.append(nag);
+
+    if (otwarty) {
+      const siatka = el("div", "dni");
+      for (const d of dniTyg) {
+        const dd = naDate(d);
+        const lista = (wgDaty.get(d) || []).filter(pasuje);
+        const btn = el("button", "dzien");
+        btn.type = "button";
+        btn.dataset.data = d;
+        const dzis = d === iso(dzisiaj);
+        const cel = !!przenoszony && dd >= dzisiaj;
+        if (!lista.length && !cel) {
+          btn.className = "dzien pusty" + (dzis ? " dzis" : "");
+          btn.tabIndex = -1;
+          btn.append(el("span", "nr", DNI[dzienTyg(dd)] + " " + dd.getUTCDate()));
+          siatka.append(btn); continue;
+        }
+        const glowny = lista.find(x => x.sport === "bieg") || lista[0];
+        const zSila = glowny && glowny.sport === "bieg" && lista.some(x => x.sport === "sila");
+        const zmienione = zmianyDni.has(d);
+        btn.className = "dzien " + (glowny ? glowny.rodzaj : "pusty") + (zSila ? " plus-sila" : "") + (dd < dzisiaj ? " minelo" : "")
+          + (zmienione ? " zmiana" : "") + (dzis ? " dzis" : "") + (cel ? " cel" : "")
+          + (przenoszony && przenoszony.data === d ? " zrodlo" : "");
+        btn.setAttribute("aria-pressed", String(wybrany === d));
+        btn.setAttribute("aria-label", d + (lista.length ? ": " + lista.map(x => x.pelna).join(" i ") : ": wolne"));
+        btn.append(el("span", "nr", DNI[dzienTyg(dd)] + " " + dd.getUTCDate()));
+        if (glowny) {
+          const dl = glowny.etykieta.length;
+          btn.append(el("span", "et" + (dl > 5 ? " s" : dl > 4 ? " m" : ""), glowny.etykieta));
+        }
+        if (zSila) btn.append(el("span", "sk", lista.filter(x => x.sport === "sila").map(x => x.etykieta).join("+")));
+        btn.addEventListener("click", () => {
+          if (przenoszony) { wybierzCel(d); return; }
+          wybrany = wybrany === d ? null : d; rysuj();
+        });
+        siatka.append(btn);
+      }
+      s.append(siatka);
+      if (wybrany && dniTyg.includes(wybrany) && !przenoszony) s.append(panelDnia(wybrany, (wgDaty.get(wybrany) || []).filter(pasuje)));
     }
-    for (const d of bazowy.keys())
-      if (!wgDaty.has(d) && naDate(d) >= pierwsza && naDate(d) <= ostatnia) usuniete++;
-  }
-  const zn = $("#znaczki");
-  zn.innerHTML = "";
-  if (bazowy) {
-    if (zmienione) zn.append(el("span", "znaczek zm", zmienione + " " + odmiana(zmienione, "zmieniony", "zmienione", "zmienionych")));
-    if (nowe) zn.append(el("span", "znaczek zm", nowe + " " + odmiana(nowe, "nowy dzień", "nowe dni", "nowych dni")));
-    if (usuniete) zn.append(el("span", "znaczek zm", usuniete + " do usunięcia"));
-    if (!zmienione && !nowe && !usuniete) zn.append(el("span", "znaczek ok", "✓ taki sam jak w repo"));
-  }
-  if (silowych) zn.append(el("span", "znaczek", "w tym " + silowych + " " + odmiana(silowych, "siłowy", "siłowe", "siłowych")));
-  if (minione) zn.append(el("span", "znaczek", minione + " " + odmiana(minione, "minął", "minęły", "minęło") + " – nie zostaną wysłane"));
-  zn.hidden = !zn.children.length;
-  $("#leg-zmiana").hidden = !(zmienione || nowe);
-
-  // siatka tygodni (od poniedziałku)
-  const s = $("#siatka");
-  s.innerHTML = "";
-  s.append(el("div", "dz", ""));
-  DNI.forEach((d, i) => s.append(el("div", "dz" + (i > 4 ? " weekend" : ""), d)));
-  const od = new Date(pierwsza); od.setUTCDate(od.getUTCDate() - ((od.getUTCDay() + 6) % 7));
-  for (let t = new Date(od); t <= ostatnia; t.setUTCDate(t.getUTCDate() + 7)) {
-    s.append(el("div", "tydz", krotko(t)));
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(t); d.setUTCDate(d.getUTCDate() + i);
-      const lista = wgDaty.get(iso(d));
-      const b = document.createElement("button");
-      b.type = "button";
-      if (!lista) { b.className = "dzien pusty"; b.tabIndex = -1; b.setAttribute("aria-hidden", "true"); s.append(b); continue; }
-      const p = lista.find(x => x.rodzaj !== "sila") || lista[0];
-      const zSila = p.rodzaj !== "sila" && lista.some(x => x.rodzaj === "sila");
-      b.className = "dzien " + p.rodzaj + (zSila ? " plus-sila" : "") + (d < dzisiaj ? " minelo" : "") + (status.get(p.data) ? " " + status.get(p.data) : "");
-      b.setAttribute("aria-pressed", String(wybrany === p.data));
-      b.setAttribute("aria-label", p.data + ": " + lista.map(x => x.pelna).join(" i "));
-      const dl = p.etykieta.length;
-      b.append(el("span", "nr", String(d.getUTCDate())), el("span", "et" + (dl > 5 ? " s" : dl > 4 ? " m" : ""), p.etykieta));
-      b.addEventListener("click", () => { wybrany = wybrany === p.data ? null : p.data; rysuj(); });
-      s.append(b);
-    }
+    tyg.append(s);
   }
 
-  // dopasowanie etykiet do szerokości komórki (zależy od czcionki i ekranu)
-  for (const e of s.querySelectorAll(".et")) {
+  // dopasowanie etykiet do szerokości komórki
+  for (const e of tyg.querySelectorAll(".et")) {
     let f = parseFloat(getComputedStyle(e).fontSize);
     while (e.scrollWidth > e.clientWidth + 0.5 && f > 9) { f -= 0.5; e.style.fontSize = f + "px"; }
   }
 
-  const lista = wybrany && wgDaty.get(wybrany);
-  $("#szczegoly").hidden = !lista;
-  if (lista) {
-    const p = lista[0];
-    const d = naDate(p.data);
-    const nz = $("#sz-nazwa");
-    nz.innerHTML = "";
-    lista.forEach(x => nz.append(el("b", x.rodzaj === "sila" ? "s" : "", x.pelna)));
-    const info = [DNI_PELNE[(d.getUTCDay() + 6) % 7] + " " + krotko(d)];
-    if (lista.some(x => x.opcjonalny)) info.push("opcjonalny");
-    if (d < dzisiaj) info.push("minął – nie zostanie wysłany");
-    if (status.get(p.data) === "zmiana") info.push("inny niż w repo");
-    if (status.get(p.data) === "nowy") info.push("nowy dzień");
-    $("#sz-info").textContent = info.join(", ");
+  rysujZestawy(poz);
+  $("#legenda").dataset.f = filtr;
+}
+
+let zmianyDni = new Set();
+function rysujZmiany() {
+  const box = $("#zmiany");
+  box.innerHTML = "";
+  zmianyDni = new Set();
+  if (!bazowy) { box.hidden = !historia.length; if (historia.length) box.append(przycisk("Cofnij ostatnią zmianę", "maly", cofnijZmiane)); return; }
+  const zmiany = porownaj(plan, bazowy);
+  for (const z of zmiany) if (z.p) { zmianyDni.add(z.p.data); if (z.z) zmianyDni.add(z.z); }
+  box.hidden = false;
+  const gora = el("div", "zm-gora");
+  if (!zmiany.length) {
+    box.className = "zmiany bez";
+    gora.append(el("span", "", "Kalendarz zgadza się z planem w repo."));
+    if (historia.length) gora.append(przycisk("Cofnij", "maly", cofnijZmiane));
+    box.append(gora);
+    return;
+  }
+  box.className = "zmiany";
+  gora.append(el("b", "", zmiany.length + " " + odmiana(zmiany.length, "zmiana", "zmiany", "zmian") + " do wysłania"));
+  if (historia.length) gora.append(przycisk("Cofnij", "maly", cofnijZmiane));
+  box.append(gora);
+  const ul = el("ul", "");
+  for (const z of zmiany) {
+    const li = el("li", "zm-" + (z.typ === "usunięty" ? "usun" : z.typ === "nowy" ? "nowy" : "inny"));
+    if (z.typ === "zestaw") { li.append(el("span", "zt", "zmieniony zestaw"), el("span", "", z.nazwa)); ul.append(li); continue; }
+    const opisZm = z.typ === "przeniesiony" ? kiedy(z.z) + " → " + kiedy(z.p.data) : kiedy(z.p.data);
+    const b = el("button", "zm-link");
+    b.type = "button";
+    b.append(el("span", "zt", z.typ), el("span", "", z.p.pelna), el("small", "", opisZm));
+    if (z.typ !== "usunięty") b.addEventListener("click", () => { wybrany = z.p.data; otworzTydzien(z.p.data); rysuj(); przewinDo(z.p.data); });
+    else b.disabled = true;
+    li.append(b);
+    ul.append(li);
+  }
+  box.append(ul);
+}
+
+const NAZWY_RODZAJOW = { spokojny: "spokojny", dlugi: "długi", akcent: "akcent", test: "test", start: "start", opcja: "opcjonalny", inny: "bieg", sila: "siła" };
+
+function panelDnia(d, lista) {
+  const dd = naDate(d);
+  const panel = el("div", "panel");
+  const nag = el("div", "panel-nag");
+  nag.append(el("b", "", DNI_PELNE[dzienTyg(dd)][0].toUpperCase() + DNI_PELNE[dzienTyg(dd)].slice(1) + ", " + dd.getUTCDate() + " " + MIESIACE[dd.getUTCMonth()]));
+  if (dd < dzisiaj) nag.append(el("span", "uwaga", "minął, nie zostanie wysłany"));
+  nag.append(przycisk("Zamknij", "maly zamknij", () => { wybrany = null; rysuj(); }));
+  panel.append(nag);
+  if (!lista.length) panel.append(el("p", "opis", "Dzień wolny."));
+  for (const p of lista) {
+    const art = el("article", "wpis r-" + p.rodzaj);
+    const h = el("div", "wpis-nag");
+    h.append(el("span", "znak", NAZWY_RODZAJOW[p.rodzaj] || p.rodzaj), el("h3", "", p.pelna));
+    const km = p.sport === "bieg" ? kmTekst(p.kmMin, p.kmMax) : "";
+    if (km) h.append(el("span", "wpis-km", km));
+    art.append(h);
+    if (p.opcjonalny) art.append(el("p", "meta", "Opcjonalny – zrób, jeśli czujesz się dobrze."));
+    if (p.opis) art.append(el("p", "opis", p.opis));
+    if (p.lista.length) {
+      const det = el("details", "kroki-box");
+      det.open = true;
+      det.append(el("summary", "", "Kroki na zegarku"));
+      det.append(listaKrokow(p.lista));
+      art.append(det);
+    }
+    const akcje = el("div", "akcje");
+    if (dd >= dzisiaj) akcje.append(przycisk("Przenieś na inny dzień", "maly glowny", () => zacznijPrzenoszenie(p)));
+    akcje.append(
+      przycisk("Usuń z planu", "maly", () => usunPozycje(p)),
+      przycisk("Pokaż w pliku", "maly", () => pokazWTekscie(p)),
+    );
+    art.append(akcje);
+    panel.append(art);
+  }
+  return panel;
+}
+
+function liczKroki(lista) {
+  return lista.reduce((s, k) => s + (k.typ === "powtorz" ? liczKroki(k.dzieci) : 1), 0);
+}
+
+function rysujZestawy(poz) {
+  const box = $("#zestawy");
+  box.innerHTML = "";
+  box.hidden = filtr !== "sila" || !plan.zestawy.size;
+  if (box.hidden) return;
+  box.append(el("h2", "", "Zestawy ćwiczeń"));
+  for (const z of plan.zestawy.values()) {
+    const daty = poz.filter(p => p.sport === "sila" && p.etykieta === z.klucz).map(p => p.data);
+    const det = el("details", "zestaw");
+    const sum = el("summary", "");
+    sum.append(el("span", "zk", z.klucz), el("span", "zn", z.nazwa), el("small", "", daty.length + "×"));
+    det.append(sum);
+    if (z.opis) det.append(el("p", "opis", z.opis));
+    det.append(listaKrokow(z.kroki));
+    if (daty.length) {
+      const ch = el("div", "daty");
+      for (const d of daty) {
+        const b = przycisk(kiedy(d), "chip" + (naDate(d) < dzisiaj ? " minelo" : ""), () => { wybrany = d; otworzTydzien(d); rysuj(); przewinDo(d); });
+        ch.append(b);
+      }
+      det.append(ch);
+    }
+    box.append(det);
   }
 }
 
-function pokazWTekscie() {
-  const p = plan.pozycje.filter(x => x.data === wybrany).sort((a, b) => a.linia - b.linia)[0];
-  if (!p) return;
+function otworzTydzien(d) {
+  const x = naDate(d);
+  tygodnieOtwarte.set(iso(plusDni(x, -dzienTyg(x))), true);
+}
+function przewinDo(d) {
+  requestAnimationFrame(() => {
+    const e = document.querySelector('.dzien[data-data="' + d + '"]');
+    if (e) e.closest(".tydzien").scrollIntoView({ block: "start", behavior: "smooth" });
+  });
+}
+
+function pokazWTekscie(p) {
   const ta = $("#tekst");
   const linie = ta.value.split("\n");
   let start = 0;
   for (let i = 0; i < p.linia; i++) start += linie[i].length + 1;
+  let koniec = start;
+  for (let i = p.linia; i <= p.ost; i++) koniec += linie[i].length + 1;
   $("#edytor").open = true;
   ta.focus();
-  ta.setSelectionRange(start, start + linie[p.linia].length);
+  ta.setSelectionRange(start, koniec - 1);
   const wys = parseFloat(getComputedStyle(ta).lineHeight) || 20;
   ta.scrollTop = Math.max(0, p.linia * wys - ta.clientHeight / 3);
   $("#edytor").scrollIntoView({ block: "start", behavior: "smooth" });
-}
-
-function mapaDni(pozycje) {
-  const m = new Map();
-  for (const p of [...pozycje].sort((a, b) => a.data.localeCompare(b.data)))
-    m.set(p.data, m.has(p.data) ? m.get(p.data) + " | " + p.klucz : p.klucz);
-  return m;
 }
 
 // ---------- plan z repo ----------
@@ -621,7 +1288,7 @@ async function wczytajBazowy() {
   if (!ust.token) return;
   try {
     const t = await pobierzZRepo();
-    bazowy = mapaDni(t ? rozbierz(t).pozycje : []);
+    bazowy = rozbierz(t || "");
     rysuj();
   } catch { /* brak porównania nie blokuje wysyłki */ }
 }
@@ -648,8 +1315,11 @@ function info(tekst, typ = "", link) {
   }
 }
 
+let wysylanie = false;
 function przyciskWysylki(zajety) {
-  $("#wyslij").disabled = zajety || !(plan.pozycje.length && !plan.bledy.length);
+  if (zajety !== undefined) wysylanie = zajety;
+  zajety = wysylanie;
+  $("#wyslij").disabled = zajety || !!przenoszony || !(plan.pozycje.length && !plan.bledy.length);
   $("#wyslij-tekst").textContent = zajety ? "Wysyłam…" : "Wyślij do Garmina";
 }
 
@@ -724,7 +1394,7 @@ async function sledz(wyslano, tekst) {
       if (stan.conclusion === "success") {
         etap(2, "zrobione"); etap(3, "zrobione");
         info("Gotowe. Zsynchronizuj zegarek, żeby zobaczyć zmiany.", "ok", run.html_url);
-        bazowy = mapaDni(rozbierz(tekst).pozycje);
+        bazowy = rozbierz(tekst); historia.length = 0;
         rysuj();
       } else {
         if (!zapis || zapis.conclusion !== "success") etap(2, "blad"); else etap(3, "blad");
@@ -763,7 +1433,6 @@ async function sprawdzPolaczenie() {
     wiersz(p.ok ? "✓ plan.yaml jest w repo" : p.status === 404 ? "• plan.yaml jeszcze nie istnieje – powstanie przy pierwszej wysyłce" : "✗ Nie mogę odczytać plan.yaml (" + p.status + ")");
     const a = await gh("/actions/runs?per_page=1");
     wiersz(a.ok ? "✓ Postęp synchronizacji będzie widoczny" : "• Bez uprawnienia Actions: Read-only – postęp sprawdzisz w Actions");
-    $("#repo-naglowek").textContent = ust.repo;
     wczytajBazowy();
   } catch {
     wiersz("✗ Brak połączenia z GitHubem.");
@@ -782,17 +1451,47 @@ async function wczytajPlik(plik) {
   ustawTekst(t, "Wczytano plik " + plik.name + ".");
 }
 
-function zapiszJakoPlik() {
-  const blob = new Blob([$("#tekst").value], { type: "application/x-yaml" });
+function nazwaPliku() {
+  // niezmieniony plan z repo dostaje datę w nazwie, żeby nie pomylić go z wersją roboczą
+  if (tekstZRepo !== null && $("#tekst").value === tekstZRepo) {
+    const d = new Date(), dd = n => String(n).padStart(2, "0");
+    return "plan_repo_" + d.getFullYear() + "-" + dd(d.getMonth() + 1) + "-" + dd(d.getDate()) + ".yaml";
+  }
+  return PLIK;
+}
+
+function odswiezPrzyciskZapisu() {
+  const zRepo = tekstZRepo !== null && $("#tekst").value === tekstZRepo;
+  $("#zapisz-plan-tekst").textContent = "Zapisz plik";
+}
+
+async function zapiszJakoPlik() {
+  const tekst = $("#tekst").value;
+  if (!tekst.trim()) { komunikat("Nie ma czego zapisać – najpierw wczytaj plan.", "blad"); return; }
+  const nazwa = nazwaPliku();
+  // na telefonie: arkusz udostępniania (Zapisz w Plikach, Dysk, wysłanie do czatu);
+  // text/plain, bo Android nie udostępnia plików application/x-yaml
+  const plik = new File([tekst], nazwa, { type: "text/plain" });
+  const telefon = matchMedia("(pointer: coarse)").matches;
+  if (telefon && navigator.canShare && navigator.canShare({ files: [plik] })) {
+    try { await navigator.share({ files: [plik], title: nazwa }); komunikat("Plan zapisany jako " + nazwa + ".", "ok"); }
+    catch (e) { if (e.name !== "AbortError") pobierzPlik(tekst, nazwa); }
+    return;
+  }
+  pobierzPlik(tekst, nazwa);
+}
+
+function pobierzPlik(tekst, nazwa) {
   const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = PLIK;
-  a.click();
+  a.href = URL.createObjectURL(new Blob([tekst], { type: "application/x-yaml" }));
+  a.download = nazwa;
+  document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  komunikat("Pobrano plik " + nazwa + ".", "ok");
 }
 
 // ---------- zdarzenia ----------
-$("#tekst").addEventListener("input", odswiez);
+$("#tekst").addEventListener("input", () => { przenoszony = null; pytanie = null; odswiez(); });
 
 $("#wklej").addEventListener("click", async () => {
   try {
@@ -816,16 +1515,21 @@ $("#z-repo").addEventListener("click", async () => {
   try {
     const t = await pobierzZRepo();
     if (t === null) { komunikat("W repo nie ma jeszcze pliku plan.yaml.", "blad"); return; }
-    bazowy = mapaDni(rozbierz(t).pozycje);
-    ustawTekst(t, "Wczytano plan z repo. Popraw go w tekście planu albo wybierz dzień w siatce.");
+    bazowy = rozbierz(t);
+    ustawTekst(t, "Wczytano plan z repo. Dotknij dnia, żeby zobaczyć trening, przenieść go albo usunąć.");
+    tekstZRepo = $("#tekst").value;
+    odswiezPrzyciskZapisu();
   } catch (e) { komunikat(e.message, "blad"); }
 });
 
 $("#wyczysc").addEventListener("click", () => {
-  $("#tekst").value = ""; wybrany = null; $("#postep").hidden = true; odswiez();
+  $("#tekst").value = ""; wybrany = null; przenoszony = null; historia.length = 0; $("#postep").hidden = true; odswiez();
 });
 $("#pobierz").addEventListener("click", zapiszJakoPlik);
-$("#sz-pokaz").addEventListener("click", pokazWTekscie);
+$("#zapisz-plan").addEventListener("click", zapiszJakoPlik);
+for (const b of document.querySelectorAll("#filtr button"))
+  b.addEventListener("click", () => { filtr = b.dataset.f; zapisz("pg.filtr", filtr); rysuj(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && przenoszony) { przenoszony = null; pytanie = null; rysuj(); } });
 
 $("#wyslij").addEventListener("click", wyslij);
 $("#otworz-ustawienia").addEventListener("click", () => otworzUstawienia());
@@ -833,13 +1537,11 @@ $("#sprawdz").addEventListener("click", sprawdzPolaczenie);
 $("#form-ustawien").addEventListener("submit", () => {
   zapisz("pg.token", $("#pole-token").value.trim());
   zapisz("pg.repo", $("#pole-repo").value.trim() || DOMYSLNE_REPO);
-  $("#repo-naglowek").textContent = ust.repo;
   wczytajBazowy();
 });
 
 // ---------- start ----------
 async function start() {
-  $("#repo-naglowek").textContent = ust.repo;
   const u = new URL(location.href);
   let wczytano = false;
 
