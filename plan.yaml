@@ -470,7 +470,7 @@ treningi:
   - {data: 2026-12-23, szablon: opcja_rozruch}
   - {data: 2026-12-25, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1, przebiezki: true}
   - {data: 2026-12-26, sila: C, opcjonalny: true}
-  - {data: 2026-12-27, szablon: dlugi, km_txt: "14-16", km: 14, opcja: 2, uwaga: "Tydzień regeneracji - luźno, bez przyspieszeń."}
+  - {data: 2026-12-27, szablon: dlugi, km_txt: "14-16", km: 14, opcja: 2, uwaga: "Tydzień odciążenia - spokojnie."}
 
   # --- Tydzień 2/8 (baza) ---
   - {data: 2026-12-28, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
@@ -502,7 +502,7 @@ treningi:
       - schlodzenie_std:
   - {data: 2027-01-02, szablon: opcja_rozruch}
   - {data: 2027-01-02, sila: C, opcjonalny: true}
-  - {data: 2027-01-03, szablon: dlugi, km_txt: "18-20", km: 18, opcja: 2}
+  - {data: 2027-01-03, szablon: dlugi, km_txt: "18-20", km: 18, opcja: 2, uwaga: "Cały w 5:20-5:35, bez przyspieszeń na końcu."}
 
   # --- Tydzień 3/8 (baza) ---
   - {data: 2027-01-04, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
@@ -597,7 +597,7 @@ treningi:
     dopisz_stop: true
     kroki: test_5km
   - {data: 2027-01-23, szablon: opcja_rozruch}
-  - {data: 2027-01-24, szablon: dlugi, km_txt: "14-16", km: 14, opcja: 2, uwaga: "Dzień po teście - spokojnie."}
+  - {data: 2027-01-24, szablon: dlugi, km_txt: "14-16", km: 14, opcja: 2, uwaga: "Tydzień odciążenia - spokojnie."}
 
   # --- Tydzień 6/8 (rozwój) ---
   - {data: 2027-01-25, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1}
