@@ -655,22 +655,72 @@ function opisSzablonu(p) {
   return "";
 }
 
-function kmDrzewa(lista) {
-  let min = 0, max = 0;
-  for (const k of lista) {
-    let a = 0, b = 0;
-    if (k.typ === "powtorz") { [a, b] = kmDrzewa(k.dzieci); a *= k.n; b *= k.n; }
-    else if (k.typ === "rozgrzewka_std") a = b = 3.4;
-    else if (k.typ === "schlodzenie_std") a = b = 2;
-    else if (k.typ === "przebiezki") a = b = 0.4;
-    else if (k.par) {
-      const d = k.par.km ? +k.par.km : k.par.m ? +k.par.m / 1000 : 0;
-      b = d; a = /OPCJONALNIE/i.test(k.par.notatka || "") ? 0 : d;
-    }
-    min += a; max += b;
-  }
-  return [min, max];
+// ---------- kilometry ----------
+// Szacunki dla kroków bez podanego dystansu (czas zamiast metrów).
+const TEMPO_TRUCHTU = 390;      // s/km – trucht w przerwach (ok. 6:30/km)
+const TEMPO_SPOKOJNE = 345;     // s/km – rozgrzewka, schłodzenie, bieg bez tempa (ok. 5:45/km)
+const PRZEBIEZKI = { n: 4, m: 100, truchtSek: 40 };
+const ROZGRZEWKA_KM = 3, PRZERWA_PO_ROZGRZEWCE_MIN = 2, SCHLODZENIE_KM = 2;
+
+const sekundy = par => (+par.min || 0) * 60 + (+par.sek || 0);
+const naSek = t => { const m = String(t).match(/^(\d+):(\d{1,2})$/); return m ? +m[1] * 60 + +m[2] : 0; };
+function tempoSrednie(par) {
+  const t = (Array.isArray(par.tempo) ? par.tempo : par.tempo ? [par.tempo] : []).map(naSek).filter(Boolean);
+  return t.length ? t.reduce((a, b) => a + b, 0) / t.length : 0;
 }
+
+// rozgrzewka standardowa = trzy osobne punkty: rozgrzewka, przebieżki, przerwa
+function rozwinStandardowe(lista) {
+  return lista.flatMap((k, i) => {
+    if (k.typ === "powtorz") return [{ ...k, dzieci: rozwinStandardowe(k.dzieci) }];
+    if (k.typ === "rozgrzewka_std") return [
+      { typ: "rozgrzewka", par: { km: ROZGRZEWKA_KM, notatka: "Spokojnie" } },
+      { typ: "przebiezki", par: {} },
+      // gdy plan ma własną przerwę zaraz po rozgrzewce, nie dublujemy jej
+      ...(lista[i + 1]?.typ === "przerwa" ? [] : [{ typ: "przerwa", par: { min: PRZERWA_PO_ROZGRZEWCE_MIN, notatka: "Marsz lub stanie, przed częścią główną" } }]),
+    ];
+    return [k];
+  });
+}
+
+// {km, trucht, szac}: dystans kroku, w tym trucht regeneracyjny; szac = wartość oszacowana z czasu
+function kmKroku(k) {
+  const p = k.par || {};
+  if (k.typ === "przebiezki") {
+    const n = +p.n || PRZEBIEZKI.n, m = +p.m || PRZEBIEZKI.m, ts = +p.trucht_sek || PRZEBIEZKI.truchtSek;
+    const trucht = (n - 1) * ts / TEMPO_TRUCHTU;
+    return { km: n * m / 1000 + trucht, trucht, szac: true };
+  }
+  if (k.typ === "schlodzenie_std") return { km: SCHLODZENIE_KM, trucht: 0, szac: false };
+  if (k.typ === "rozgrzewka_std") return { km: ROZGRZEWKA_KM, trucht: 0, szac: false };
+  if (k.typ === "przerwa" || k.typ === "cwiczenie" || k.typ === "auto") return { km: 0, trucht: 0, szac: false };
+  const regen = k.typ === "odpoczynek";
+  let km = p.km ? +p.km : p.m ? +p.m / 1000 : 0, szac = false;
+  if (!km && sekundy(p)) {
+    const tempo = tempoSrednie(p) || (regen ? TEMPO_TRUCHTU : TEMPO_SPOKOJNE);
+    km = sekundy(p) / tempo; szac = true;
+  }
+  return { km, trucht: regen ? km : 0, szac };
+}
+
+// [min, max, truchtMin, truchtMax]; kroki OPCJONALNIE liczą się tylko do max
+function kmDrzewa(lista) {
+  let min = 0, max = 0, tmin = 0, tmax = 0;
+  for (const k of lista) {
+    if (k.typ === "powtorz") {
+      const [a, b, c, d] = kmDrzewa(k.dzieci);
+      min += a * k.n; max += b * k.n; tmin += c * k.n; tmax += d * k.n;
+      continue;
+    }
+    const { km, trucht } = kmKroku(k);
+    const opc = /OPCJONALNIE/i.test(k.par?.notatka || "");
+    max += km; tmax += trucht;
+    if (!opc) { min += km; tmin += trucht; }
+  }
+  return [min, max, tmin, tmax];
+}
+
+const kmLiczba = x => { const r = Math.round(x * 10) / 10; return String(r).replace(".", ","); };
 
 const JEDNOSTRONNE_NOGA = ["przysiad_jednonoz", "przysiad_bulgarski", "mostek_jednonoz", "martwy_jednonoz", "wspiecia_jednonoz", "wejscia_na_podwyzszenie"];
 const JEDNOSTRONNE_STRONA = ["plank_boczny", "plank_boczny_noga", "copenhagen", "przywodziciele", "muszelka", "wymachy_bok", "wykroki_boczne"];
@@ -705,16 +755,25 @@ function cel(par) {
 function opisKroku(k) {
   const p = k.par || {};
   switch (k.typ) {
-    case "rozgrzewka_std": return { co: "Rozgrzewka 3 km", cel: "", notatka: "Potem 4× 100 m przebieżki i 2 min przerwy" };
-    case "schlodzenie_std": return { co: "Schłodzenie 2 km", cel: "spokojnie", notatka: "" };
-    case "przebiezki": return { co: "Przebieżki 4× 100 m", cel: "", notatka: "40 s truchtu między nimi" };
+    case "rozgrzewka_std": return { co: "Rozgrzewka " + ROZGRZEWKA_KM + " km", cel: "spokojnie", notatka: "" };
+    case "schlodzenie_std": return { co: "Schłodzenie " + SCHLODZENIE_KM + " km", cel: "spokojnie", notatka: "" };
+    case "przebiezki": {
+      const n = +p.n || PRZEBIEZKI.n, m = +p.m || PRZEBIEZKI.m, ts = +p.trucht_sek || PRZEBIEZKI.truchtSek;
+      return { co: "Przebieżki " + n + "× " + m + " m", cel: "≈ " + kmLiczba(kmKroku(k).km) + " km",
+        notatka: "Szybko, ale luźno; " + ts + " s truchtu między nimi (ok. " + kmLiczba(kmKroku(k).trucht) + " km)" };
+    }
     case "cwiczenie": {
       const ile = p.powt ? p.powt + " powt." : p.sek ? p.sek + " s" : p.min ? p.min + " min" : "do Lap";
       return { co: nazwaCwiczenia(p), cel: ile, notatka: [p.strona, p.notatka].filter(Boolean).join(". ") };
     }
     case "auto": return { co: p.co, cel: p.ile, notatka: p.notatka };
     default:
-      if (NAZWY_KROKOW[k.typ]) return { co: NAZWY_KROKOW[k.typ] + " " + dlugosc(p), cel: cel(p), notatka: p.notatka || "" };
+      if (NAZWY_KROKOW[k.typ]) {
+        const d = kmKroku(k);
+        const szac = d.szac && d.km ? "≈ " + kmLiczba(d.km) + " km" : "";
+        return { co: NAZWY_KROKOW[k.typ] + " " + dlugosc(p), cel: cel(p) || szac,
+          notatka: [p.notatka !== NAZWY_KROKOW[k.typ] && p.notatka, cel(p) && szac].filter(Boolean).join(", ") };
+      }
       return { co: k.typ.replace(/_/g, " "), cel: "", notatka: p.wartosc || "" };
   }
 }
@@ -947,12 +1006,13 @@ function rozbierz(tekst) {
       wynik.bledy.push(data + ": nieznany szablon „" + szablon + "”.");
     if (szablon || typeof pola.kroki === "string") { lista = krokiSzablonu({ ...pola }); opis = opis || opisSzablonu(pola); }
     const sport = rodzaj === "sila" ? "sila" : "bieg";
-    let [kmMin, kmMax] = sport === "bieg" ? kmDrzewa(lista) : [0, 0];
+    if (sport === "bieg") lista = rozwinStandardowe(lista);
+    let [kmMin, kmMax, truchtMin, truchtMax] = sport === "bieg" ? kmDrzewa(lista) : [0, 0, 0, 0];
     const opcjonalny = opc || rodzaj === "opcja";
-    if (opcjonalny) kmMin = 0;
+    if (opcjonalny) { kmMin = 0; truchtMin = 0; }
     const klucz = surowe.replace(/\s+/g, " ").trim();
     wynik.pozycje.push({
-      data, rodzaj, sport, etykieta, pelna, opis, lista, kmMin, kmMax, opcjonalny, notka: b.notka,
+      data, rodzaj, sport, etykieta, pelna, opis, lista, kmMin, kmMax, truchtMin, truchtMax, opcjonalny, notka: b.notka,
       linia: b.linia, ost: b.ost, klucz,
       kluczBez: klucz.replace(/data:\s*["']?\d{4}-\d{2}-\d{2}["']?\s*,?\s*/, ""),
     });
@@ -1010,9 +1070,13 @@ function zakresTyg(pn) {
     : pn.getUTCDate() + " " + MIESIACE[pn.getUTCMonth()] + " – " + nd.getUTCDate() + " " + MIESIACE[nd.getUTCMonth()];
 }
 function kmTekst(a, b) {
-  a = Math.round(a); b = Math.round(b);
+  a = Math.round(a * 10) / 10; b = Math.round(b * 10) / 10;
   if (!b) return "";
-  return (a === b ? "ok. " + a : a + "–" + b) + " km";
+  return (a === b ? "ok. " + kmLiczba(a) : kmLiczba(a) + "–" + kmLiczba(b)) + " km";
+}
+function truchtTekst(a, b) {
+  const t = kmTekst(a, b);
+  return t ? t.replace(/^ok\. /, "") : "";
 }
 
 // ---------- stan ----------
@@ -1168,7 +1232,8 @@ function rysuj() {
     biegi.length + " " + odmiana(biegi.length, "bieg", "biegi", "biegów")
       + (biegi.some(p => p.opcjonalny) ? " (" + biegi.filter(p => p.opcjonalny).length + " opcjonalnie)" : "")];
   if (sily.length) pod.push(sily.length + " " + odmiana(sily.length, "trening siłowy", "treningi siłowe", "treningów siłowych"));
-  if (sumMax) pod.push(kmTekst(sumMin, sumMax) + " biegu");
+  const trMin = biegi.reduce((s, p) => s + p.truchtMin, 0), trMax = biegi.reduce((s, p) => s + p.truchtMax, 0);
+  if (sumMax) pod.push(kmTekst(sumMin, sumMax) + " biegu" + (trMax >= 0.05 ? " (w tym ok. " + truchtTekst(trMin, trMax) + " truchtu w przerwach)" : ""));
   $("#podtytul").textContent = pod.join(", ");
 
   // najbliższy trening
@@ -1212,7 +1277,12 @@ function rysuj() {
     const prawa = el("span", "tp");
     const b = wTyg.filter(p => p.sport === "bieg"), si = wTyg.filter(p => p.sport === "sila");
     const km = kmTekst(b.reduce((x, p) => x + p.kmMin, 0), b.reduce((x, p) => x + p.kmMax, 0));
-    if (filtr !== "sila" && km) prawa.append(el("span", "km", km));
+    if (filtr !== "sila" && km) {
+      const tr = truchtTekst(b.reduce((x, p) => x + p.truchtMin, 0), b.reduce((x, p) => x + p.truchtMax, 0));
+      const s = el("span", "km", km);
+      if (tr) s.title = "W tym ok. " + tr + " truchtu w przerwach (szacunek)";
+      prawa.append(s);
+    }
     if (filtr !== "bieg" && si.length) prawa.append(el("span", "ss", si.length + "× siła"));
     nag.append(lewa, prawa);
     nag.addEventListener("click", () => { tygodnieOtwarte.set(klucz, !otwarty); rysuj(); });
@@ -1326,6 +1396,8 @@ function panelDnia(d, lista) {
     if (km) h.append(el("span", "wpis-km", km));
     art.append(h);
     if (p.opcjonalny) art.append(el("p", "meta", "Opcjonalny – zrób, jeśli czujesz się dobrze."));
+    if (p.sport === "bieg" && p.truchtMax >= 0.05)
+      art.append(el("p", "meta", "W tym ok. " + truchtTekst(p.truchtMin, p.truchtMax) + " truchtu w przerwach (szacunek przy 6:30/km)."));
     if (p.opis) art.append(el("p", "opis", p.opis));
     if (p.lista.length) {
       const det = el("details", "kroki-box");
