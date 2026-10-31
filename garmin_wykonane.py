@@ -15,8 +15,13 @@ Użycie:
     python garmin_wykonane.py --bez-odcinkow   # bez szczegółów okrążeń (szybciej)
 
 W pliku są tylko podsumowania: data, godzina, nazwa, dystans, czas, tętno,
-efekt treningowy i suma odcinków wg rodzaju kroku (rozgrzewka, bieg,
-regeneracja, przerwa, schłodzenie) – bez śladu GPS.
+efekt treningowy, czas w strefach tętna, suma odcinków wg rodzaju kroku
+(rozgrzewka, bieg, regeneracja, przerwa, schłodzenie) i lista okrążeń
+(dystans, czas, rodzaj) – aplikacja liczy z nich strefy Danielsa. Bez śladu GPS.
+
+Po aktualizacji skryptu starsze aktywności nie mają stref i okrążeń –
+uzupełnisz je jednym uruchomieniem z większym oknem, np. --dni 120
+(w Actions: Run workflow, pole „Ile dni wstecz”).
 """
 
 import argparse
@@ -36,6 +41,7 @@ SPORT = {
     "strength_training": "sila",
 }
 # rodzaj okrążenia w Garminie -> rodzaj kroku w planie
+KOD_OKRAZENIA = {"rozgrzewka": "w", "bieg": "b", "regeneracja": "r", "przerwa": "p", "schlodzenie": "s"}
 ODCINKI = {
     "WARMUP": "rozgrzewka", "INTERVAL": "bieg", "ACTIVE": "bieg",
     "RECOVERY": "regeneracja", "REST": "przerwa", "COOLDOWN": "schlodzenie",
@@ -72,15 +78,20 @@ def lista_aktywnosci(client, od, do):
 
 
 def odcinki(client, id_):
-    """Suma okrążeń wg rodzaju kroku treningu: {"regeneracja": {"km": .., "sek": ..}, ...}"""
+    """-> (suma okrążeń wg rodzaju kroku {"regeneracja": {"km", "sek"}, ...} albo None,
+           lista okrążeń [[km, sek, kod], ...] albo None)"""
     try:
         dane = client.get_activity_splits(id_)
     except Exception as e:
         print(f"  odcinki {id_}: pominięte ({e})")
-        return None
-    wynik = {}
+        return None, None
+    wynik, okr = {}, []
     for lap in (dane or {}).get("lapDTOs") or []:
         rodzaj = ODCINKI.get(str(lap.get("intensityType", "")).upper())
+        km = round((lap.get("distance") or 0) / 1000, 3)
+        sek = round(lap.get("movingDuration") or lap.get("duration") or 0)
+        if sek:
+            okr.append([km, sek, KOD_OKRAZENIA.get(rodzaj, "b")])
         if not rodzaj:
             continue
         s = wynik.setdefault(rodzaj, {"km": 0.0, "sek": 0})
@@ -89,8 +100,28 @@ def odcinki(client, id_):
     for s in wynik.values():
         s["km"] = round(s["km"], 3)
         s["sek"] = round(s["sek"])
-    # sam „bieg” bez innych rodzajów to zwykłe autolapy – nic nie wnoszą
-    return wynik if set(wynik) - {"bieg"} else None
+    # sam „bieg” bez innych rodzajów to zwykłe autolapy – suma nic nie wnosi
+    return (wynik if set(wynik) - {"bieg"} else None), (okr or None)
+
+
+def strefy_tetna(client, a):
+    """Czas w strefach tętna 1-5 w sekundach (z podsumowania albo osobnym zapytaniem)."""
+    z = [a.get(f"hrTimeInZone_{i}") for i in range(1, 6)]
+    if any(z):
+        return [round(x or 0) for x in z]
+    if not a.get("averageHR"):
+        return None
+    try:
+        dane = client.get_activity_hr_in_timezones(a.get("activityId")) or []
+    except Exception as e:
+        print(f"  strefy {a.get('activityId')}: pominięte ({e})")
+        return None
+    wynik = [0] * 5
+    for s in dane:
+        n = int(s.get("zoneNumber") or 0)
+        if 1 <= n <= 5:
+            wynik[n - 1] = round(s.get("secsInZone") or 0)
+    return wynik if any(wynik) else None
 
 
 def rekord(a):
@@ -152,14 +183,22 @@ def main():
         r = rekord(a)
         if not r.get("id") or not r["data"]:
             continue
-        poprz = stare.get(r["id"])
+        poprz = stare.get(r["id"]) or {}
         if r["sport"] == "bieg" and not arg.bez_odcinkow:
-            if poprz and "odcinki" in poprz:       # okrążenia się nie zmieniają – bez ponownego pytania
-                r["odcinki"] = poprz["odcinki"]
+            if "okrazenia" in poprz:                # okrążenia się nie zmieniają – bez ponownego pytania
+                for k in ("odcinki", "okrazenia"):
+                    if k in poprz:
+                        r[k] = poprz[k]
             else:
-                o = odcinki(client, r["id"])
+                o, okr = odcinki(client, r["id"])
                 if o:
                     r["odcinki"] = o
+                if okr:
+                    r["okrazenia"] = okr
+        if r["sport"] in ("bieg", "sila"):
+            z = poprz.get("strefy") or strefy_tetna(client, a)
+            if z:
+                r["strefy"] = z
         nowe.append(r)
 
     # okno odświeżania zastępujemy w całości (aktywność usunięta w Garminie znika też tu)

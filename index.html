@@ -19,6 +19,8 @@
   --signal: #F2C230; --on-signal: #13233A; --easy: #CCDCF1; --red: #C23B3B; --ok: #2E7D4F;
   --sila: #2A9A86; --on-sila: #FFFFFF; --link: #2C62A8; --start-bg: #C23B3B; --karta-ramka: transparent; --minelo: .35;
   --k-bieg: #2C62A8; --k-regen: #9AA6B5; --k-rozg: #D64545; --k-schl: #2E9D57; --cien: rgba(19,35,58,.18);
+  --zE: #9CC3EE; --zM: #59C2AE; --zT: #F2C230; --zI: #F08A45; --zR: #E05555;
+  --h1: #B8C2CF; --h2: #6FA8E6; --h3: #5CC08A; --h4: #F2A33A; --h5: #E05555;
   --cond: "Barlow Condensed", "Roboto Condensed", sans-serif-condensed, "Arial Narrow", system-ui, sans-serif;
   --body: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, "Cascadia Mono", "Roboto Mono", Menlo, monospace;
@@ -35,6 +37,8 @@
     --signal: #FFD24A; --on-signal: #13233A; --easy: #355E92; --red: #EC6A6A; --ok: #63CB92;
     --sila: #3FC2AA; --on-sila: #04131C; --link: #8FBDF5; --start-bg: #BE3C3C; --karta-ramka: #2A4166; --minelo: .55;
     --k-bieg: #5B9BEA; --k-regen: #7F92AD; --k-rozg: #EE6B6B; --k-schl: #4CC17A; --cien: rgba(0,0,0,.55); --biezacy-mix: 8%;
+    --zE: #8DB8EC; --zM: #4FCCB5; --zT: #FFD24A; --zI: #FF9D5C; --zR: #FF6F6F;
+    --h1: #AEB9C8; --h2: #78B2F0; --h3: #63CB92; --h4: #FFB04A; --h5: #FF6F6F;
     color-scheme: dark;
   }
 }
@@ -44,6 +48,8 @@
   --signal: #FFD24A; --on-signal: #13233A; --easy: #355E92; --red: #EC6A6A; --ok: #63CB92;
   --sila: #3FC2AA; --on-sila: #04131C; --link: #8FBDF5; --start-bg: #BE3C3C; --karta-ramka: #2A4166; --minelo: .55;
   --k-bieg: #5B9BEA; --k-regen: #7F92AD; --k-rozg: #EE6B6B; --k-schl: #4CC17A; --cien: rgba(0,0,0,.55); --biezacy-mix: 8%;
+    --zE: #8DB8EC; --zM: #4FCCB5; --zT: #FFD24A; --zI: #FF9D5C; --zR: #FF6F6F;
+    --h1: #AEB9C8; --h2: #78B2F0; --h3: #63CB92; --h4: #FFB04A; --h5: #FF6F6F;
   color-scheme: dark;
 }
 *, *::before, *::after { box-sizing: inherit; }
@@ -155,6 +161,7 @@ dialog::backdrop { background: rgba(5,12,24,.55); }
 dialog h2 { margin: 0 0 4px; font: 700 26px/1 var(--cond); }
 label { display: block; font-weight: 600; margin-top: 16px; }
 label span { display: block; font-weight: 400; color: var(--muted); font-size: 14px; }
+dialog select { width: 100%; margin-top: 6px; padding: 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--sunk); color: var(--ink); font: inherit; }
 dialog input { width: 100%; margin-top: 6px; padding: 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--sunk); }
 .wiersz { display: flex; gap: 8px; margin-top: 18px; }
 .wiersz button { flex: 1; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; border: 1px solid var(--line); background: var(--surface); }
@@ -460,42 +467,85 @@ fieldset.tempa legend { font-weight: 600; padding: 0 4px; }
 .wyk-box.ok .wpis-stat div { background: var(--surface); }
 .wyk-box > .maly { margin-top: 8px; }
 
-/* ---------- statystyki ---------- */
-.stat-nag { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
-.stat-nag h2 { margin: 0; font: 700 24px/1 var(--cond); margin-right: auto; }
-.stat-nag small { color: var(--muted); font-size: 13.5px; }
+/* ---------- zakładki i statystyki ---------- */
+.widoki { grid-template-columns: 1fr 1fr; margin-top: 12px; padding: 4px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+.widoki button { padding: 11px 4px; font: 700 18px/1 var(--cond); letter-spacing: .01em; }
+.widoki button[aria-selected="true"] { background: var(--track); color: var(--on-track); box-shadow: none; }
+.statystyki > .karta:first-child { margin-top: 12px; }
+.stat-tyt { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 10px; margin-bottom: 12px; }
+.stat-tyt h2 { margin: 0; font: 700 24px/1.05 var(--cond); }
+.stat-tyt small { color: var(--muted); font-size: 14px; }
+.stat-nag { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.stat-zrodlo b { display: block; font: 700 20px/1.1 var(--cond); }
+.stat-zrodlo span { color: var(--muted); font-size: 14px; }
+.stat .okres { margin-top: 14px; }
 .stat .pasek { margin-top: 10px; background: var(--sunk); }
-.stat-uwaga { margin: 10px 0 0; font-size: 14px; color: var(--muted); max-width: 62ch; }
-.stat-blok { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
-.stat-blok h3 { margin: 0 0 8px; font: 700 19px/1.1 var(--cond); }
-.stat-blok .wpis-stat { margin-top: 0; }
-.tydz-postep { margin-top: 12px; }
-.tydz-postep p { margin: 0 0 6px; font-size: 14.5px; }
-.pasek-post { position: relative; height: 12px; border-radius: 99px; background: var(--sunk); box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
+.stat-uwaga { margin: 12px 0 0; font-size: 13.5px; line-height: 1.45; color: var(--muted); max-width: 62ch; }
+
+.kafle { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.kafle > div { background: var(--sunk); border-radius: 10px; padding: 10px 12px; box-shadow: inset 0 0 0 1px var(--karta-ramka); }
+.kafle b { display: block; font: 700 26px/1.05 var(--cond); color: var(--ink); overflow-wrap: anywhere; }
+.kafle span { display: block; margin-top: 3px; font-size: 13.5px; line-height: 1.3; color: var(--muted); }
+@media (min-width: 560px) { .kafle { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.wpis-stat span { display: block; line-height: 1.3; margin-top: 2px; }
+
+.tydz-postep { margin-top: 14px; }
+.tydz-postep p { margin: 0 0 6px; font-size: 15px; }
+.pasek-post { position: relative; height: 14px; border-radius: 99px; background: var(--sunk); box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
 .pasek-post i { display: block; height: 100%; background: var(--ok); border-radius: 99px; }
 .pasek-post .znacznik { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--ink); opacity: .6; }
+
+/* strefy Danielsa i tętna */
+.z-E { --zc: var(--zE); } .z-M { --zc: var(--zM); } .z-T { --zc: var(--zT); } .z-I { --zc: var(--zI); } .z-R { --zc: var(--zR); }
+.h-1 { --zc: var(--h1); } .h-2 { --zc: var(--h2); } .h-3 { --zc: var(--h3); } .h-4 { --zc: var(--h4); } .h-5 { --zc: var(--h5); }
+.d-wiersz { display: grid; grid-template-columns: 72px 1fr; align-items: center; gap: 8px; margin-top: 8px; }
+.d-etyk { font: 600 15px/1 var(--cond); color: var(--muted); }
+.d-pasek { display: flex; gap: 2px; height: 26px; border-radius: 7px; overflow: hidden; }
+.d-pasek i { display: flex; align-items: center; justify-content: center; flex: 1 1 0; min-width: 3px; background: var(--zc);
+  color: #0B1524; font: 700 13px/1 var(--cond); font-style: normal; white-space: nowrap; overflow: hidden; }
+.d-pasek.hr { margin-top: 4px; }
+.d-tabela { margin-top: 14px; }
+.d-rz { display: grid; grid-template-columns: minmax(0, 1fr) 62px 74px; gap: 8px; align-items: center; padding: 9px 0; border-top: 1px solid var(--line); }
+.d-rz.d-nag { border-top: 0; padding: 0 0 4px; font-size: 12.5px; color: var(--muted); font-weight: 600; }
+.d-rz.d-nag span:nth-child(n+2) { text-align: right; }
+.d-strefa { display: flex; align-items: center; gap: 8px; min-width: 0; font-weight: 600; font-size: 14.5px; }
+.d-strefa i, .hr-n i { flex: none; width: 26px; height: 26px; border-radius: 7px; background: var(--zc); color: #0B1524;
+  font: 700 15px/26px var(--cond); font-style: normal; text-align: center; }
+.d-st { min-width: 0; }
+.d-st b { display: block; font-weight: 600; font-size: 15px; line-height: 1.2; }
+.d-st small { display: block; font: 600 15px/1.2 var(--cond); color: var(--muted); }
+.d-l { text-align: right; font: 700 19px/1.1 var(--cond); }
+.d-l small { display: block; font: 500 12.5px/1.2 var(--body); color: var(--muted); }
+.d-l.ponad { color: var(--red); }
+ul.hr-lista { list-style: none; margin: 12px 0 0; padding: 0; }
+.hr-lista li { display: grid; grid-template-columns: 26px minmax(0, 1fr) 66px 40px; gap: 10px; align-items: center; padding: 7px 0; }
+.hr-n { display: flex; }
+.hr-s { min-width: 0; font-size: 14px; font-weight: 600; }
+.hr-pr { display: block; height: 8px; margin-top: 5px; border-radius: 99px; background: var(--sunk); overflow: hidden; }
+.hr-pr i { display: block; height: 100%; background: var(--zc); border-radius: 99px; }
+.hr-lista b { font: 700 18px/1 var(--cond); text-align: right; white-space: nowrap; }
+.hr-proc { text-align: right; color: var(--muted); font: 600 15px/1 var(--cond); }
+
+/* listy aktywności: dane zawsze pod nazwą */
 ul.tempa-wyk, ul.akt { list-style: none; margin: 0; padding: 0; }
-.tempa-wyk li { display: grid; grid-template-columns: 1fr auto auto; gap: 4px 10px; align-items: center; padding: 8px 0; }
+.tempa-wyk li { display: grid; grid-template-columns: 1fr auto auto; gap: 4px 10px; align-items: center; padding: 10px 0; }
 .tempa-wyk li + li { border-top: 1px solid var(--line); }
-.tempa-wyk b { display: block; font-weight: 600; font-size: 14.5px; }
+.tempa-wyk b { display: block; font-weight: 600; font-size: 15px; }
 .tempa-wyk small { color: var(--muted); font-size: 13px; }
-.tempa-wyk strong { font: 700 21px/1 var(--cond); }
+.tempa-wyk strong { font: 700 23px/1 var(--cond); }
 .tempa-wyk .zgodne { color: var(--ok); font-size: 13.5px; font-weight: 600; }
-.rozklad { display: flex; gap: 2px; height: 14px; border-radius: 99px; overflow: hidden; }
-.rozklad i { display: block; flex: 1 1 0; min-width: 2px; }
-.r-spok { background: var(--easy); } .r-mocno { background: var(--signal); } .r-prz { background: var(--k-regen); }
-.rozklad-leg { margin: 6px 0 12px; font-size: 13px; color: var(--muted); line-height: 1.7; }
-.rozklad-leg i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin: 0 4px 0 0; vertical-align: -1px; }
-.rozklad-leg i:not(:first-child) { margin-left: 10px; }
-.maly:disabled { opacity: .6; cursor: default; }
-.akt li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 12px; padding: 8px 0 8px 10px; border-left: 3px solid var(--track-2); }
-.akt li + li { margin-top: 4px; }
+.stat ul.akt { margin-top: 12px; }
+.akt li { display: block; padding: 8px 0 8px 12px; border-left: 4px solid var(--track-2); }
+.akt li + li { margin-top: 6px; }
 .akt li.akt-sila { border-left-color: var(--sila); } .akt li.akt-inny { border-left-color: var(--line); }
-.akt-co { min-width: 0; }
-.akt-co a { font-weight: 600; text-decoration: none; color: var(--ink); }
+.akt li.akt-nie { border-left-color: var(--red); }
+.akt li.akt-neutr { border-left-color: var(--line); }
+.akt-co { display: block; min-width: 0; }
+.akt-co a, .akt-co b { font-weight: 600; font-size: 15px; text-decoration: none; color: var(--ink); }
 .akt-co a:hover { text-decoration: underline; }
 .akt-co small { display: block; color: var(--muted); font-size: 13px; }
-.akt-dane { display: flex; flex-wrap: wrap; gap: 0 10px; font: 600 15px/1.3 var(--cond); }
+.akt-dane { display: flex; flex-wrap: wrap; gap: 2px 14px; margin-top: 4px; font: 600 17px/1.3 var(--cond); }
+.akt-dane .ok { color: var(--ok); } .akt-dane .nie { color: var(--red); } .akt-dane .plan { color: var(--muted); font-weight: 500; }
 .motyw { margin-top: 8px; }
 
 </style>
@@ -522,6 +572,16 @@ ul.tempa-wyk, ul.akt { list-style: none; margin: 0; padding: 0; }
   </div>
   <input type="file" id="plik" tabindex="-1" aria-hidden="true">
   <p class="pasek" id="komunikat" role="status"></p>
+  <div class="filtr widoki" id="widoki" role="tablist" aria-label="Widok" hidden>
+    <button type="button" role="tab" data-w="plan">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Plan
+    </button>
+    <button type="button" role="tab" data-w="stat">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15v3M12 10v8M17 6v12"/></svg>
+      Statystyki
+    </button>
+  </div>
 
   <section class="pusto" id="pusto">
     <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><rect x="6" y="14" width="52" height="36" rx="18"/><rect x="14" y="22" width="36" height="20" rx="10"/></svg>
@@ -568,7 +628,7 @@ ul.tempa-wyk, ul.akt { list-style: none; margin: 0; padding: 0; }
     </div>
   </section>
 
-  <section class="karta stat" id="statystyki" hidden aria-label="Statystyki treningów"></section>
+  <div class="statystyki" id="statystyki" role="tabpanel" hidden aria-label="Statystyki treningów"></div>
 
   <section class="karta postep" id="postep" hidden aria-live="polite">
     <h2>Wysyłanie do Garmina</h2>
@@ -634,6 +694,15 @@ ul.tempa-wyk, ul.akt { list-style: none; margin: 0; padding: 0; }
         <label>Marsz<input id="t-marsz" autocomplete="off" placeholder="10:00"></label>
         <label>Przebieżki<input id="t-przebiezka" autocomplete="off" placeholder="3:45"></label>
       </div>
+    </fieldset>
+    <fieldset class="tempa">
+      <legend>Strefy Danielsa</legend>
+      <span class="tempa-info">Wynik, z którego liczę VDOT i tempa E, M, T, I, R w statystykach. Po teście albo starcie wpisz nowy.</span>
+      <div class="tempa-siatka">
+        <label>Dystans<select id="vdot-dyst"><option value="5">5 km</option><option value="10">10 km</option><option value="21.1">półmaraton</option><option value="42.2">maraton</option></select></label>
+        <label>Czas<input id="vdot-czas" autocomplete="off" placeholder="19:44"></label>
+      </div>
+      <span class="tempa-info" id="vdot-info"></span>
     </fieldset>
     <ul id="test-wynik"></ul>
     <div class="wiersz">
@@ -1478,6 +1547,14 @@ function truchtTekst(a, b) {
 }
 
 // ---------- stan ----------
+let widok = (() => { try { return sessionStorage.getItem("pg.widok") || "plan"; } catch { return "plan"; } })();
+function ustawWidok(w) {
+  widok = w;
+  try { sessionStorage.setItem("pg.widok", w); } catch {}
+  if (w === "stat") przenoszony = null;
+  rysuj();
+  window.scrollTo({ top: 0 });
+}
 let plan = { pozycje: [], bledy: [], zestawy: new Map() };
 let tekstZRepo = null;      // plan.yaml dokładnie tak, jak pobrany z repo
 let bazowy = null;            // rozbiór planu z repo
@@ -1720,8 +1797,13 @@ function rysujTryb() {
 function rysuj() {
   const sek = $("#podglad");
   rysujTryb();
-  if (!plan.pozycje.length) { sek.hidden = true; $("#statystyki").hidden = true; return; }
-  sek.hidden = false;
+  const jestPlan = !!plan.pozycje.length;
+  $("#widoki").hidden = !jestPlan;
+  for (const b of document.querySelectorAll("#widoki button")) b.setAttribute("aria-selected", String(b.dataset.w === widok));
+  $("#statystyki").hidden = !jestPlan || widok !== "stat";
+  $("#edytor").hidden = jestPlan && widok === "stat";
+  if (!jestPlan) { sek.hidden = true; return; }
+  sek.hidden = widok === "stat";
   const poz = [...plan.pozycje].sort((a, b) => a.data.localeCompare(b.data) || (a.sport === "sila") - (b.sport === "sila"));
   const pierwsza = naDate(poz[0].data), ostatnia = naDate(poz[poz.length - 1].data);
   const wgDaty = new Map();
@@ -1869,7 +1951,7 @@ function rysuj() {
 
   rysujZestawy(poz);
   rysujObjetosc(objetosc);
-  rysujStatystyki(poz);
+  if (widok === "stat") rysujStatystyki(poz); else ostatniePoz = poz;
   const wszystkieOtwarte = [...tyg.querySelectorAll(".tydz-nag")].every(n => n.getAttribute("aria-expanded") === "true");
   $("#rozwin-wszystkie").textContent = wszystkieOtwarte ? "Zwiń tygodnie" : "Rozwiń tygodnie";
   $("#rozwin-wszystkie").dataset.stan = wszystkieOtwarte ? "zwin" : "rozwin";
@@ -1920,89 +2002,296 @@ function rysujObjetosc(tyg) {
   }
 }
 
-// ---------- statystyki ----------
+// ---------- strefy Danielsa (VDOT z wyniku referencyjnego) ----------
+// VO2 przy prędkości v [m/min] i odsetek VO2max utrzymywany przez t minut – wzory Danielsa i Gilberta
+const VO2 = v => -4.60 + 0.182258 * v + 0.000104 * v * v;
+const procMax = t => 0.8 + 0.1894393 * Math.exp(-0.012778 * t) + 0.2989558 * Math.exp(-0.1932605 * t);
+const DYSTANSE_VDOT = { "5": [5000, "5 km"], "10": [10000, "10 km"], "21.1": [21097.5, "półmaraton"], "42.2": [42195, "maraton"] };
+const WYNIK_DOMYSLNY = { dyst: "5", czas: "19:44" };       // test 5 km z 13.10
+function czasNaSek(t) {
+  const c = String(t || "").trim().split(":").map(Number);
+  if (c.some(isNaN) || c.length < 2 || c.length > 3) return 0;
+  return c.reduce((s, x) => s * 60 + x, 0);
+}
+function wynikVdot() {
+  let w = {};
+  try { w = JSON.parse(czytaj("pg.vdot", "{}")) || {}; } catch {}
+  return { ...WYNIK_DOMYSLNY, ...w };
+}
+function liczVdot(w = wynikVdot()) {
+  const m = DYSTANSE_VDOT[w.dyst]?.[0], sek = czasNaSek(w.czas);
+  if (!m || !sek) return 0;
+  const t = sek / 60;
+  return VO2(m / t) / procMax(t);
+}
+// tempo [s/km], przy którym wysiłek to ułamek f VDOT
+function tempoDlaUlamka(f, vdot) {
+  const a = 0.000104, b = 0.182258, c = -(f * vdot + 4.60);
+  return 60000 / ((-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a));
+}
+// granice stref jako ułamek VDOT: E | M | T | I | R (T ≈ 88%, I ≈ 97–100%, R powyżej VO2max)
+const STREFY_D = [
+  { k: "E", nazwa: "Easy", opis: "spokojne, długie, rozgrzewka, trucht w przerwach", do: 0.76 },
+  { k: "M", nazwa: "Marathon", opis: "tempo maratońskie", do: 0.85 },
+  { k: "T", nazwa: "Threshold", opis: "próg, tempo komfortowo ciężkie", do: 0.93, limit: 10 },
+  { k: "I", nazwa: "Interval", opis: "interwały VO2max", do: 1.01, limit: 8 },
+  { k: "R", nazwa: "Repetition", opis: "szybkość, przebieżki", do: Infinity, limit: 5 },
+];
+function strefaD(tempo, vdot) {
+  if (!tempo || !vdot) return null;
+  const f = VO2(60000 / tempo) / vdot;
+  return STREFY_D.find(z => f < z.do).k;
+}
+function rozkladPusty() { return Object.fromEntries(STREFY_D.map(z => [z.k, { km: 0, sek: 0 }])); }
+function dodajD(r, k, km, sek) { if (k && km > 0) { r[k].km += km; r[k].sek += sek; } }
+// plan: każdy krok wg tempa docelowego / z opisu / z ustawień; trucht = E, przebieżki = R, marsz i postój pomijam
+function rozkladPlanu(pozycje, vdot) {
+  const r = rozkladPusty();
+  for (const p of pozycje) {
+    if (p.sport !== "bieg" || p.opcjonalny) continue;
+    for (const k of liscie(p.lista)) {
+      if (jestOpc(k) || k.typ === "przerwa") continue;
+      const m = miaraKroku(k);
+      dodajD(r, k.typ === "odpoczynek" ? "E" : k.par?.przebiezka ? "R" : strefaD(tempoKroku(k).t, vdot), m.km, m.sek);
+    }
+  }
+  return r;
+}
+// wykonane: okrążenia z Garmina wg tempa; bez okrążeń – cała aktywność wg średniego tempa
+function rozkladWykonanych(akt, vdot) {
+  const r = rozkladPusty();
+  for (const a of akt) {
+    if (a.sport !== "bieg") continue;
+    if (Array.isArray(a.okrazenia) && a.okrazenia.length) {
+      for (const [km, sek, kod] of a.okrazenia) {
+        if (kod === "p" || !km || km < 0.05) continue;
+        dodajD(r, kod === "r" ? "E" : strefaD(sek / km, vdot), km, sek);
+      }
+    } else if (a.km > 0.2) dodajD(r, strefaD((a.ruch_sek || a.sek) / a.km, vdot), a.km, a.ruch_sek || a.sek);
+  }
+  return r;
+}
+
+// ---------- statystyki (osobna zakładka) ----------
 let ostatniePoz = [];
+let okresStat = czytaj("pg.okres", "4tyg");
 function rysujStatystykiPonownie() { rysujStatystyki(ostatniePoz); }
+
+function zakresOkresu(poz) {
+  const dzis = iso(dzisiaj);
+  if (okresStat === "tydz") { const pn = plusDni(dzisiaj, -dzienTyg(dzisiaj)); return { od: iso(pn), do: iso(plusDni(pn, 6)), wykDo: dzis, nazwa: "ten tydzień" }; }
+  if (okresStat === "plan") return { od: poz[0].data, do: poz[poz.length - 1].data, wykDo: dzis, nazwa: "cały plan" };
+  return { od: iso(plusDni(dzisiaj, -27)), do: dzis, wykDo: dzis, nazwa: "ostatnie 4 tygodnie" };
+}
 
 function rysujStatystyki(poz) {
   ostatniePoz = poz;
   const box = $("#statystyki");
   box.innerHTML = "";
-  box.hidden = !poz.length;
-  if (box.hidden) return;
+  if (!poz.length) return;
   const dzis = iso(dzisiaj);
   const biegi = poz.filter(p => p.sport === "bieg"), sily = poz.filter(p => p.sport === "sila");
+  const zak = zakresOkresu(poz);
+  const wOkresie = p => p.data >= zak.od && p.data <= zak.do;
+  const aktOkresu = (sport) => aktywnosci(sport).filter(a => a.data >= zak.od && a.data <= zak.wykDo);
 
-  // nagłówek z odświeżaniem
+  const karta = (tytul, podpis) => {
+    const k = el("section", "karta stat");
+    if (tytul) { const h = el("div", "stat-tyt"); h.append(el("h2", "", tytul)); if (podpis) h.append(el("small", "", podpis)); k.append(h); }
+    box.append(k); return k;
+  };
+  const kafle = () => el("div", "kafle");
+  const kafel = (st, wart, etyk, tytul, klasa) => {
+    const d = el("div", klasa || ""); d.append(el("b", "", wart), el("span", "", etyk));
+    if (tytul) d.title = tytul; st.append(d); return d;
+  };
+
+  // nagłówek: źródło danych, odświeżanie, okres
+  const k0 = karta("");
   const nag = el("div", "stat-nag");
-  nag.append(el("h2", "", "Statystyki"));
+  const zr = el("div", "stat-zrodlo");
+  zr.append(el("b", "", "Dane z Garmina"));
   if (wykonane?.zaktualizowano) {
     const z = new Date(wykonane.zaktualizowano);
     const dz = iso(new Date(Date.UTC(z.getFullYear(), z.getMonth(), z.getDate())));
-    nag.append(el("small", "", "Garmin: " + (dz === dzis ? "dziś" : kiedy(dz)) + " " + pad2(z.getHours()) + ":" + pad2(z.getMinutes())));
-  }
-  const ods = przycisk(stanWyk === "pobieram" ? "Pobieram…" : "Pobierz z Garmina", "maly", odswiezWykonane);
+    zr.append(el("span", "", "pobrane " + (dz === dzis ? "dziś" : kiedy(dz)) + " o " + pad2(z.getHours()) + ":" + pad2(z.getMinutes())));
+  } else zr.append(el("span", "", stanWyk === "brak-pliku" ? "jeszcze ich nie ma w repo" : "brak"));
+  const ods = przycisk(stanWyk === "pobieram" ? "Pobieram…" : "Pobierz", "maly", odswiezWykonane);
   ods.disabled = stanWyk === "pobieram";
   ods.prepend(ikonaOdswiez());
-  nag.append(ods);
-  box.append(nag);
+  nag.append(zr, ods);
+  k0.append(nag);
   if (infoWyk) {
     const inf = el("p", "pasek " + (infoWyk.typ || ""), infoWyk.tekst);
     if (infoWyk.link) { inf.append(" "); const a = el("a", "", "Otwórz log"); a.href = infoWyk.link; a.target = "_blank"; a.rel = "noopener"; inf.append(a); }
-    box.append(inf);
+    k0.append(inf);
   }
-  if (!wykonane && stanWyk === "brak-pliku") {
-    box.append(el("p", "stat-uwaga", "W repo nie ma jeszcze pliku wykonane.json. Dodaj garmin_wykonane.py i .github/workflows/garmin-wykonane.yml, a GitHub będzie pobierał aktywności z Garmina kilka razy dziennie. Do tego czasu odhaczaj treningi w panelu dnia."));
+  if (!wykonane && stanWyk === "brak-pliku")
+    k0.append(el("p", "stat-uwaga", "Dodaj do repo garmin_wykonane.py i .github/workflows/garmin-wykonane.yml – GitHub będzie pobierał aktywności kilka razy dziennie. Do tego czasu odhaczaj treningi w panelu dnia."));
+  const ok = el("div", "filtr okres");
+  ok.setAttribute("role", "group"); ok.setAttribute("aria-label", "Okres statystyk");
+  for (const [k, t] of [["tydz", "Ten tydzień"], ["4tyg", "4 tygodnie"], ["plan", "Cały plan"]]) {
+    const b = przycisk(t, "", () => { okresStat = k; zapisz("pg.okres", k); rysujStatystykiPonownie(); });
+    b.setAttribute("aria-pressed", String(okresStat === k));
+    ok.append(b);
   }
+  k0.append(ok);
 
-  // 1. realizacja planu do dziś
-  const blok = (tytul) => { const b = el("div", "stat-blok"); b.append(el("h3", "", tytul)); box.append(b); return b; };
-  const kafle = () => el("div", "wpis-stat");
-  const kafel = (st, wart, etyk, tytul) => { const d = el("div"); d.append(el("b", "", wart), el("span", "", etyk)); if (tytul) d.title = tytul; st.append(d); };
-  const nalezne = p => p.data < dzis || (p.data === dzis && zrobiony(wykonanie(p)));
+  // 1. realizacja planu w okresie (do dziś)
+  const nalezne = p => wOkresie(p) && (p.data < dzis || (p.data === dzis && zrobiony(wykonanie(p))));
   const liczba = lista => {
     const n = lista.filter(nalezne);
-    const zr = n.filter(p => zrobiony(wykonanie(p)));
-    return { zr: zr.length, z: n.filter(p => !p.opcjonalny || zrobiony(wykonanie(p))).length };
+    return { zr: n.filter(p => zrobiony(wykonanie(p))).length, z: n.filter(p => !p.opcjonalny || zrobiony(wykonanie(p))).length };
   };
   const lb = liczba(biegi), ls = liczba(sily);
-  if (lb.z || ls.z || wykonane) {
-    const b1 = blok("Realizacja planu do dziś");
-    const st = kafle();
-    if (lb.z) kafel(st, lb.zr + "/" + lb.z, "biegów zrobionych");
-    if (ls.z) kafel(st, ls.zr + "/" + ls.z, "treningów siłowych");
-    const nal = biegi.filter(nalezne);
-    const planKm = kmTekst(nal.reduce((x, p) => x + p.kmMin, 0), nal.reduce((x, p) => x + p.kmMax, 0)).replace(/^ok\. /, "");
-    if (wykonane) {
-      const wyk = sumaAkt(aktywnosci("bieg").filter(a => a.data >= poz[0].data && a.data <= dzis));
-      kafel(st, kmLiczba(wyk.km) + " km", planKm ? "z planowanych " + planKm : "przebiegnięte");
-      if (wyk.sek) kafel(st, czasTekst(wyk.sek, wyk.sek).replace(/^≈ /, ""), "biegania");
-    } else if (planKm) kafel(st, planKm, "zaplanowane do dziś");
-    b1.append(st);
+  const k1 = karta("Realizacja planu", zak.nazwa + (zak.do > dzis ? ", do dziś" : ""));
+  const st1 = kafle();
+  kafel(st1, lb.z ? lb.zr + " z " + lb.z : "–", "biegów zrobionych");
+  kafel(st1, ls.z ? ls.zr + " z " + ls.z : "–", "treningów siłowych");
+  const nal = biegi.filter(nalezne);
+  const planKm = kmTekst(nal.reduce((x, p) => x + p.kmMin, 0), nal.reduce((x, p) => x + p.kmMax, 0)).replace(/^ok\. /, "");
+  const wykB = wykonane ? sumaAkt(aktOkresu("bieg")) : null;
+  if (wykB) {
+    kafel(st1, kmLiczba(wykB.km) + " km", planKm ? "przebiegnięte, plan " + planKm : "przebiegnięte");
+    kafel(st1, wykB.sek ? czasTekst(wykB.sek, wykB.sek).replace(/^≈ /, "") : "–", "czas biegania");
+  } else kafel(st1, planKm || "–", "km w planie do dziś");
+  k1.append(st1);
+  // pasek tygodnia
+  const pn = plusDni(dzisiaj, -dzienTyg(dzisiaj)), nd = plusDni(pn, 6);
+  const tyg = biegi.filter(p => p.data >= iso(pn) && p.data <= iso(nd));
+  const tMin = tyg.reduce((x, p) => x + p.kmMin, 0), tMax = tyg.reduce((x, p) => x + p.kmMax, 0);
+  if (tMax) {
+    const wykT = wykonane ? sumaAkt(aktywnosci("bieg").filter(a => a.data >= iso(pn) && a.data <= iso(nd))).km : null;
+    const zrT = tyg.filter(p => zrobiony(wykonanie(p))).length, wszT = Math.max(1, tyg.filter(p => !p.opcjonalny).length);
+    const w = el("div", "tydz-postep");
+    const opis = el("p", "");
+    opis.append(el("b", "", "Ten tydzień: "), wykT !== null ? kmLiczba(wykT) + " km z " + kmTekst(tMin, tMax).replace(/^ok\. /, "") : zrT + " z " + wszT + " biegów");
+    const pasek = el("div", "pasek-post");
+    const ile = wykT !== null ? Math.min(1, wykT / tMax) : Math.min(1, zrT / wszT);
+    pasek.setAttribute("role", "img"); pasek.setAttribute("aria-label", "Postęp tygodnia: " + Math.round(ile * 100) + "%");
+    const f = el("i"); f.style.width = (ile * 100) + "%"; pasek.append(f);
+    if (wykT !== null && tMin < tMax) { const m = el("span", "znacznik"); m.style.left = (tMin / tMax * 100) + "%"; m.title = "Minimum bez opcjonalnych: " + kmLiczba(tMin) + " km"; pasek.append(m); }
+    w.append(opis, pasek);
+    k1.append(w);
+  }
 
-    // bieżący tydzień
-    const pn = plusDni(dzisiaj, -dzienTyg(dzisiaj)), nd = plusDni(pn, 6);
-    const tyg = biegi.filter(p => p.data >= iso(pn) && p.data <= iso(nd));
-    const tMin = tyg.reduce((x, p) => x + p.kmMin, 0), tMax = tyg.reduce((x, p) => x + p.kmMax, 0);
-    if (tMax) {
-      const wykT = wykonane ? sumaAkt(aktywnosci("bieg").filter(a => a.data >= iso(pn) && a.data <= iso(nd))).km : null;
-      const zrT = tyg.filter(p => zrobiony(wykonanie(p))).length;
-      const w = el("div", "tydz-postep");
-      const opis = el("p", "");
-      opis.append(el("b", "", "Ten tydzień: "), wykT !== null ? kmLiczba(wykT) + " km z " + kmTekst(tMin, tMax).replace(/^ok\. /, "") : zrT + " z " + tyg.filter(p => !p.opcjonalny).length + " biegów");
-      const pasek = el("div", "pasek-post");
-      pasek.setAttribute("role", "img");
-      const ile = wykT !== null ? Math.min(1, wykT / tMax) : Math.min(1, zrT / Math.max(1, tyg.filter(p => !p.opcjonalny).length));
-      pasek.setAttribute("aria-label", "Postęp tygodnia: " + Math.round(ile * 100) + "%");
-      const f = el("i"); f.style.width = (ile * 100) + "%";
-      pasek.append(f);
-      if (wykT !== null && tMin < tMax) { const m = el("span", "znacznik"); m.style.left = (tMin / tMax * 100) + "%"; m.title = "Minimum bez opcjonalnych: " + kmLiczba(tMin) + " km"; pasek.append(m); }
-      w.append(opis, pasek);
-      b1.append(w);
+  // 2. intensywność wg Danielsa
+  const vdot = liczVdot(), wv = wynikVdot();
+  const k2 = karta("Intensywność wg Danielsa", vdot ? "VDOT " + String(Math.round(vdot * 10) / 10).replace(".", ",") + " z wyniku " + DYSTANSE_VDOT[wv.dyst][1] + " " + wv.czas : "");
+  if (!vdot) k2.append(el("p", "stat-uwaga", "Wpisz wynik referencyjny w ustawieniach (koło zębate), żeby policzyć strefy."));
+  else {
+    const rp = rozkladPlanu(poz.filter(wOkresie), vdot);
+    const rw = wykonane ? rozkladWykonanych(aktOkresu("bieg"), vdot) : null;
+    const suma = r => STREFY_D.reduce((x, z) => x + r[z.k].km, 0);
+    const sp = suma(rp), sw = rw ? suma(rw) : 0;
+    const pasekD = (r, s, etyk) => {
+      const w = el("div", "d-wiersz");
+      w.append(el("span", "d-etyk", etyk));
+      const b = el("div", "d-pasek");
+      b.setAttribute("role", "img");
+      b.setAttribute("aria-label", etyk + ": " + STREFY_D.map(z => z.k + " " + Math.round(r[z.k].km / s * 100) + "%").join(", "));
+      for (const z of STREFY_D) {
+        if (!r[z.k].km) continue;
+        const i = el("i", "z-" + z.k); i.style.flexGrow = String(r[z.k].km);
+        const pr = Math.round(r[z.k].km / s * 100);
+        if (pr >= 7) i.textContent = z.k + " " + pr + "%";
+        b.append(i);
+      }
+      w.append(b); return w;
+    };
+    if (sp) k2.append(pasekD(rp, sp, "Plan"));
+    if (sw) k2.append(pasekD(rw, sw, "Zrobione"));
+    const tab = el("div", "d-tabela");
+    const nagT = el("div", "d-rz d-nag");
+    nagT.append(el("span", "", "Strefa i tempo"), el("span", "", "Plan"), el("span", "", rw ? "Zrobione" : ""));
+    tab.append(nagT);
+    let prev = Infinity;
+    for (const z of STREFY_D) {
+      const szybciej = z.do === Infinity ? 0 : tempoDlaUlamka(z.do, vdot);
+      const zakres = z.k === "E" ? "wolniej niż " + fmtCzas(szybciej) : z.k === "R" ? "szybciej niż " + fmtCzas(prev) : fmtCzas(prev) + "–" + fmtCzas(szybciej);
+      prev = szybciej;
+      const rz = el("div", "d-rz");
+      const nz = el("span", "d-strefa"); nz.title = z.opis;
+      const nzT = el("span", "d-st"); nzT.append(el("b", "", z.nazwa), el("small", "", zakres + "/km"));
+      nz.append(el("i", "z-" + z.k, z.k), nzT);
+      const proc = (r, s) => s && r[z.k].km ? Math.round(r[z.k].km / s * 100) + "%" : "–";
+      const cP = el("span", "d-l", proc(rp, sp)); cP.append(el("small", "", rp[z.k].km ? kmLiczba(rp[z.k].km) + " km" : ""));
+      const cW = el("span", "d-l", rw ? proc(rw, sw) : ""); if (rw && rw[z.k].km) cW.append(el("small", "", kmLiczba(rw[z.k].km) + " km"));
+      if (z.limit && sw && rw[z.k].km / sw * 100 > z.limit + 0.5) cW.classList.add("ponad");
+      if (z.limit && sp && rp[z.k].km / sp * 100 > z.limit + 0.5) cP.classList.add("ponad");
+      rz.append(nz, cP, cW);
+      tab.append(rz);
+    }
+    k2.append(tab);
+    k2.append(el("p", "stat-uwaga", "Procent kilometrów. Daniels zaleca na tydzień najwyżej ok. 10% w T, 8% w I i 5% w R – wartości ponad to są wyróżnione. Trucht w przerwach liczy się jako E, marsz pomijam."
+      + (rw && !aktOkresu("bieg").some(a => a.okrazenia) ? " Bez okrążeń z Garmina zrobione biegi są liczone wg średniego tempa całości." : "")));
+  }
+
+  // 3. strefy tętna
+  if (wykonane) {
+    const zAkt = aktOkresu("bieg").filter(a => Array.isArray(a.strefy));
+    const k3 = karta("Czas w strefach tętna", "biegi, " + zak.nazwa);
+    if (!zAkt.length) k3.append(el("p", "stat-uwaga", aktOkresu("bieg").length
+      ? "Aktywności nie mają jeszcze stref tętna – uruchom w Actions pobieranie z większą liczbą dni (np. 120), żeby je uzupełnić."
+      : "Brak biegów w tym okresie."));
+    else {
+      const s = [0, 0, 0, 0, 0];
+      for (const a of zAkt) a.strefy.forEach((x, i) => s[i] += +x || 0);
+      const razem = s.reduce((a, b) => a + b, 0) || 1;
+      const NAZWY_HR = ["rozgrzewka", "łatwa", "aerobowa", "progowa", "maksymalna"];
+      const b = el("div", "d-pasek hr");
+      b.setAttribute("role", "img");
+      b.setAttribute("aria-label", s.map((x, i) => "strefa " + (i + 1) + ": " + Math.round(x / razem * 100) + "%").join(", "));
+      s.forEach((x, i) => { if (!x) return; const e = el("i", "h-" + (i + 1)); e.style.flexGrow = String(x); const pr = Math.round(x / razem * 100); if (pr >= 8) e.textContent = pr + "%"; b.append(e); });
+      k3.append(b);
+      const ul = el("ul", "hr-lista");
+      for (let i = 4; i >= 0; i--) {
+        const li = el("li");
+        const n = el("span", "hr-n"); n.append(el("i", "h-" + (i + 1), String(i + 1)));
+        const srodek = el("span", "hr-s"); srodek.append(el("span", "", "Strefa " + (i + 1) + ", " + NAZWY_HR[i]));
+        const pr = el("span", "hr-pr"); const pi = el("i", "h-" + (i + 1)); pi.style.width = (s[i] / Math.max(...s) * 100) + "%"; pr.append(pi);
+        srodek.append(pr);
+        li.append(n, srodek, el("b", "", czasTekst(s[i], s[i]).replace(/^≈ /, "") || "0 min"), el("span", "hr-proc", Math.round(s[i] / razem * 100) + "%"));
+        ul.append(li);
+      }
+      k3.append(ul);
+      k3.append(el("p", "stat-uwaga", "Strefy wg ustawień tętna w Garmin Connect. " + zAkt.length + " " + odmiana(zAkt.length, "bieg", "biegi", "biegów") + ", łącznie " + czasTekst(razem, razem).replace(/^≈ /, "") + "."));
     }
   }
 
-  // 2. tempa z Garmina → szacunki
+  // 4. siła
+  if (sily.length) {
+    const k4 = karta("Siła", zak.nazwa);
+    const sOkres = sily.filter(wOkresie);
+    const aS = wykonane ? aktOkresu("sila") : [];
+    const st = kafle();
+    kafel(st, ls.z ? ls.zr + " z " + ls.z : "–", "treningów zrobionych");
+    if (aS.length) {
+      const sm = sumaAkt(aS);
+      kafel(st, czasTekst(sm.sek, sm.sek).replace(/^≈ /, ""), "łącznie (Garmin)");
+      kafel(st, Math.round(sm.sek / aS.length / 60) + " min", "średnio na trening");
+    }
+    const plCz = sOkres.filter(p => !p.opcjonalny).reduce((x, p) => x + p.czasMin, 0);
+    if (plCz) kafel(st, czasTekst(plCz, plCz).replace(/^≈ /, ""), "w planie (szacunek)");
+    k4.append(st);
+    const ul = el("ul", "akt");
+    for (const p of sOkres.filter(p => p.data <= dzis).reverse().slice(0, 8)) {
+      const w = wykonanie(p);
+      const li = el("li", "akt-sila" + (w.stan === "opuszczony" ? " akt-nie" : zrobiony(w) ? "" : " akt-neutr"));
+      const co = el("span", "akt-co");
+      co.append(el("b", "", p.pelna), el("small", "", kiedy(p.data) + (p.opcjonalny ? ", opcjonalny" : "")));
+      const d = el("span", "akt-dane");
+      if (w.stan === "zrobiony") { d.append(el("span", "ok", "✓ " + fmtCzas(w.sek))); if (w.hr) d.append(el("span", "", w.hr + " bpm")); const se = w.akt.reduce((x, a) => x + (+a.serie || 0), 0); if (se) d.append(el("span", "", se + " serii")); }
+      else if (w.stan === "recznie") d.append(el("span", "ok", "✓ oznaczone ręcznie"));
+      else d.append(el("span", w.stan === "opuszczony" ? "nie" : "plan", w.stan === "pominiety" ? "pominięty" : w.stan === "opuszczony" ? "niezrobiony" : "dziś, jeszcze nie ma"));
+      if (p.czasMax) d.append(el("span", "plan", "plan " + czasTekst(p.czasMin, p.czasMax).replace(/^≈ /, "")));
+      li.append(co, d);
+      ul.append(li);
+    }
+    if (ul.children.length) k4.append(ul);
+  }
+
+  // 5. tempa z Garmina → szacunki
   if (wykonane) {
     const od = iso(plusDni(dzisiaj, -28));
     const rodzajDnia = new Map(biegi.map(p => [p.data, p.rodzaj]));
@@ -2012,9 +2301,9 @@ function rysujStatystyki(poz) {
     const sReg = bieg28.reduce((x, a) => ({ km: x.km + (+a.odcinki?.regeneracja?.km || 0), sek: x.sek + (+a.odcinki?.regeneracja?.sek || 0), n: x.n + (a.odcinki?.regeneracja ? 1 : 0) }), { km: 0, sek: 0, n: 0 });
     const wiersze = [];
     if (spok.length >= 2 && sSpok.km >= 5) wiersze.push(["spokojne", "Spokojne i długie biegi", sSpok.sek / sSpok.km, spok.length + " " + odmiana(spok.length, "bieg", "biegi", "biegów")]);
-    if (sReg.km >= 0.5) wiersze.push(["trucht", "Regeneracja w przerwach", sReg.sek / sReg.km, "z " + sReg.n + " " + odmiana(sReg.n, "treningu", "treningów", "treningów")]);
+    if (sReg.km >= 0.5) wiersze.push(["trucht", "Regeneracja w przerwach", sReg.sek / sReg.km, sReg.n + " " + odmiana(sReg.n, "trening", "treningi", "treningów")]);
     if (wiersze.length) {
-      const b2 = blok("Twoje tempa z ostatnich 4 tygodni");
+      const k5 = karta("Twoje tempa", "ostatnie 4 tygodnie");
       const ul = el("ul", "tempa-wyk");
       for (const [k, nazwa, t, zr] of wiersze) {
         const li = el("li");
@@ -2028,70 +2317,45 @@ function rysujStatystyki(poz) {
         else li.append(el("span", "zgodne", "✓ zgodne"));
         ul.append(li);
       }
-      b2.append(ul);
+      k5.append(ul);
     }
   }
 
-  // 3. struktura planu
-  const r = { spok: 0, mocno: 0, przerwy: 0 };
-  for (const p of biegi) {
-    if (p.opcjonalny) continue;
-    for (const k of liscie(p.lista)) {
-      if (jestOpc(k)) continue;
-      const m = miaraKroku(k);
-      if (!m.km) continue;
-      if (k.typ === "odpoczynek" || k.typ === "przerwa") r.przerwy += m.km;
-      else if (k.par?.przebiezka || (tempoKroku(k).t && tempoKroku(k).t < 280)) r.mocno += m.km;
-      else r.spok += m.km;
-    }
+  // 6. plan w liczbach
+  const k6 = karta("Plan w liczbach", "cały plan");
+  const st6 = kafle();
+  const najd = biegi.reduce((a, p) => p.kmMax > (a?.kmMax || 0) ? p : a, null);
+  if (najd) kafel(st6, kmTekst(najd.kmMin || najd.kmMax, najd.kmMax).replace(/^ok\. /, ""), "najdłuższy bieg, " + kiedy(najd.data));
+  const pn0 = plusDni(naDate(poz[0].data), -dzienTyg(naDate(poz[0].data)));
+  const ntyg = Math.max(1, Math.floor((naDate(poz[poz.length - 1].data) - pn0) / 864e5 / 7) + 1);
+  kafel(st6, kmLiczba(biegi.reduce((x, p) => x + p.kmMin, 0) / ntyg) + " km", "średnio na tydzień");
+  const akc = biegi.filter(p => ["akcent", "test", "start"].includes(p.rodzaj)).length;
+  if (akc) kafel(st6, String(akc), "akcentów, testów i startów");
+  if (sily.length) {
+    const cs = sily.filter(p => !p.opcjonalny).reduce((x, p) => x + p.czasMin, 0);
+    kafel(st6, cs ? czasTekst(cs, cs).replace(/^≈ /, "") : String(sily.length), "siły (bez opcjonalnych)");
   }
-  const razem = r.spok + r.mocno + r.przerwy;
-  if (razem) {
-    const b3 = blok("Struktura planu");
-    const proc = x => Math.round(x / razem * 100);
-    const rz = el("div", "rozklad");
-    rz.setAttribute("role", "img");
-    rz.setAttribute("aria-label", "Spokojnie " + proc(r.spok) + "%, mocno " + proc(r.mocno) + "%, trucht w przerwach " + proc(r.przerwy) + "%");
-    for (const [k, v] of [["r-spok", r.spok], ["r-mocno", r.mocno], ["r-prz", r.przerwy]]) { const i = el("i", k); i.style.flexGrow = String(v); rz.append(i); }
-    const leg = el("p", "rozklad-leg");
-    leg.append(el("i", "r-spok"), "spokojnie " + proc(r.spok) + "% (" + kmLiczba(r.spok) + " km)  ",
-      el("i", "r-mocno"), "szybciej niż 4:40/km " + proc(r.mocno) + "% (" + kmLiczba(r.mocno) + " km)  ",
-      el("i", "r-prz"), "przerwy " + proc(r.przerwy) + "%");
-    b3.append(rz, leg);
-    const st = kafle();
-    const najd = biegi.reduce((a, p) => p.kmMax > (a?.kmMax || 0) ? p : a, null);
-    if (najd) kafel(st, kmTekst(najd.kmMin || najd.kmMax, najd.kmMax).replace(/^ok\. /, ""), "najdłuższy: " + kiedy(najd.data));
-    const pn0 = plusDni(naDate(poz[0].data), -dzienTyg(naDate(poz[0].data)));
-    const tyg = Math.max(1, Math.floor((naDate(poz[poz.length - 1].data) - pn0) / 864e5 / 7) + 1);
-    kafel(st, kmLiczba(biegi.reduce((x, p) => x + p.kmMin, 0) / tyg) + " km", "średnio na tydzień");
-    const akc = biegi.filter(p => ["akcent", "test", "start"].includes(p.rodzaj)).length;
-    if (akc) kafel(st, String(akc), odmiana(akc, "akcent", "akcenty", "akcentów") + " i starty");
-    if (sily.length) {
-      const cs = sily.filter(p => !p.opcjonalny).reduce((x, p) => x + p.czasMin, 0);
-      kafel(st, cs ? czasTekst(cs, cs).replace(/^≈ /, "") : String(sily.length), "siły w planie (bez opcjonalnych)");
-    }
-    b3.append(st);
-  }
+  k6.append(st6);
 
-  // 4. ostatnie aktywności
+  // 7. ostatnie aktywności
   if (wykonane?.aktywnosci?.length) {
-    const b4 = blok("Ostatnie aktywności z Garmina");
+    const k7 = karta("Ostatnie aktywności");
     const ul = el("ul", "akt");
     const plany = new Set(poz.map(p => p.data + "|" + p.sport));
-    const ost = [...wykonane.aktywnosci].sort((a, b) => (b.data + (b.godz || "")).localeCompare(a.data + (a.godz || ""))).slice(0, 6);
+    const ost = [...wykonane.aktywnosci].sort((a, b) => (b.data + (b.godz || "")).localeCompare(a.data + (a.godz || ""))).slice(0, 8);
     for (const a of ost) {
       const li = el("li", "akt-" + a.sport);
-      const lewa = el("span", "akt-co");
+      const co = el("span", "akt-co");
       const link = el("a", "", a.nazwa || "Aktywność");
       link.href = "https://connect.garmin.com/modern/activity/" + a.id; link.target = "_blank"; link.rel = "noopener";
-      lewa.append(link, el("small", "", kiedy(a.data) + (a.godz ? ", " + a.godz : "") + (plany.has(a.data + "|" + a.sport) ? "" : ", poza planem")));
+      co.append(link, el("small", "", kiedy(a.data) + (a.godz ? ", " + a.godz : "") + (plany.has(a.data + "|" + a.sport) ? "" : ", poza planem")));
       const dane = el("span", "akt-dane");
-      for (const x of [a.sport === "bieg" && a.km ? kmLiczba(a.km) + " km" : "", a.sek ? fmtCzas(a.sek) : "",
+      for (const x of [a.km ? kmLiczba(a.km) + " km" : "", a.sek ? fmtCzas(a.sek) : "",
         a.sport === "bieg" && a.km > 0.2 ? fmtCzas((a.ruch_sek || a.sek) / a.km) + "/km" : "", a.hr ? a.hr + " bpm" : ""]) if (x) dane.append(el("span", "", x));
-      li.append(lewa, dane);
+      li.append(co, dane);
       ul.append(li);
     }
-    b4.append(ul);
+    k7.append(ul);
   }
 }
 
@@ -2331,6 +2595,7 @@ function rysujZestawy(poz) {
 }
 
 function otworzTydzien(d) {
+  if (widok !== "plan") { widok = "plan"; try { sessionStorage.setItem("pg.widok", "plan"); } catch {} }
   const x = naDate(d);
   tygodnieOtwarte.set(iso(plusDni(x, -dzienTyg(x))), true);
 }
@@ -2493,6 +2758,9 @@ function otworzUstawienia(powod) {
   $("#pole-token").value = ust.token;
   $("#pole-repo").value = ust.repo;
   for (const k of Object.keys(TEMPA_DOMYSLNE)) $("#t-" + k).value = tempa[k];
+  const wv = wynikVdot();
+  $("#vdot-dyst").value = wv.dyst; $("#vdot-czas").value = wv.czas;
+  pokazVdot();
   $("#test-wynik").innerHTML = "";
   if (powod) $("#test-wynik").append(el("li", "", powod));
   $("#ustawienia").showModal();
@@ -2629,7 +2897,16 @@ function zapiszTempa() {
   if (zle.length) komunikat("Nie rozpoznałem tempa " + zle.join(", ") + " – wpisz min:sek, np. 6:30. Przywróciłem domyślne.", "blad");
   if ($("#tekst").value.trim()) odswiez();
 }
+function pokazVdot() {
+  const v = liczVdot({ dyst: $("#vdot-dyst").value, czas: $("#vdot-czas").value.trim().replace(/[.,]/g, ":") });
+  $("#vdot-info").textContent = v ? "VDOT " + String(Math.round(v * 10) / 10).replace(".", ",") + ": T ok. " + fmtCzas(tempoDlaUlamka(0.88, v)) + "/km, I ok. " + fmtCzas(tempoDlaUlamka(0.975, v)) + "/km" : "Czas w formacie mm:ss albo h:mm:ss.";
+}
+$("#vdot-dyst").addEventListener("change", pokazVdot);
+$("#vdot-czas").addEventListener("input", pokazVdot);
 $("#form-ustawien").addEventListener("submit", () => {
+  const wv = { dyst: $("#vdot-dyst").value, czas: $("#vdot-czas").value.trim().replace(/[.,]/g, ":") };
+  if (liczVdot(wv)) zapisz("pg.vdot", JSON.stringify(wv));
+  else komunikat("Nie rozpoznałem czasu " + wv.czas + " – zostawiam poprzedni wynik do stref Danielsa.", "blad");
   zapiszTempa();
   zapisz("pg.token", $("#pole-token").value.trim());
   zapisz("pg.repo", $("#pole-repo").value.trim() || DOMYSLNE_REPO);
@@ -2646,6 +2923,7 @@ function ustawMotyw(m) {
   const ciemny = m === "dark" || (m !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
   $("#meta-kolor").setAttribute("content", ciemny ? "#070E19" : "#1F4E8C");
 }
+for (const b of document.querySelectorAll("#widoki button")) b.addEventListener("click", () => ustawWidok(b.dataset.w));
 for (const b of document.querySelectorAll("#motyw button")) b.addEventListener("click", () => ustawMotyw(b.dataset.m));
 matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => ustawMotyw(czytaj("pg.motyw", "auto")));
 ustawMotyw(czytaj("pg.motyw", "auto"));
