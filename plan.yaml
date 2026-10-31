@@ -3,6 +3,8 @@
 # długi 1.11 bez przyspieszeń, we wtorek 27.10 kontrola HR pod LTHR 167.
 # Aktualizacja 28.10: długie 8.11 i 15.11 skrócone z 20 do 18 km.
 # Aktualizacja 30.10: długi 1.11 skrócony do 15-16 km, przebieżki po spokojnych biegach w pn i cz (2.11-10.12).
+# Aktualizacja 31.10: po T1 VO2 (RPE 19) T2 VO2 = 4 odcinki + 1 opcjonalny i reguły RPE w VO2/tempie 5 km;
+# podbiegi 10 s w czwartki 5.11, 12.11, 26.11, 3.12; długie 29.11 i 6.12 po 18 km, 13.12 14-16 km.
 # Zmiana tego pliku na GitHubie (main) = automatyczna synchronizacja z Garmin Connect.
 #
 # Tempa i czasy ZAWSZE w cudzysłowie: "4:11", "2:00".
@@ -60,6 +62,7 @@ stare_nazwy:  # usuwane z "Moje treningi" (stary plan 20-30.10)
   - Interwały 5x1000
   - Interwały 6x800
   - Próg 3x2000
+  - T2 VO2 5x1200
 
 zestawy_sily:
   # Tygodnie 1-3: A (pon) i B (czw). Tydzień 4 i 8: L (lekki). Tygodnie 5-7: A2 i B2 (trudniej).
@@ -237,18 +240,30 @@ treningi:
           - odpoczynek: {min: 2, sek: 30}
       - schlodzenie_std:
   - {data: 2026-11-04, szablon: opcja_rozruch}
-  - {data: 2026-11-05, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1, przebiezki: true}
+  - data: 2026-11-05
+    nazwa: "Spokojny 8-9 km + podbiegi 6x10 s"
+    opis: "Spokojny bieg + 6 krótkich podbiegów (10 s, nachylenie 6-8%): szybko i luźno, RPE 15, nie sprint; zejście stępem, pełna przerwa. Siła i ekonomia przed podbiegami 60 s w styczniu. Bez wzniesienia: 6x10 s szybko po płaskim. Ciągnięcie w pachwinie - kończysz same podbiegi."
+    dopisz_stop: true
+    kroki:
+      - bieg: {km: 7, tempo: ["5:30", "6:00"], notatka: "Spokojnie, rozmowa swobodna"}
+      - powtorz: 6
+        kroki:
+          - bieg: {sek: 10, notatka: "Podbieg 6-8%, szybko i luźno, RPE 15. Nie sprint"}
+          - odpoczynek: {lap: true, notatka: "Zejście stępem, Lap na dole. Pełna przerwa"}
+      - bieg: {km: 1, notatka: "Trucht, spokojnie"}
+      - bieg: {km: 1, notatka: "OPCJONALNIE 9. km. Inaczej pomiń krok."}
   - {data: 2026-11-05, sila: B}
   - data: 2026-11-06
-    nazwa: "T2 VO2 5x1200"
-    opis: "VO2max i ekonomia biegu."
+    nazwa: "T2 VO2 4-5x1200"
+    opis: "VO2max i ekonomia biegu. 30.10 6x1000 dało RPE 19, więc obowiązkowe są 4 odcinki. 5. tylko jeśli po 4. RPE <=17. RPE >18 po 3. odcinku - kończysz na 3."
     dopisz_stop: true
     kroki:
       - rozgrzewka_std:
-      - powtorz: 5
+      - powtorz: 4
         kroki:
           - bieg: {m: 1200, tempo: ["3:55", "3:58"]}
           - odpoczynek: {min: 2, sek: 45}
+      - bieg: {m: 1200, tempo: ["3:55", "3:58"], notatka: "OPCJONALNIE 5. odcinek. Inaczej pomiń krok."}
       - schlodzenie_std:
   - {data: 2026-11-07, szablon: opcja_rozruch}
   - {data: 2026-11-07, sila: C, opcjonalny: true}
@@ -269,7 +284,18 @@ treningi:
           - odpoczynek: {min: 1, sek: 45}
       - schlodzenie_std:
   - {data: 2026-11-11, szablon: opcja_rozruch}
-  - {data: 2026-11-12, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1, przebiezki: true}
+  - data: 2026-11-12
+    nazwa: "Spokojny 8-9 km + podbiegi 6x10 s"
+    opis: "Spokojny bieg + 6 krótkich podbiegów (10 s, nachylenie 6-8%): szybko i luźno, RPE 15, nie sprint; zejście stępem, pełna przerwa. Siła i ekonomia przed podbiegami 60 s w styczniu. Bez wzniesienia: 6x10 s szybko po płaskim. Ciągnięcie w pachwinie - kończysz same podbiegi."
+    dopisz_stop: true
+    kroki:
+      - bieg: {km: 7, tempo: ["5:30", "6:00"], notatka: "Spokojnie, rozmowa swobodna"}
+      - powtorz: 6
+        kroki:
+          - bieg: {sek: 10, notatka: "Podbieg 6-8%, szybko i luźno, RPE 15. Nie sprint"}
+          - odpoczynek: {lap: true, notatka: "Zejście stępem, Lap na dole. Pełna przerwa"}
+      - bieg: {km: 1, notatka: "Trucht, spokojnie"}
+      - bieg: {km: 1, notatka: "OPCJONALNIE 9. km. Inaczej pomiń krok."}
   - {data: 2026-11-12, sila: B}
   - data: 2026-11-13
     nazwa: "T3 Szybkość 8x400"
@@ -332,11 +358,22 @@ treningi:
           - odpoczynek: {min: 2, sek: 30}
       - schlodzenie_std:
   - {data: 2026-11-25, szablon: opcja_rozruch}
-  - {data: 2026-11-26, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1, przebiezki: true}
+  - data: 2026-11-26
+    nazwa: "Spokojny 8-9 km + podbiegi 8x10 s"
+    opis: "Spokojny bieg + 8 krótkich podbiegów (10 s, nachylenie 6-8%): szybko i luźno, RPE 15, nie sprint; zejście stępem, pełna przerwa. Siła i ekonomia przed podbiegami 60 s w styczniu. Bez wzniesienia: 8x10 s szybko po płaskim. Ciągnięcie w pachwinie - kończysz same podbiegi."
+    dopisz_stop: true
+    kroki:
+      - bieg: {km: 7, tempo: ["5:30", "6:00"], notatka: "Spokojnie, rozmowa swobodna"}
+      - powtorz: 8
+        kroki:
+          - bieg: {sek: 10, notatka: "Podbieg 6-8%, szybko i luźno, RPE 15. Nie sprint"}
+          - odpoczynek: {lap: true, notatka: "Zejście stępem, Lap na dole. Pełna przerwa"}
+      - bieg: {km: 1, notatka: "Trucht, spokojnie"}
+      - bieg: {km: 1, notatka: "OPCJONALNIE 9. km. Inaczej pomiń krok."}
   - {data: 2026-11-26, sila: B2}
   - data: 2026-11-27
     nazwa: "T5 VO2 5x1000"
-    opis: "VO2max. Tempo = 5 km z testu minus 2-3 s/km."
+    opis: "VO2max. Tempo = 5 km z testu minus 2-3 s/km. Po 3. odcinku RPE >18 - kończysz na 3."
     dopisz_stop: true
     kroki:
       - rozgrzewka_std:
@@ -347,7 +384,7 @@ treningi:
       - schlodzenie_std:
   - {data: 2026-11-28, szablon: opcja_rozruch}
   - {data: 2026-11-28, sila: C, opcjonalny: true}
-  - {data: 2026-11-29, szablon: dlugi, km_txt: "20", km: 20}
+  - {data: 2026-11-29, szablon: dlugi, km_txt: "18", km: 18}
 
   # --- Tydzień 6/8 ---
   - {data: 2026-11-30, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1, przebiezki: true}
@@ -364,11 +401,22 @@ treningi:
           - odpoczynek: {min: 2}
       - schlodzenie_std:
   - {data: 2026-12-02, szablon: opcja_rozruch}
-  - {data: 2026-12-03, szablon: spokojny, km_txt: "8-9", km: 8, opcja: 1, przebiezki: true}
+  - data: 2026-12-03
+    nazwa: "Spokojny 8-9 km + podbiegi 8x10 s"
+    opis: "Spokojny bieg + 8 krótkich podbiegów (10 s, nachylenie 6-8%): szybko i luźno, RPE 15, nie sprint; zejście stępem, pełna przerwa. Siła i ekonomia przed podbiegami 60 s w styczniu. Bez wzniesienia: 8x10 s szybko po płaskim. Ciągnięcie w pachwinie - kończysz same podbiegi."
+    dopisz_stop: true
+    kroki:
+      - bieg: {km: 7, tempo: ["5:30", "6:00"], notatka: "Spokojnie, rozmowa swobodna"}
+      - powtorz: 8
+        kroki:
+          - bieg: {sek: 10, notatka: "Podbieg 6-8%, szybko i luźno, RPE 15. Nie sprint"}
+          - odpoczynek: {lap: true, notatka: "Zejście stępem, Lap na dole. Pełna przerwa"}
+      - bieg: {km: 1, notatka: "Trucht, spokojnie"}
+      - bieg: {km: 1, notatka: "OPCJONALNIE 9. km. Inaczej pomiń krok."}
   - {data: 2026-12-03, sila: B2}
   - data: 2026-12-04
     nazwa: "T6 Tempo 5 km 4x1600"
-    opis: "Tempo 5 km, utrzymanie szybkości."
+    opis: "Tempo 5 km, utrzymanie szybkości. Po 2. serii RPE >18 - kończysz na 3."
     dopisz_stop: true
     kroki:
       - rozgrzewka_std:
@@ -379,7 +427,7 @@ treningi:
       - schlodzenie_std:
   - {data: 2026-12-05, szablon: opcja_rozruch}
   - {data: 2026-12-05, sila: C, opcjonalny: true}
-  - {data: 2026-12-06, szablon: dlugi, km_txt: "20", km: 20}
+  - {data: 2026-12-06, szablon: dlugi, km_txt: "18", km: 18}
 
   # --- Tydzień 7/8 ---
   - {data: 2026-12-07, szablon: spokojny, km_txt: "7-8", km: 7, opcja: 1, przebiezki: true}
@@ -400,7 +448,7 @@ treningi:
   - {data: 2026-12-10, sila: B2}
   - data: 2026-12-11
     nazwa: "T7 VO2 5x1000"
-    opis: "Utrzymanie szybkości przed startem."
+    opis: "Utrzymanie szybkości przed startem. Po 3. odcinku RPE >17 - kończysz na 3, bez walki o tempo."
     dopisz_stop: true
     kroki:
       - rozgrzewka_std:
@@ -411,7 +459,7 @@ treningi:
       - schlodzenie_std:
   - {data: 2026-12-12, szablon: opcja_rozruch}
   - {data: 2026-12-12, sila: C, opcjonalny: true}
-  - {data: 2026-12-13, szablon: dlugi, km_txt: "18", km: 18}
+  - {data: 2026-12-13, szablon: dlugi, km_txt: "14-16", km: 14, opcja: 2, uwaga: "Tydzień odciążenia - spokojnie."}
 
   # --- Tydzień 8/8 (start) ---
   - {data: 2026-12-14, szablon: spokojny, km_txt: "6-7", km: 6, opcja: 1}
