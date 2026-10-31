@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1F4E8C">
+<meta name="theme-color" content="#1F4E8C" id="meta-kolor">
+<script>try{var m=localStorage.getItem("pg.motyw");if(m==="light"||m==="dark")document.documentElement.dataset.theme=m;}catch(e){}</script>
 <title>Plan → Garmin</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
@@ -16,7 +17,8 @@
   --bg: #E9EEF4; --surface: #FFFFFF; --sunk: #F3F6F9; --ink: #13233A; --muted: #5A6B81;
   --line: #D3DCE7; --track: #1F4E8C; --track-2: #2C62A8; --on-track: #FFFFFF;
   --signal: #F2C230; --on-signal: #13233A; --easy: #CCDCF1; --red: #C23B3B; --ok: #2E7D4F;
-  --sila: #2A9A86; --on-sila: #FFFFFF;
+  --sila: #2A9A86; --on-sila: #FFFFFF; --link: #2C62A8; --start-bg: #C23B3B; --karta-ramka: transparent; --minelo: .35;
+  --k-bieg: #2C62A8; --k-regen: #9AA6B5; --k-rozg: #D64545; --k-schl: #2E9D57; --cien: rgba(19,35,58,.18);
   --cond: "Barlow Condensed", "Roboto Condensed", sans-serif-condensed, "Arial Narrow", system-ui, sans-serif;
   --body: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, "Cascadia Mono", "Roboto Mono", Menlo, monospace;
@@ -25,13 +27,24 @@
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
+/* ciemny motyw: auto (ustawienia systemu) albo wybrany ręcznie w ustawieniach */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0B1524; --surface: #13223A; --sunk: #0F1C30; --ink: #E6EDF6; --muted: #91A2B8;
-    --line: #243753; --track: #1F4E8C; --track-2: #2C62A8; --on-track: #FFFFFF;
-    --easy: #2A4467; --red: #DD5A5A; --ok: #58B884; --sila: #3BB39E; --on-sila: #0B1524;
+  :root:not([data-theme="light"]) {
+    --bg: #070E19; --surface: #15243B; --sunk: #0E1A2C; --ink: #F1F5FB; --muted: #AEBDD1;
+    --line: #36507A; --track: #3474C4; --track-2: #7DB0F0; --on-track: #FFFFFF;
+    --signal: #FFD24A; --on-signal: #13233A; --easy: #355E92; --red: #EC6A6A; --ok: #63CB92;
+    --sila: #3FC2AA; --on-sila: #04131C; --link: #8FBDF5; --start-bg: #BE3C3C; --karta-ramka: #2A4166; --minelo: .55;
+    --k-bieg: #5B9BEA; --k-regen: #7F92AD; --k-rozg: #EE6B6B; --k-schl: #4CC17A; --cien: rgba(0,0,0,.55); --biezacy-mix: 8%;
     color-scheme: dark;
   }
+}
+:root[data-theme="dark"] {
+  --bg: #070E19; --surface: #15243B; --sunk: #0E1A2C; --ink: #F1F5FB; --muted: #AEBDD1;
+  --line: #36507A; --track: #3474C4; --track-2: #7DB0F0; --on-track: #FFFFFF;
+  --signal: #FFD24A; --on-signal: #13233A; --easy: #355E92; --red: #EC6A6A; --ok: #63CB92;
+  --sila: #3FC2AA; --on-sila: #04131C; --link: #8FBDF5; --start-bg: #BE3C3C; --karta-ramka: #2A4166; --minelo: .55;
+  --k-bieg: #5B9BEA; --k-regen: #7F92AD; --k-rozg: #EE6B6B; --k-schl: #4CC17A; --cien: rgba(0,0,0,.55); --biezacy-mix: 8%;
+  color-scheme: dark;
 }
 *, *::before, *::after { box-sizing: inherit; }
 html { scroll-padding-top: env(safe-area-inset-top, 0px); }
@@ -78,7 +91,7 @@ main { max-width: 640px; margin: 0 auto; padding: 16px 16px 128px; }
 .pusto p { margin: 0 auto; max-width: 34ch; }
 
 /* ---------- podsumowanie ---------- */
-.karta { background: var(--surface); border-radius: 14px; padding: 16px; margin-top: 16px; }
+.karta { background: var(--surface); border-radius: 14px; padding: 16px; margin-top: 16px; box-shadow: inset 0 0 0 1px var(--karta-ramka); }
 .podsumowanie { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
 .liczba { font: 700 46px/.9 var(--cond); }
 .liczba span { font: 600 20px/1 var(--cond); color: var(--muted); margin-left: 4px; }
@@ -90,7 +103,7 @@ main { max-width: 640px; margin: 0 auto; padding: 16px 16px 128px; }
 .znaczek.ok { color: var(--ok); }
 
 /* ---------- edytor ---------- */
-details.edytor { margin-top: 16px; background: var(--surface); border-radius: 14px; }
+details.edytor { margin-top: 16px; background: var(--surface); border-radius: 14px; box-shadow: inset 0 0 0 1px var(--karta-ramka); }
 details.edytor summary {
   list-style: none; cursor: pointer; padding: 14px 16px; display: flex; align-items: center; gap: 10px; font-weight: 600;
 }
@@ -120,8 +133,7 @@ textarea {
 @keyframes krec { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .postep li.trwa .kropka { animation: none; border-top-color: var(--signal); } }
 .postep .pasek { background: var(--sunk); }
-a { color: var(--track-2); font-weight: 600; }
-@media (prefers-color-scheme: dark) { a { color: #8DB4EA; } }
+a { color: var(--link); font-weight: 600; }
 
 /* ---------- dolny pasek ---------- */
 .dolny {
@@ -178,7 +190,7 @@ dialog input { width: 100%; margin-top: 6px; padding: 11px; border: 1px solid va
   font: 600 15px/1 var(--body); color: var(--muted); display: inline-flex; justify-content: center; align-items: center; gap: 6px;
 }
 .filtr button i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
-.filtr button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(19,35,58,.18); }
+.filtr button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px var(--cien), inset 0 0 0 1px var(--karta-ramka); }
 
 /* zmiany względem repo */
 .zmiany { margin-top: 14px; border-radius: 10px; background: var(--sunk); padding: 10px 12px; border-left: 4px solid var(--signal); }
@@ -206,7 +218,7 @@ dialog input { width: 100%; margin-top: 6px; padding: 11px; border: 1px solid va
 .tydzien { border-top: 1px solid var(--line); scroll-margin-top: 12px; }
 .tydzien.biezacy {
   border-top: 0; margin: 4px -10px 6px; padding: 0 10px 2px; border-radius: 12px;
-  background: color-mix(in srgb, var(--signal) 16%, var(--surface)); box-shadow: inset 0 0 0 2px var(--signal);
+  background: color-mix(in srgb, var(--signal) var(--biezacy-mix, 16%), var(--surface)); box-shadow: inset 0 0 0 2px var(--signal);
 }
 .tydzien.biezacy + .tydzien { border-top: 0; }
 .tydz-nag .tn .teraz { font: 700 13px/1 var(--cond); color: var(--on-signal); background: var(--signal); padding: 4px 8px; border-radius: 99px; }
@@ -246,13 +258,13 @@ dialog input { width: 100%; margin-top: 6px; padding: 11px; border: 1px solid va
 .dzien.spokojny { background: var(--easy); }
 .dzien.dlugi { background: var(--track); color: var(--on-track); }
 .dzien.akcent { background: var(--signal); color: var(--on-signal); }
-.dzien.test, .dzien.start { background: var(--red); color: #fff; }
+.dzien.test, .dzien.start { background: var(--start-bg); color: #fff; }
 .dzien.opcja, .dzien.inny {
   background: repeating-linear-gradient(135deg, transparent 0 5px, var(--line) 5px 7px);
   color: var(--muted); box-shadow: inset 0 0 0 1px var(--line);
 }
 .dzien.sila { background: var(--sila); color: var(--on-sila); }
-.dzien.minelo { opacity: .35; }
+.dzien.minelo { opacity: var(--minelo); }
 .dzien.dzis { box-shadow: 0 0 0 3px var(--signal), 0 0 0 5px var(--ink); z-index: 1; }
 .dzien.dzis .nr { opacity: 1; font-weight: 700; text-transform: none; }
 .dzien.dzis[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--signal), 0 0 0 6px var(--ink); }
@@ -389,9 +401,8 @@ ol.kroki li.powt > ol { margin-top: 4px; }
 .profil { display: flex; align-items: flex-end; gap: 1px; height: 64px; padding: 4px 4px 0; background: var(--sunk); border-radius: 8px 8px 0 0; }
 .profil .pr { flex: 1 1 0; min-width: 2px; border-radius: 2px 2px 0 0; }
 .profil-os { display: flex; justify-content: space-between; font: 600 12px/1 var(--cond); color: var(--muted); padding: 4px 2px 0; border-top: 2px solid var(--line); }
-.k-rozg { --kk: #D64545; } .k-bieg { --kk: var(--track-2); } .k-regen { --kk: #9AA6B5; }
-.k-schl { --kk: #2E9D57; } .k-inny { --kk: var(--muted); }
-@media (prefers-color-scheme: dark) { .k-regen { --kk: #5E6F86; } .k-bieg { --kk: #4C86D4; } }
+.k-rozg { --kk: var(--k-rozg); } .k-bieg { --kk: var(--k-bieg); } .k-regen { --kk: var(--k-regen); }
+.k-schl { --kk: var(--k-schl); } .k-inny { --kk: var(--muted); }
 .profil .pr { background: var(--kk); }
 .profil .pr.opc { background: repeating-linear-gradient(135deg, var(--kk) 0 3px, transparent 3px 6px); }
 
@@ -410,12 +421,11 @@ ol.kb { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; 
 .kb-not { margin: 6px 0 0; padding-top: 6px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--muted); }
 .kb-powt { background: var(--sunk); border-radius: 10px; padding: 8px; }
 .kb-powt-nag { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; padding: 0 2px; }
-.kb-powt-nag b { font: 700 19px/1 var(--cond); color: var(--track-2); }
+.kb-powt-nag b { font: 700 19px/1 var(--cond); color: var(--link); }
 .kb-powt-nag span { font-weight: 600; font-size: 14px; }
 .kb-powt-nag small { margin-left: auto; color: var(--muted); font: 600 14px/1 var(--cond); }
 .kb-powt > ol.kb { margin-top: 6px; }
 .kb-leg { margin: 8px 0 0; font-size: 12.5px; color: var(--muted); }
-@media (prefers-color-scheme: dark) { .kb-powt-nag b { color: #8DB4EA; } }
 
 /* tempa w ustawieniach */
 dialog { max-height: 92vh; overflow: auto; }
@@ -424,6 +434,69 @@ fieldset.tempa legend { font-weight: 600; padding: 0 4px; }
 .tempa-info { display: block; color: var(--muted); font-size: 14px; }
 .tempa-siatka { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
 .tempa-siatka label { margin-top: 10px; font-size: 14px; }
+
+/* ---------- wykonane ---------- */
+.dzien .nr .st { font-style: normal; display: inline-block; width: 13px; height: 13px; margin-right: 3px; border-radius: 50%;
+  background: var(--ok); color: #fff; font: 700 10px/13px var(--body); text-align: center; vertical-align: 0; }
+.dzien.minelo.zrobiony { opacity: .85; }
+.dzien.opuszczony { box-shadow: inset 0 0 0 2px var(--red); }
+.dzien.opuszczony.dzis { box-shadow: inset 0 0 0 2px var(--red), 0 0 0 3px var(--signal), 0 0 0 5px var(--ink); }
+.tydz-nag .kmb small.wyk-km { color: var(--ok); font-weight: 600; }
+.ob-s .ob-wyk { position: absolute; left: 50%; bottom: 0; width: 44%; transform: translateX(-50%); background: var(--ok);
+  border-radius: 3px 3px 0 0; box-shadow: 0 0 0 1.5px var(--surface); }
+.ob-s .ob-w.zr { color: var(--ok); }
+.ob-leg { margin: 6px 0 0; font-size: 12.5px; color: var(--muted); }
+.ob-leg i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+.ob-leg .l-plan { background: var(--track-2); } .ob-leg .l-wyk { background: var(--ok); margin-left: 8px; }
+
+.wyk-box { margin-top: 10px; padding: 9px 10px; border-radius: 8px; background: var(--sunk); border: 1px solid var(--line); }
+.wyk-box.ok { background: color-mix(in srgb, var(--ok) 11%, var(--surface)); border-color: color-mix(in srgb, var(--ok) 55%, transparent); }
+.wyk-box.nie { border-color: color-mix(in srgb, var(--red) 60%, transparent); }
+.wyk-nag { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; font-size: 14px; }
+.wyk-nag b { font: 700 17px/1.1 var(--cond); }
+.wyk-box.ok .wyk-nag b { color: var(--ok); }
+.wyk-nag span { color: var(--muted); }
+.wyk-box .wpis-stat { margin-top: 8px; }
+.wyk-box.ok .wpis-stat div { background: var(--surface); }
+.wyk-box > .maly { margin-top: 8px; }
+
+/* ---------- statystyki ---------- */
+.stat-nag { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.stat-nag h2 { margin: 0; font: 700 24px/1 var(--cond); margin-right: auto; }
+.stat-nag small { color: var(--muted); font-size: 13.5px; }
+.stat .pasek { margin-top: 10px; background: var(--sunk); }
+.stat-uwaga { margin: 10px 0 0; font-size: 14px; color: var(--muted); max-width: 62ch; }
+.stat-blok { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+.stat-blok h3 { margin: 0 0 8px; font: 700 19px/1.1 var(--cond); }
+.stat-blok .wpis-stat { margin-top: 0; }
+.tydz-postep { margin-top: 12px; }
+.tydz-postep p { margin: 0 0 6px; font-size: 14.5px; }
+.pasek-post { position: relative; height: 12px; border-radius: 99px; background: var(--sunk); box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
+.pasek-post i { display: block; height: 100%; background: var(--ok); border-radius: 99px; }
+.pasek-post .znacznik { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--ink); opacity: .6; }
+ul.tempa-wyk, ul.akt { list-style: none; margin: 0; padding: 0; }
+.tempa-wyk li { display: grid; grid-template-columns: 1fr auto auto; gap: 4px 10px; align-items: center; padding: 8px 0; }
+.tempa-wyk li + li { border-top: 1px solid var(--line); }
+.tempa-wyk b { display: block; font-weight: 600; font-size: 14.5px; }
+.tempa-wyk small { color: var(--muted); font-size: 13px; }
+.tempa-wyk strong { font: 700 21px/1 var(--cond); }
+.tempa-wyk .zgodne { color: var(--ok); font-size: 13.5px; font-weight: 600; }
+.rozklad { display: flex; gap: 2px; height: 14px; border-radius: 99px; overflow: hidden; }
+.rozklad i { display: block; flex: 1 1 0; min-width: 2px; }
+.r-spok { background: var(--easy); } .r-mocno { background: var(--signal); } .r-prz { background: var(--k-regen); }
+.rozklad-leg { margin: 6px 0 12px; font-size: 13px; color: var(--muted); line-height: 1.7; }
+.rozklad-leg i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin: 0 4px 0 0; vertical-align: -1px; }
+.rozklad-leg i:not(:first-child) { margin-left: 10px; }
+.maly:disabled { opacity: .6; cursor: default; }
+.akt li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 12px; padding: 8px 0 8px 10px; border-left: 3px solid var(--track-2); }
+.akt li + li { margin-top: 4px; }
+.akt li.akt-sila { border-left-color: var(--sila); } .akt li.akt-inny { border-left-color: var(--line); }
+.akt-co { min-width: 0; }
+.akt-co a { font-weight: 600; text-decoration: none; color: var(--ink); }
+.akt-co a:hover { text-decoration: underline; }
+.akt-co small { display: block; color: var(--muted); font-size: 13px; }
+.akt-dane { display: flex; flex-wrap: wrap; gap: 0 10px; font: 600 15px/1.3 var(--cond); }
+.motyw { margin-top: 8px; }
 
 </style>
 </head>
@@ -495,6 +568,8 @@ fieldset.tempa legend { font-weight: 600; padding: 0 4px; }
     </div>
   </section>
 
+  <section class="karta stat" id="statystyki" hidden aria-label="Statystyki treningów"></section>
+
   <section class="karta postep" id="postep" hidden aria-live="polite">
     <h2>Wysyłanie do Garmina</h2>
     <ol>
@@ -543,10 +618,18 @@ fieldset.tempa legend { font-weight: 600; padding: 0 4px; }
       <input type="text" id="pole-repo" autocomplete="off" spellcheck="false" autocapitalize="off">
     </label>
     <fieldset class="tempa">
+      <legend>Wygląd</legend>
+      <div class="filtr motyw" id="motyw" role="group" aria-label="Motyw">
+        <button type="button" data-m="auto">Auto</button>
+        <button type="button" data-m="light">Jasny</button>
+        <button type="button" data-m="dark">Ciemny</button>
+      </div>
+    </fieldset>
+    <fieldset class="tempa">
       <legend>Tempa do szacunków</legend>
-      <span class="tempa-info">Gdy krok ma tylko czas, dystans liczę z tego tempa (i odwrotnie). Format min:sek na km. Marsz 0 = stoisz w miejscu.</span>
+      <span class="tempa-info">Gdy krok nie ma tempa w planie ani w opisie, dystans liczę z tych temp (i odwrotnie). Format min:sek na km. Marsz 0 = stoisz w miejscu. Twoje rzeczywiste tempa z Garmina zobaczysz w Statystykach.</span>
       <div class="tempa-siatka">
-        <label>Trucht w przerwach<input id="t-trucht" autocomplete="off" placeholder="6:30"></label>
+        <label>Regeneracja<input id="t-trucht" autocomplete="off" placeholder="6:00"></label>
         <label>Spokojnie<input id="t-spokojne" autocomplete="off" placeholder="5:45"></label>
         <label>Marsz<input id="t-marsz" autocomplete="off" placeholder="10:00"></label>
         <label>Przebieżki<input id="t-przebiezka" autocomplete="off" placeholder="3:45"></label>
@@ -705,44 +788,54 @@ function drzewo(linie) {
 }
 
 // treść szablonów odtworzona tak jak w garmin_trening.py (tylko do podglądu)
+// tempoSzac = tempo z notatki kroku: zegarek nie ma tu celu tempa, ale szacunek z niego jest dokładniejszy
+const SPOKOJNIE = ["5:30", "6:00"], DLUGI = ["5:20", "5:35"], ROZRUCH = ["5:50", "6:10"];
 function krokiSzablonu(p) {
   const opcja = +p.opcja || 0;
   if (p.szablon === "spokojny") return [
-    { typ: "bieg", par: { km: p.km, tempo: ["5:30", "6:00"] } },
-    ...(opcja ? [{ typ: "bieg", par: { km: opcja, notatka: "OPCJONALNIE" } }] : []),
+    { typ: "bieg", par: { km: p.km, tempoSzac: SPOKOJNIE, notatka: "Spokojnie 5:30-6:00/km, tętno poniżej ok. 140" } },
+    ...(opcja ? [{ typ: "bieg", par: { km: opcja, tempoSzac: SPOKOJNIE, notatka: "OPCJONALNIE, jeśli nogi lekkie. Inaczej pomiń krok." } }] : []),
     ...(p.przebiezki === "true" ? [{ typ: "przebiezki", par: {} }] : []),
   ];
   if (p.szablon === "dlugi") return [
-    { typ: "bieg", par: { km: p.km, tempo: ["5:20", "5:35"] } },
-    ...(opcja ? [{ typ: "bieg", par: { km: opcja, notatka: "OPCJONALNIE" } }] : []),
+    { typ: "bieg", par: { km: p.km, tempoSzac: DLUGI, notatka: "Równo 5:20-5:35/km, tętno ok. 140-150. Poniżej 5:15 – zwolnij." } },
+    ...(opcja ? [{ typ: "bieg", par: { km: opcja, tempoSzac: DLUGI, notatka: "OPCJONALNIE, spokojnie. Przy ciężkich nogach pomiń krok." } }] : []),
   ];
   if (p.szablon === "opcja_rozruch") return [
-    { typ: "bieg", par: { km: 5, notatka: "Spokojnie" } },
-    { typ: "bieg", par: { km: 1, notatka: "OPCJONALNIE 6. km" } },
+    { typ: "bieg", par: { km: 5, tempoSzac: ROZRUCH, notatka: "Bardzo spokojnie 5:50-6:10/km" } },
+    { typ: "bieg", par: { km: 1, tempoSzac: ROZRUCH, notatka: "OPCJONALNIE 6. km. Inaczej pomiń krok." } },
   ];
   if (p.szablon === "akcent") {
     const przerwa = typeof p.przerwa === "object" ? p.przerwa : {};
+    const dod = p.dodatkowe ? String(p.dodatkowe) : "";
     return [
       { typ: "rozgrzewka_std", par: {} },
       { typ: "powtorz", n: +p.powtorzenia || 1, dzieci: [
         { typ: "bieg", par: { m: p.metry, tempo: p.tempo } },
-        { typ: "odpoczynek", par: { ...przerwa, notatka: "Trucht" } },
+        { typ: "odpoczynek", par: { ...przerwa, notatka: "Trucht" + (p.przerwa_txt ? " " + p.przerwa_txt : "") } },
       ] },
-      // zegarek dostaje osobną regenerację przed dodatkowym powtórzeniem
-      ...(p.dodatkowe ? [
-        { typ: "odpoczynek", par: { ...przerwa, notatka: "OPCJONALNIE Przed dodatkowym powtórzeniem – pomijasz razem z nim" } },
-        { typ: "bieg", par: { m: p.metry, tempo: p.tempo, notatka: "OPCJONALNIE " + p.dodatkowe } },
-      ] : []),
+      // dodatkowe powtórzenie idzie zaraz po ostatniej przerwie z serii (bez osobnej regeneracji)
+      ...(dod ? [{ typ: "bieg", par: { m: p.metry, tempo: p.tempo, notatka: (/^OPCJONALNIE/i.test(dod) ? "" : "OPCJONALNIE ") + dod } }] : []),
       { typ: "schlodzenie_std", par: {} },
     ];
   }
   if (p.kroki === "test_5km") return [
-    { typ: "rozgrzewka_std", par: {} }, { typ: "przerwa", par: { min: 5 } },
-    { typ: "bieg", par: { km: 5, tempo: ["3:56", "3:58"] } }, { typ: "schlodzenie_std", par: {} },
+    { typ: "rozgrzewka", par: { km: ROZGRZEWKA_KM, tempoSzac: SPOKOJNIE, notatka: "Spokojnie 5:30-6:00/km" } },
+    { typ: "przebiezki", par: {} },
+    { typ: "przerwa", par: { min: 5, notatka: "Przerwa przed testem (na zegarku jako regeneracja)" } },
+    { typ: "bieg", par: { km: 2, tempo: ["3:56", "3:58"], notatka: "Start 3:56-3:58/km, NIE szybciej niż 3:56" } },
+    { typ: "bieg", par: { km: 2, tempo: ["3:56", "3:58"], notatka: "Utrzymaj tempo, równo" } },
+    { typ: "bieg", par: { km: 1, tempoSzac: ["3:48", "3:54"], notatka: "Ostatnie 1000 m – dociśnij" } },
+    { typ: "schladzanie", par: { km: 2, tempoSzac: ["5:45", "6:00"], notatka: "Spokojnie, możesz do 3 km" } },
   ];
   if (p.kroki === "start_10km") return [
-    { typ: "rozgrzewka_std", par: {} },
-    { typ: "bieg", par: { km: 10, tempo: ["4:00", "4:05"] } }, { typ: "schlodzenie_std", par: {} },
+    { typ: "rozgrzewka", par: { km: 2, tempoSzac: SPOKOJNIE, notatka: "Trucht, możesz do 3 km" } },
+    { typ: "przebiezki", par: {} },
+    { typ: "odpoczynek", par: { notatka: "Czekaj na start – naciśnij Lap na starcie" } },
+    { typ: "bieg", par: { km: 2, tempo: ["4:03", "4:05"], notatka: "Pierwsze 2 km 4:03-4:05/km, NIE szybciej" } },
+    { typ: "bieg", par: { km: 6, tempo: ["4:00", "4:03"], notatka: "3-8 km równo ok. 4:00-4:03/km" } },
+    { typ: "bieg", par: { km: 2, tempoSzac: ["3:52", "3:58"], notatka: "Ostatnie 2 km – dociśnij według samopoczucia" } },
+    { typ: "schladzanie", par: { km: 2, tempoSzac: ["5:45", "6:00"], notatka: "Spokojnie" } },
   ];
   return [];
 }
@@ -757,10 +850,15 @@ function opisSzablonu(p) {
 
 // ---------- kilometry i czas ----------
 // Każdy krok ma dystans i czas: podany w planie albo oszacowany z tempa.
-const TEMPA_DOMYSLNE = { trucht: "6:30", spokojne: "5:45", marsz: "10:00", przebiezka: "3:45" };
+const TEMPA_DOMYSLNE = { trucht: "6:00", spokojne: "5:45", marsz: "10:00", przebiezka: "3:45" };
 function wczytajTempa() {
   let t = {};
   try { t = JSON.parse(czytaj("pg.tempa", "{}")) || {}; } catch {}
+  // poprzednia wersja zapisywała domyślny trucht 6:30 – zamieniam go raz na nowy domyślny 6:00
+  if (czytaj("pg.tempa.v") !== "2") {
+    if (t.trucht === "6:30") t.trucht = TEMPA_DOMYSLNE.trucht;
+    zapisz("pg.tempa", JSON.stringify(t)); zapisz("pg.tempa.v", "2");
+  }
   return { ...TEMPA_DOMYSLNE, ...t };
 }
 let tempa = wczytajTempa();
@@ -770,8 +868,8 @@ const ROZGRZEWKA_KM = 3, PRZERWA_PO_ROZGRZEWCE_MIN = 2, SCHLODZENIE_KM = 2;
 
 const sekundy = par => (+par.min || 0) * 60 + (+par.sek || 0);
 const naSek = t => { const m = String(t ?? "").trim().match(/^(\d+):(\d{1,2})$/); return m ? +m[1] * 60 + +m[2] : 0; };
-function tempoSrednie(par) {
-  const t = (Array.isArray(par.tempo) ? par.tempo : par.tempo ? [par.tempo] : []).map(naSek).filter(Boolean);
+function tempoSrednie(par, pole = "tempo") {
+  const t = (Array.isArray(par[pole]) ? par[pole] : par[pole] ? [par[pole]] : []).map(naSek).filter(Boolean);
   return t.length ? t.reduce((a, b) => a + b, 0) / t.length : 0;
 }
 const jestOpc = k => /OPCJONALNIE/i.test(k.par?.notatka || "");
@@ -785,17 +883,17 @@ function przebiezkiNaZegarek(p) {
   ] };
 }
 
-// kroki standardowe rozpisane na to, co faktycznie widać na zegarku
+// kroki standardowe rozpisane na to, co faktycznie widać na zegarku (jak _rozgrzewka_std w garmin_trening.py)
 function rozwinStandardowe(lista) {
-  return lista.flatMap((k, i) => {
+  return lista.flatMap(k => {
     if (k.typ === "powtorz") return [{ ...k, dzieci: rozwinStandardowe(k.dzieci) }];
     if (k.typ === "rozgrzewka_std") return [
-      { typ: "rozgrzewka", par: { km: ROZGRZEWKA_KM, notatka: "Spokojnie 5:30-6:00/km" } },
+      { typ: "rozgrzewka", par: { km: ROZGRZEWKA_KM, tempoSzac: SPOKOJNIE, notatka: "Spokojnie 5:30-6:00/km" } },
       przebiezkiNaZegarek({}),
-      // gdy plan ma własną przerwę zaraz po rozgrzewce, nie dublujemy jej
-      ...(lista[i + 1]?.typ === "przerwa" ? [] : [{ typ: "przerwa", par: { min: PRZERWA_PO_ROZGRZEWCE_MIN, notatka: "Marsz lub stanie, przed częścią główną" } }]),
+      // na zegarku to krok regeneracji (trucht), nie przerwa
+      { typ: "odpoczynek", par: { min: PRZERWA_PO_ROZGRZEWCE_MIN, notatka: "Trucht przed częścią główną" } },
     ];
-    if (k.typ === "schlodzenie_std") return [{ typ: "schladzanie", par: { km: SCHLODZENIE_KM, notatka: "Spokojnie 5:45-6:00/km, możesz do 3 km" } }];
+    if (k.typ === "schlodzenie_std") return [{ typ: "schladzanie", par: { km: SCHLODZENIE_KM, tempoSzac: ["5:45", "6:00"], notatka: "Spokojnie 5:45-6:00/km, możesz do 3 km" } }];
     if (k.typ === "przebiezki") return [przebiezkiNaZegarek(k.par || {})];
     return [k];
   });
@@ -806,6 +904,8 @@ function tempoKroku(k) {
   const p = k.par || {};
   const t = tempoSrednie(p);
   if (t) return { t, zrodlo: "cel" };
+  const tn = tempoSrednie(p, "tempoSzac");
+  if (tn) return { t: tn, zrodlo: "notatka" };
   if (k.typ === "odpoczynek") return { t: tempoUst("trucht"), zrodlo: "trucht" };
   if (k.typ === "przerwa") return { t: tempoUst("marsz"), zrodlo: "marsz" };
   if (p.przebiezka) return { t: tempoUst("przebiezka"), zrodlo: "przebieżki" };
@@ -899,7 +999,7 @@ function cel(par) {
   return "";
 }
 
-function opisKroku(k) {
+function opisKroku(k, sport = "bieg") {
   const p = k.par || {};
   switch (k.typ) {
     case "rozgrzewka_std": return { co: "Rozgrzewka " + ROZGRZEWKA_KM + " km", cel: "spokojnie", notatka: "" };
@@ -915,6 +1015,11 @@ function opisKroku(k) {
     }
     case "auto": return { co: p.co, cel: p.ile, notatka: p.notatka };
     default:
+      // w treningu siłowym rozgrzewka i przerwy to czas, nie bieganie – bez przeliczania na dystans
+      if (NAZWY_KROKOW[k.typ] && sport === "sila") {
+        const nazwa = k.typ === "odpoczynek" ? "Odpoczynek" : NAZWY_KROKOW[k.typ];
+        return { co: nazwa, cel: czas(p) || (p.km || p.m ? dlugosc(p) : "do Lap"), notatka: p.notatka !== nazwa ? p.notatka || "" : "" };
+      }
       if (NAZWY_KROKOW[k.typ]) {
         const d = kmKroku(k);
         const szac = d.szac && d.km ? "≈ " + kmLiczba(d.km) + " km" : "";
@@ -925,12 +1030,12 @@ function opisKroku(k) {
   }
 }
 
-function listaKrokow(lista) {
+function listaKrokow(lista, sport = "sila") {
   const ol = el("ol", "kroki");
   for (const k of lista) {
     const li = el("li", k.typ === "powtorz" ? "powt" : k.typ === "auto" ? "auto" : (/OPCJONALNIE/i.test(k.par?.notatka || "") ? "opc" : ""));
     if (k.typ === "powtorz") {
-      li.append(el("span", "ile", k.n + "×"), listaKrokow(k.dzieci));
+      li.append(el("span", "ile", k.n + "×"), listaKrokow(k.dzieci, sport));
     } else if (k.typ === "cwiczenie") {
       const o = opisKroku(k);
       const b = el("button", "co jak-btn", o.co);
@@ -947,7 +1052,7 @@ function listaKrokow(lista) {
       if (o.cel) li.append(el("span", "cel", o.cel));
       if (o.notatka) li.append(el("span", "not", o.notatka));
     } else {
-      const o = opisKroku(k);
+      const o = opisKroku(k, sport);
       li.append(el("span", "co", o.co));
       if (o.cel) li.append(el("span", "cel", o.cel));
       const nt = String(o.notatka || "").replace(/^OPCJONALNIE\.?\s*/i, "");
@@ -974,7 +1079,7 @@ function wartosc3(tekst, etyk, szac, tytul) {
   if (tytul) d.title = tytul;
   return d;
 }
-const ZRODLO_TEMPA = { trucht: "tempo truchtu", marsz: "tempo marszu", spokojne: "tempo spokojne", "przebieżki": "tempo przebieżek" };
+const ZRODLO_TEMPA = { notatka: "tempo z opisu kroku", trucht: "tempo regeneracji", marsz: "tempo marszu", spokojne: "tempo spokojne", "przebieżki": "tempo przebieżek" };
 
 function listaKrokowBiegu(lista) {
   const ol = el("ol", "kb");
@@ -1017,7 +1122,7 @@ function listaKrokowBiegu(lista) {
     if (Array.isArray(p.tempo)) w.append(wartosc3(p.tempo.join("–"), "tempo docelowe", false));
     else if (p.tempo) w.append(wartosc3(String(p.tempo), "tempo docelowe", false));
     else if (p.strefa_hr) w.append(wartosc3("strefa " + p.strefa_hr, "tętno", false));
-    else if (tz.t) w.append(wartosc3("≈ " + fmtCzas(tz.t), "tempo", true, "Tempo z ustawień (" + zrodlo + "), tylko do szacunku"));
+    else if (tz.t) w.append(wartosc3("≈ " + fmtCzas(tz.t), "tempo", true, tz.zrodlo === "notatka" ? "Środek zakresu z opisu kroku – zegarek nie pilnuje tu tempa" : "Tempo z ustawień (" + zrodlo + "), tylko do szacunku"));
     li.append(w);
     const nt = String(p.notatka || "").replace(/^OPCJONALNIE\.?\s*/i, "").trim();
     if (nt && nt !== nazwa) li.append(el("p", "kb-not", nt[0].toUpperCase() + nt.slice(1)));
@@ -1060,7 +1165,8 @@ function profilTreningu(p) {
 
 // opis tekstowy (schowek, kalendarz)
 function opisTekstowy(p) {
-  const linie = [p.pelna + (p.sport === "bieg" && p.kmMax ? " – " + kmTekst(p.kmMin, p.kmMax) + ", " + czasTekst(p.czasMin, p.czasMax) : "")];
+  const linie = [p.pelna + (p.sport === "bieg" && p.kmMax ? " – " + kmTekst(p.kmMin, p.kmMax) + ", " + czasTekst(p.czasMin, p.czasMax)
+    : p.sport === "sila" && p.czasMax ? " – " + czasTekst(p.czasMin, p.czasMax) : "")];
   if (p.opis) linie.push(p.opis);
   const krok = (lista, wc) => {
     for (const k of lista) {
@@ -1071,13 +1177,34 @@ function opisTekstowy(p) {
         linie.push(wc + "- " + nazwaKroku(k)[0] + " " + fmtDyst(m.km, m.kmSzac) + (m.sek ? ", " + (m.sekSzac ? "≈ " : "") + fmtCzas(m.sek) : "")
           + (cel ? ", " + cel : "") + (jestOpc(k) ? " (opcjonalnie)" : ""));
       } else {
-        const o = opisKroku(k);
+        const o = opisKroku(k, p.sport);
         linie.push(wc + "- " + [o.co, o.cel, o.notatka].filter(Boolean).join(", "));
       }
     }
   };
   if (p.lista.length) { linie.push(""); krok(p.lista, ""); }
   return linie.join("\n");
+}
+
+// ---------- siła: szacunek czasu (bez dystansu) ----------
+const SEK_NA_POWT = 4, SEK_ZMIANY_CWICZENIA = 10;   // powtórzenie w wolnym tempie; przejście do ćwiczenia na powtórzenia
+function sekundyTekstu(t) {
+  const m = String(t || "").match(/(\d+(?:[.,]\d+)?)\s*(s|min)/);
+  return m ? parseFloat(m[1].replace(",", ".")) * (m[2] === "min" ? 60 : 1) : 0;
+}
+function czasSily(lista) {
+  const s = { min: 0, max: 0 };
+  for (const k of lista) {
+    if (k.typ === "powtorz") { const d = czasSily(k.dzieci); s.min += d.min * k.n; s.max += d.max * k.n; continue; }
+    const p = k.par || {};
+    let sek = 0;
+    if (k.typ === "auto") sek = sekundyTekstu(p.ile);
+    else if (k.typ === "cwiczenie") sek = sekundy(p) || ((+p.powt || 0) ? +p.powt * SEK_NA_POWT + SEK_ZMIANY_CWICZENIA : 0);
+    else sek = sekundy(p);
+    s.max += sek;
+    if (!jestOpc(k)) s.min += sek;
+  }
+  return s;
 }
 
 // ---------- siła: strony, przejścia i opis wykonania (jak w garmin_trening.py) ----------
@@ -1278,6 +1405,7 @@ function rozbierz(tekst) {
     if (sport === "bieg") lista = rozwinStandardowe(lista);
     const suma = sport === "bieg" ? sumaDrzewa(lista) : sumaDrzewa([]);
     let kmMin = suma.min, kmMax = suma.max, truchtMin = suma.tmin, truchtMax = suma.tmax, czasMin = suma.smin, czasMax = suma.smax;
+    if (sport === "sila") { const cs = czasSily(lista); czasMin = cs.min; czasMax = cs.max; }
     const opcjonalny = opc || rodzaj === "opcja";
     if (opcjonalny) { kmMin = 0; truchtMin = 0; czasMin = 0; }
     const klucz = surowe.replace(/\s+/g, " ").trim();
@@ -1359,6 +1487,113 @@ let przenoszony = null;       // pozycja w trybie przenoszenia
 let pytanie = null;           // {p, cel, naCelu} – zamienić czy dodać?
 const historia = [];
 const tygodnieOtwarte = new Map();
+
+// ---------- wykonane treningi ----------
+// Garmin nie pozwala stronie w przeglądarce czytać aktywności, więc robi to GitHub Actions
+// (garmin_wykonane.py, te same tokeny co wysyłka planu) i zapisuje wykonane.json w repo.
+// Do tego ręczne odhaczenie – dla treningów bez zegarka.
+const PLIK_WYK = "wykonane.json";
+let wykonane = null;          // {zaktualizowano, aktywnosci: [...]}
+let stanWyk = "";             // "" | "brak-pliku" | "blad" | "pobieram"
+let infoWyk = null;           // {tekst, typ, link}
+try { wykonane = JSON.parse(czytaj("pg.wykonane", "null")); } catch {}
+let odhaczone = new Set();
+try { odhaczone = new Set(JSON.parse(czytaj("pg.odhaczone", "[]"))); } catch {}
+const kluczOdh = p => p.data + "|" + p.sport + "|" + p.pelna;
+
+function aktywnosci(sport) {
+  return (wykonane?.aktywnosci || []).filter(a => !sport || a.sport === sport);
+}
+function sumaAkt(lista) {
+  const s = { km: 0, sek: 0, hrSek: 0, hrWaga: 0, n: lista.length };
+  for (const a of lista) {
+    s.km += +a.km || 0; s.sek += +a.sek || 0;
+    if (a.hr) { s.hrSek += a.hr * (a.sek || 1); s.hrWaga += a.sek || 1; }
+  }
+  s.hr = s.hrWaga ? Math.round(s.hrSek / s.hrWaga) : 0;
+  s.tempo = s.km >= 0.2 ? s.sek / s.km : 0;
+  return s;
+}
+// stan pozycji planu: zrobiony (Garmin) | recznie | opuszczony | pominiety (opcjonalny) | dzis | przyszly
+function wykonanie(p) {
+  const akt = (wykonane?.aktywnosci || []).filter(a => a.data === p.data && a.sport === p.sport);
+  if (akt.length) return { stan: "zrobiony", akt, ...sumaAkt(akt) };
+  if (odhaczone.has(kluczOdh(p))) return { stan: "recznie", akt: [] };
+  const dd = naDate(p.data);
+  if (dd < dzisiaj) return { stan: p.opcjonalny ? "pominiety" : "opuszczony", akt: [] };
+  return { stan: +dd === +dzisiaj ? "dzis" : "przyszly", akt: [] };
+}
+const zrobiony = w => w.stan === "zrobiony" || w.stan === "recznie";
+
+function przelaczOdhaczenie(p) {
+  const k = kluczOdh(p);
+  if (odhaczone.has(k)) odhaczone.delete(k); else odhaczone.add(k);
+  zapisz("pg.odhaczone", JSON.stringify([...odhaczone]));
+  komunikat(odhaczone.has(k) ? "Oznaczono jako zrobiony: " + p.pelna + "." : "Cofnięto oznaczenie: " + p.pelna + ".", "ok");
+  rysuj();
+}
+
+async function pobierzWykonane() {
+  const r = await gh("/contents/" + PLIK_WYK + "?ref=main", { headers: { "Accept": "application/vnd.github.raw" } });
+  if (r.status === 404) return null;
+  if (!r.ok) throw new Error(opisBledu(r.status));
+  const d = JSON.parse(await r.text());
+  if (!Array.isArray(d.aktywnosci)) throw new Error("Plik " + PLIK_WYK + " ma nieznany format.");
+  return d;
+}
+async function wczytajWykonane() {
+  try {
+    const d = await pobierzWykonane();
+    if (!d) { stanWyk = "brak-pliku"; rysuj(); return; }
+    wykonane = d; stanWyk = "";
+    zapisz("pg.wykonane", JSON.stringify(d));
+    rysuj();
+  } catch { if (!wykonane) stanWyk = "blad"; rysuj(); }
+}
+
+// przycisk „Pobierz z Garmina”: uruchamia workflow garmin-wykonane.yml i czeka na nowy plik
+async function odswiezWykonane() {
+  if (!ust.token) { otworzUstawienia("Do pobrania treningów z Garmina potrzebny jest token GitHuba."); return; }
+  if (stanWyk === "pobieram") return;
+  const poprz = wykonane?.zaktualizowano || "", wyslano = Date.now();
+  stanWyk = "pobieram"; infoWyk = { tekst: "Pobieram treningi z Garmina przez GitHuba (zwykle 1–2 min)…" }; rysujStatystykiPonownie();
+  let r;
+  try {
+    r = await gh("/dispatches", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event_type: "pobierz-wykonane" }) });
+  } catch { r = null; }
+  if (!r || r.status !== 204) {
+    stanWyk = wykonane ? "" : "blad";
+    infoWyk = { tekst: r ? opisBledu(r.status) : "Brak połączenia z GitHubem.", typ: "blad" };
+    rysujStatystykiPonownie(); return;
+  }
+  for (let proba = 0; proba < 50; proba++) {          // ok. 3,5 minuty
+    await czekaj(4000);
+    try {
+      const a = await gh("/actions/runs?event=repository_dispatch&per_page=10");
+      if (a.ok) {
+        const run = ((await a.json()).workflow_runs || []).find(w => /garmin-wykonane\.ya?ml$/.test(w.path || "") && Date.parse(w.created_at) >= wyslano - 60000);
+        if (run && run.status === "completed" && run.conclusion !== "success") {
+          stanWyk = wykonane ? "" : "blad";
+          infoWyk = { tekst: "Pobieranie z Garmina nie powiodło się. Najczęściej to wygasłe tokeny – szczegóły w logu.", typ: "blad", link: run.html_url };
+          rysujStatystykiPonownie(); return;
+        }
+      }
+    } catch {}
+    try {
+      const d = await pobierzWykonane();
+      if (d && d.zaktualizowano !== poprz) {
+        wykonane = d; stanWyk = "";
+        zapisz("pg.wykonane", JSON.stringify(d));
+        const n = d.aktywnosci.length;
+        infoWyk = { tekst: "Gotowe – " + n + " " + odmiana(n, "aktywność", "aktywności", "aktywności") + " w pliku.", typ: "ok" };
+        rysuj(); return;
+      }
+    } catch {}
+  }
+  stanWyk = "";
+  infoWyk = { tekst: "GitHub jeszcze nie skończył. Sprawdź wynik w Actions albo odśwież za chwilę.", link: "https://github.com/" + ust.repo + "/actions" };
+  rysujStatystykiPonownie();
+}
 
 function el(tag, klasa, tekst) {
   const e = document.createElement(tag);
@@ -1485,7 +1720,7 @@ function rysujTryb() {
 function rysuj() {
   const sek = $("#podglad");
   rysujTryb();
-  if (!plan.pozycje.length) { sek.hidden = true; return; }
+  if (!plan.pozycje.length) { sek.hidden = true; $("#statystyki").hidden = true; return; }
   sek.hidden = false;
   const poz = [...plan.pozycje].sort((a, b) => a.data.localeCompare(b.data) || (a.sport === "sila") - (b.sport === "sila"));
   const pierwsza = naDate(poz[0].data), ostatnia = naDate(poz[poz.length - 1].data);
@@ -1553,7 +1788,8 @@ function rysuj() {
     const b = wTyg.filter(p => p.sport === "bieg"), si = wTyg.filter(p => p.sport === "sila");
     const kmA = b.reduce((x, p) => x + p.kmMin, 0), kmB = b.reduce((x, p) => x + p.kmMax, 0);
     const km = kmTekst(kmA, kmB);
-    objetosc.push({ klucz, nr, min: kmA, max: kmB, biezacy, minal, start: b.some(p => p.rodzaj === "start" || p.rodzaj === "test") });
+    const wykTyg = pn <= dzisiaj && wykonane ? sumaAkt(aktywnosci("bieg").filter(a => a.data >= klucz && a.data <= iso(nd))) : null;
+    objetosc.push({ klucz, nr, min: kmA, max: kmB, biezacy, minal, start: b.some(p => p.rodzaj === "start" || p.rodzaj === "test"), wyk: wykTyg ? wykTyg.km : null });
     if (filtr !== "sila" && km) {
       const tr = truchtTekst(b.reduce((x, p) => x + p.truchtMin, 0), b.reduce((x, p) => x + p.truchtMax, 0));
       const kb = el("span", "kmb");
@@ -1561,7 +1797,8 @@ function rysuj() {
       if (tr) s.title = "W tym ok. " + tr + " truchtu i marszu w przerwach (szacunek)";
       kb.append(s);
       const cz = czasTekst(b.reduce((x, p) => x + p.czasMin, 0), b.reduce((x, p) => x + p.czasMax, 0));
-      if (cz) kb.append(el("small", "", cz));
+      if (wykTyg && wykTyg.km) kb.append(el("small", "wyk-km", "✓ " + kmLiczba(wykTyg.km) + " km zrobione"));
+      else if (cz) kb.append(el("small", "", cz));
       prawa.append(kb);
     }
     if (filtr !== "bieg" && si.length) prawa.append(el("span", "ss", si.length + "× siła"));
@@ -1588,12 +1825,21 @@ function rysuj() {
         const glowny = lista.find(x => x.sport === "bieg") || lista[0];
         const zSila = glowny && glowny.sport === "bieg" && lista.some(x => x.sport === "sila");
         const zmienione = zmianyDni.has(d);
+        const stany = lista.map(wykonanie);
+        const dzienZrobiony = stany.length && stany.some(zrobiony);
+        const dzienOpuszczony = stany.length && !dzienZrobiony && stany.some(w => w.stan === "opuszczony");
         btn.className = "dzien " + (glowny ? glowny.rodzaj : "pusty") + (zSila ? " plus-sila" : "") + (dd < dzisiaj ? " minelo" : "")
+          + (dzienZrobiony ? " zrobiony" : "") + (dzienOpuszczony ? " opuszczony" : "")
           + (zmienione ? " zmiana" : "") + (dzis ? " dzis" : "") + (cel ? " cel" : "")
           + (przenoszony && przenoszony.data === d ? " zrodlo" : "");
         btn.setAttribute("aria-pressed", String(wybrany === d));
-        btn.setAttribute("aria-label", d + (lista.length ? ": " + lista.map(x => x.pelna + (x.sport === "bieg" && x.kmMax ? ", " + kmTekst(x.kmMin, x.kmMax) : "")).join(" i ") : ": wolne"));
-        btn.append(el("span", "nr" + (dd.getUTCDate() === 1 && !dzis ? " mies" : ""), dzis ? "dziś" : etykietaDnia(dd)));
+        btn.setAttribute("aria-label", d + (lista.length ? ": " + lista.map((x, i) => x.pelna + (x.sport === "bieg" && x.kmMax ? ", " + kmTekst(x.kmMin, x.kmMax) : "")
+          + (zrobiony(stany[i]) ? ", zrobiony" : stany[i].stan === "opuszczony" ? ", niezrobiony" : "")).join(" i ") : ": wolne"));
+        const nr = el("span", "nr" + (dd.getUTCDate() === 1 && !dzis ? " mies" : ""));
+        // zrobiony dzień: ✓ zamiast skrótu dnia tygodnia (kolumny i tak idą od poniedziałku)
+        if (dzienZrobiony) nr.append(el("i", "st", "✓"), dzis ? "dziś" : dd.getUTCDate() === 1 ? etykietaDnia(dd) : String(dd.getUTCDate()));
+        else nr.append(dzis ? "dziś" : etykietaDnia(dd));
+        btn.append(nr);
         if (glowny) {
           const dl = glowny.etykieta.length;
           btn.append(el("span", "et" + (dl > 5 ? " s" : dl > 4 ? " m" : ""), glowny.etykieta));
@@ -1623,6 +1869,7 @@ function rysuj() {
 
   rysujZestawy(poz);
   rysujObjetosc(objetosc);
+  rysujStatystyki(poz);
   const wszystkieOtwarte = [...tyg.querySelectorAll(".tydz-nag")].every(n => n.getAttribute("aria-expanded") === "true");
   $("#rozwin-wszystkie").textContent = wszystkieOtwarte ? "Zwiń tygodnie" : "Rozwiń tygodnie";
   $("#rozwin-wszystkie").dataset.stan = wszystkieOtwarte ? "zwin" : "rozwin";
@@ -1636,7 +1883,7 @@ const etykietaDnia = dd => dd.getUTCDate() === 1 ? "1 " + MIESIACE[dd.getUTCMont
 function rysujObjetosc(tyg) {
   const box = $("#objetosc");
   box.innerHTML = "";
-  const maks = Math.max(0, ...tyg.map(t => t.max));
+  const maks = Math.max(0, ...tyg.map(t => Math.max(t.max, t.wyk || 0)));
   box.hidden = filtr === "sila" || tyg.length < 2 || !maks;
   if (box.hidden) return;
   const nag = el("div", "ob-nag");
@@ -1652,7 +1899,13 @@ function rysujObjetosc(tyg) {
     mx.style.height = (t.max / maks * 100) + "%";
     mn.style.height = (t.min / maks * 100) + "%";
     k.append(mx, mn);
-    b.append(el("span", "ob-w", t.max ? String(Math.round(t.min || t.max)) : ""), k, el("span", "ob-t", "T" + t.nr));
+    if (t.wyk) {
+      const w = el("span", "ob-wyk");
+      w.style.height = (t.wyk / maks * 100) + "%";
+      k.append(w);
+      b.setAttribute("aria-label", b.getAttribute("aria-label") + ", zrobione " + kmLiczba(t.wyk) + " km");
+    }
+    b.append(el("span", "ob-w" + (t.wyk ? " zr" : ""), t.wyk ? String(Math.round(t.wyk)) : t.max ? String(Math.round(t.min || t.max)) : ""), k, el("span", "ob-t", "T" + t.nr));
     b.addEventListener("click", () => {
       tygodnieOtwarte.set(t.klucz, true); rysuj();
       requestAnimationFrame(() => document.querySelector('.tydzien[data-tydz="' + t.klucz + '"]')?.scrollIntoView({ block: "start", behavior: "smooth" }));
@@ -1660,6 +1913,192 @@ function rysujObjetosc(tyg) {
     sl.append(b);
   }
   box.append(nag, sl);
+  if (tyg.some(t => t.wyk)) {
+    const leg = el("p", "ob-leg");
+    leg.append(el("i", "l-plan"), "plan  ", el("i", "l-wyk"), "zrobione (Garmin) – liczba nad słupkiem");
+    box.append(leg);
+  }
+}
+
+// ---------- statystyki ----------
+let ostatniePoz = [];
+function rysujStatystykiPonownie() { rysujStatystyki(ostatniePoz); }
+
+function rysujStatystyki(poz) {
+  ostatniePoz = poz;
+  const box = $("#statystyki");
+  box.innerHTML = "";
+  box.hidden = !poz.length;
+  if (box.hidden) return;
+  const dzis = iso(dzisiaj);
+  const biegi = poz.filter(p => p.sport === "bieg"), sily = poz.filter(p => p.sport === "sila");
+
+  // nagłówek z odświeżaniem
+  const nag = el("div", "stat-nag");
+  nag.append(el("h2", "", "Statystyki"));
+  if (wykonane?.zaktualizowano) {
+    const z = new Date(wykonane.zaktualizowano);
+    const dz = iso(new Date(Date.UTC(z.getFullYear(), z.getMonth(), z.getDate())));
+    nag.append(el("small", "", "Garmin: " + (dz === dzis ? "dziś" : kiedy(dz)) + " " + pad2(z.getHours()) + ":" + pad2(z.getMinutes())));
+  }
+  const ods = przycisk(stanWyk === "pobieram" ? "Pobieram…" : "Pobierz z Garmina", "maly", odswiezWykonane);
+  ods.disabled = stanWyk === "pobieram";
+  ods.prepend(ikonaOdswiez());
+  nag.append(ods);
+  box.append(nag);
+  if (infoWyk) {
+    const inf = el("p", "pasek " + (infoWyk.typ || ""), infoWyk.tekst);
+    if (infoWyk.link) { inf.append(" "); const a = el("a", "", "Otwórz log"); a.href = infoWyk.link; a.target = "_blank"; a.rel = "noopener"; inf.append(a); }
+    box.append(inf);
+  }
+  if (!wykonane && stanWyk === "brak-pliku") {
+    box.append(el("p", "stat-uwaga", "W repo nie ma jeszcze pliku wykonane.json. Dodaj garmin_wykonane.py i .github/workflows/garmin-wykonane.yml, a GitHub będzie pobierał aktywności z Garmina kilka razy dziennie. Do tego czasu odhaczaj treningi w panelu dnia."));
+  }
+
+  // 1. realizacja planu do dziś
+  const blok = (tytul) => { const b = el("div", "stat-blok"); b.append(el("h3", "", tytul)); box.append(b); return b; };
+  const kafle = () => el("div", "wpis-stat");
+  const kafel = (st, wart, etyk, tytul) => { const d = el("div"); d.append(el("b", "", wart), el("span", "", etyk)); if (tytul) d.title = tytul; st.append(d); };
+  const nalezne = p => p.data < dzis || (p.data === dzis && zrobiony(wykonanie(p)));
+  const liczba = lista => {
+    const n = lista.filter(nalezne);
+    const zr = n.filter(p => zrobiony(wykonanie(p)));
+    return { zr: zr.length, z: n.filter(p => !p.opcjonalny || zrobiony(wykonanie(p))).length };
+  };
+  const lb = liczba(biegi), ls = liczba(sily);
+  if (lb.z || ls.z || wykonane) {
+    const b1 = blok("Realizacja planu do dziś");
+    const st = kafle();
+    if (lb.z) kafel(st, lb.zr + "/" + lb.z, "biegów zrobionych");
+    if (ls.z) kafel(st, ls.zr + "/" + ls.z, "treningów siłowych");
+    const nal = biegi.filter(nalezne);
+    const planKm = kmTekst(nal.reduce((x, p) => x + p.kmMin, 0), nal.reduce((x, p) => x + p.kmMax, 0)).replace(/^ok\. /, "");
+    if (wykonane) {
+      const wyk = sumaAkt(aktywnosci("bieg").filter(a => a.data >= poz[0].data && a.data <= dzis));
+      kafel(st, kmLiczba(wyk.km) + " km", planKm ? "z planowanych " + planKm : "przebiegnięte");
+      if (wyk.sek) kafel(st, czasTekst(wyk.sek, wyk.sek).replace(/^≈ /, ""), "biegania");
+    } else if (planKm) kafel(st, planKm, "zaplanowane do dziś");
+    b1.append(st);
+
+    // bieżący tydzień
+    const pn = plusDni(dzisiaj, -dzienTyg(dzisiaj)), nd = plusDni(pn, 6);
+    const tyg = biegi.filter(p => p.data >= iso(pn) && p.data <= iso(nd));
+    const tMin = tyg.reduce((x, p) => x + p.kmMin, 0), tMax = tyg.reduce((x, p) => x + p.kmMax, 0);
+    if (tMax) {
+      const wykT = wykonane ? sumaAkt(aktywnosci("bieg").filter(a => a.data >= iso(pn) && a.data <= iso(nd))).km : null;
+      const zrT = tyg.filter(p => zrobiony(wykonanie(p))).length;
+      const w = el("div", "tydz-postep");
+      const opis = el("p", "");
+      opis.append(el("b", "", "Ten tydzień: "), wykT !== null ? kmLiczba(wykT) + " km z " + kmTekst(tMin, tMax).replace(/^ok\. /, "") : zrT + " z " + tyg.filter(p => !p.opcjonalny).length + " biegów");
+      const pasek = el("div", "pasek-post");
+      pasek.setAttribute("role", "img");
+      const ile = wykT !== null ? Math.min(1, wykT / tMax) : Math.min(1, zrT / Math.max(1, tyg.filter(p => !p.opcjonalny).length));
+      pasek.setAttribute("aria-label", "Postęp tygodnia: " + Math.round(ile * 100) + "%");
+      const f = el("i"); f.style.width = (ile * 100) + "%";
+      pasek.append(f);
+      if (wykT !== null && tMin < tMax) { const m = el("span", "znacznik"); m.style.left = (tMin / tMax * 100) + "%"; m.title = "Minimum bez opcjonalnych: " + kmLiczba(tMin) + " km"; pasek.append(m); }
+      w.append(opis, pasek);
+      b1.append(w);
+    }
+  }
+
+  // 2. tempa z Garmina → szacunki
+  if (wykonane) {
+    const od = iso(plusDni(dzisiaj, -28));
+    const rodzajDnia = new Map(biegi.map(p => [p.data, p.rodzaj]));
+    const bieg28 = aktywnosci("bieg").filter(a => a.data >= od && a.data <= dzis);
+    const spok = bieg28.filter(a => ["spokojny", "dlugi", "opcja"].includes(rodzajDnia.get(a.data)));
+    const sSpok = spok.reduce((x, a) => ({ km: x.km + (+a.km || 0), sek: x.sek + (+a.ruch_sek || +a.sek || 0) }), { km: 0, sek: 0 });
+    const sReg = bieg28.reduce((x, a) => ({ km: x.km + (+a.odcinki?.regeneracja?.km || 0), sek: x.sek + (+a.odcinki?.regeneracja?.sek || 0), n: x.n + (a.odcinki?.regeneracja ? 1 : 0) }), { km: 0, sek: 0, n: 0 });
+    const wiersze = [];
+    if (spok.length >= 2 && sSpok.km >= 5) wiersze.push(["spokojne", "Spokojne i długie biegi", sSpok.sek / sSpok.km, spok.length + " " + odmiana(spok.length, "bieg", "biegi", "biegów")]);
+    if (sReg.km >= 0.5) wiersze.push(["trucht", "Regeneracja w przerwach", sReg.sek / sReg.km, "z " + sReg.n + " " + odmiana(sReg.n, "treningu", "treningów", "treningów")]);
+    if (wiersze.length) {
+      const b2 = blok("Twoje tempa z ostatnich 4 tygodni");
+      const ul = el("ul", "tempa-wyk");
+      for (const [k, nazwa, t, zr] of wiersze) {
+        const li = el("li");
+        const lewa = el("span"); lewa.append(el("b", "", nazwa), el("small", "", zr + ", w szacunkach " + tempa[k]));
+        li.append(lewa, el("strong", "", fmtCzas(t) + "/km"));
+        const zaokr = Math.round(t / 5) * 5;
+        if (Math.abs(zaokr - tempoUst(k)) >= 10) li.append(przycisk("Użyj " + fmtCzas(zaokr), "maly", () => {
+          tempa = { ...tempa, [k]: fmtCzas(zaokr) }; zapisz("pg.tempa", JSON.stringify(tempa));
+          komunikat("Szacunki liczą teraz " + nazwa.toLowerCase() + " z tempa " + fmtCzas(zaokr) + "/km.", "ok"); odswiez();
+        }));
+        else li.append(el("span", "zgodne", "✓ zgodne"));
+        ul.append(li);
+      }
+      b2.append(ul);
+    }
+  }
+
+  // 3. struktura planu
+  const r = { spok: 0, mocno: 0, przerwy: 0 };
+  for (const p of biegi) {
+    if (p.opcjonalny) continue;
+    for (const k of liscie(p.lista)) {
+      if (jestOpc(k)) continue;
+      const m = miaraKroku(k);
+      if (!m.km) continue;
+      if (k.typ === "odpoczynek" || k.typ === "przerwa") r.przerwy += m.km;
+      else if (k.par?.przebiezka || (tempoKroku(k).t && tempoKroku(k).t < 280)) r.mocno += m.km;
+      else r.spok += m.km;
+    }
+  }
+  const razem = r.spok + r.mocno + r.przerwy;
+  if (razem) {
+    const b3 = blok("Struktura planu");
+    const proc = x => Math.round(x / razem * 100);
+    const rz = el("div", "rozklad");
+    rz.setAttribute("role", "img");
+    rz.setAttribute("aria-label", "Spokojnie " + proc(r.spok) + "%, mocno " + proc(r.mocno) + "%, trucht w przerwach " + proc(r.przerwy) + "%");
+    for (const [k, v] of [["r-spok", r.spok], ["r-mocno", r.mocno], ["r-prz", r.przerwy]]) { const i = el("i", k); i.style.flexGrow = String(v); rz.append(i); }
+    const leg = el("p", "rozklad-leg");
+    leg.append(el("i", "r-spok"), "spokojnie " + proc(r.spok) + "% (" + kmLiczba(r.spok) + " km)  ",
+      el("i", "r-mocno"), "szybciej niż 4:40/km " + proc(r.mocno) + "% (" + kmLiczba(r.mocno) + " km)  ",
+      el("i", "r-prz"), "przerwy " + proc(r.przerwy) + "%");
+    b3.append(rz, leg);
+    const st = kafle();
+    const najd = biegi.reduce((a, p) => p.kmMax > (a?.kmMax || 0) ? p : a, null);
+    if (najd) kafel(st, kmTekst(najd.kmMin || najd.kmMax, najd.kmMax).replace(/^ok\. /, ""), "najdłuższy: " + kiedy(najd.data));
+    const pn0 = plusDni(naDate(poz[0].data), -dzienTyg(naDate(poz[0].data)));
+    const tyg = Math.max(1, Math.floor((naDate(poz[poz.length - 1].data) - pn0) / 864e5 / 7) + 1);
+    kafel(st, kmLiczba(biegi.reduce((x, p) => x + p.kmMin, 0) / tyg) + " km", "średnio na tydzień");
+    const akc = biegi.filter(p => ["akcent", "test", "start"].includes(p.rodzaj)).length;
+    if (akc) kafel(st, String(akc), odmiana(akc, "akcent", "akcenty", "akcentów") + " i starty");
+    if (sily.length) {
+      const cs = sily.filter(p => !p.opcjonalny).reduce((x, p) => x + p.czasMin, 0);
+      kafel(st, cs ? czasTekst(cs, cs).replace(/^≈ /, "") : String(sily.length), "siły w planie (bez opcjonalnych)");
+    }
+    b3.append(st);
+  }
+
+  // 4. ostatnie aktywności
+  if (wykonane?.aktywnosci?.length) {
+    const b4 = blok("Ostatnie aktywności z Garmina");
+    const ul = el("ul", "akt");
+    const plany = new Set(poz.map(p => p.data + "|" + p.sport));
+    const ost = [...wykonane.aktywnosci].sort((a, b) => (b.data + (b.godz || "")).localeCompare(a.data + (a.godz || ""))).slice(0, 6);
+    for (const a of ost) {
+      const li = el("li", "akt-" + a.sport);
+      const lewa = el("span", "akt-co");
+      const link = el("a", "", a.nazwa || "Aktywność");
+      link.href = "https://connect.garmin.com/modern/activity/" + a.id; link.target = "_blank"; link.rel = "noopener";
+      lewa.append(link, el("small", "", kiedy(a.data) + (a.godz ? ", " + a.godz : "") + (plany.has(a.data + "|" + a.sport) ? "" : ", poza planem")));
+      const dane = el("span", "akt-dane");
+      for (const x of [a.sport === "bieg" && a.km ? kmLiczba(a.km) + " km" : "", a.sek ? fmtCzas(a.sek) : "",
+        a.sport === "bieg" && a.km > 0.2 ? fmtCzas((a.ruch_sek || a.sek) / a.km) + "/km" : "", a.hr ? a.hr + " bpm" : ""]) if (x) dane.append(el("span", "", x));
+      li.append(lewa, dane);
+      ul.append(li);
+    }
+    b4.append(ul);
+  }
+}
+
+function ikonaOdswiez() {
+  const t = document.createElement("template");
+  t.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>';
+  return t.content.firstChild;
 }
 
 function przelaczWszystkie() {
@@ -1761,6 +2200,48 @@ function rysujZmiany() {
 
 const NAZWY_RODZAJOW = { spokojny: "spokojny", dlugi: "długi", akcent: "akcent", test: "test", start: "start", opcja: "opcjonalny", inny: "bieg", sila: "siła" };
 
+// co faktycznie zrobiono (Garmin albo ręczne odhaczenie) w porównaniu z planem
+function blokWykonania(p) {
+  const w = wykonanie(p);
+  if (w.stan === "przyszly") return null;
+  const box = el("div", "wyk-box " + (zrobiony(w) ? "ok" : w.stan === "opuszczony" ? "nie" : ""));
+  const nag = el("div", "wyk-nag");
+  box.append(nag);
+  if (w.stan === "zrobiony") {
+    nag.append(el("b", "", "✓ Zrobione"));
+    for (const a of w.akt) {
+      const link = el("a", "", (a.godz ? a.godz + " " : "") + (a.nazwa || "aktywność"));
+      link.href = "https://connect.garmin.com/modern/activity/" + a.id; link.target = "_blank"; link.rel = "noopener";
+      nag.append(link);
+    }
+    const st = el("div", "wpis-stat");
+    const pole = (wart, etyk, tytul) => { const d = el("div"); d.append(el("b", "", wart), el("span", "", etyk)); if (tytul) d.title = tytul; st.append(d); };
+    if (p.sport === "bieg") {
+      const roznica = w.km - (p.kmMin + p.kmMax) / 2;
+      const plan = p.kmMax ? (Math.abs(roznica) < 0.3 ? "jak w planie" : (roznica > 0 ? "+" : "−") + kmLiczba(Math.abs(roznica)) + " km vs plan") : "dystans";
+      pole(kmLiczba(w.km) + " km", plan);
+      pole(fmtCzas(w.sek), p.czasMax ? "plan " + czasTekst(p.czasMin, p.czasMax).replace(/^≈ /, "") : "czas");
+      if (w.tempo) pole(fmtCzas(w.tempo) + "/km", "tempo średnie");
+    } else {
+      pole(fmtCzas(w.sek), p.czasMax ? "plan " + czasTekst(p.czasMin, p.czasMax).replace(/^≈ /, "") : "czas");
+      const serie = w.akt.reduce((x, a) => x + (+a.serie || 0), 0);
+      if (serie) pole(String(serie), "serii");
+    }
+    if (w.hr) pole(String(w.hr), "tętno średnie");
+    const te = w.akt.find(a => a.te)?.te;
+    if (te) pole(String(te).replace(".", ","), "efekt tlenowy", "Training Effect z Garmina (0–5)");
+    box.append(st);
+  } else if (w.stan === "recznie") {
+    nag.append(el("b", "", "✓ Zrobione"), el("span", "", "oznaczone ręcznie"));
+    box.append(przycisk("Cofnij oznaczenie", "maly link", () => przelaczOdhaczenie(p)));
+  } else {
+    nag.append(el("b", "", w.stan === "opuszczony" ? "Brak aktywności" : w.stan === "pominiety" ? "Pominięty (opcjonalny)" : "Jeszcze nie ma aktywności"));
+    if (wykonane) nag.append(el("span", "", "w Garminie z tego dnia"));
+    box.append(przycisk("Oznacz jako zrobiony", "maly", () => przelaczOdhaczenie(p)));
+  }
+  return box;
+}
+
 function panelDnia(d, lista) {
   const dd = naDate(d);
   const panel = el("div", "panel");
@@ -1776,6 +2257,15 @@ function panelDnia(d, lista) {
     h.append(el("span", "znak", NAZWY_RODZAJOW[p.rodzaj] || p.rodzaj), el("h3", "", p.pelna));
     art.append(h);
     if (p.opcjonalny) art.append(el("p", "meta", "Opcjonalny – zrób, jeśli czujesz się dobrze."));
+    const wb = blokWykonania(p);
+    if (wb) art.append(wb);
+    if (p.sport === "sila" && p.czasMax) {
+      const st = el("div", "wpis-stat");
+      const pole = (w, e) => { const d = el("div"); d.append(el("b", "", w), el("span", "", e)); st.append(d); };
+      pole(czasTekst(p.czasMin, p.czasMax).replace(/^≈ /, ""), "czas (szacunek)");
+      pole(String(liczKroki(p.lista)), "kroków na zegarku");
+      art.append(st);
+    }
     if (p.sport === "bieg" && p.kmMax) {
       const st = el("div", "wpis-stat");
       const pole = (w, e) => { const d = el("div"); d.append(el("b", "", w), el("span", "", e)); st.append(d); };
@@ -1960,7 +2450,7 @@ async function sledz(wyslano, tekst) {
     }
     if (!r.ok) continue;
     const dane = await r.json();
-    run = (dane.workflow_runs || []).find(w => Date.parse(w.created_at) >= wyslano - 60000) || run;
+    run = (dane.workflow_runs || []).find(w => !/garmin-wykonane\.ya?ml$/.test(w.path || "") && Date.parse(w.created_at) >= wyslano - 60000) || run;
     if (!run) continue;
 
     let kroki = [];
@@ -2144,7 +2634,21 @@ $("#form-ustawien").addEventListener("submit", () => {
   zapisz("pg.token", $("#pole-token").value.trim());
   zapisz("pg.repo", $("#pole-repo").value.trim() || DOMYSLNE_REPO);
   wczytajBazowy();
+  wczytajWykonane();
 });
+
+// ---------- motyw ----------
+function ustawMotyw(m) {
+  if (m === "light" || m === "dark") document.documentElement.dataset.theme = m;
+  else delete document.documentElement.dataset.theme;
+  zapisz("pg.motyw", m === "light" || m === "dark" ? m : "auto");
+  for (const b of document.querySelectorAll("#motyw button")) b.setAttribute("aria-pressed", String(b.dataset.m === (m || "auto")));
+  const ciemny = m === "dark" || (m !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+  $("#meta-kolor").setAttribute("content", ciemny ? "#070E19" : "#1F4E8C");
+}
+for (const b of document.querySelectorAll("#motyw button")) b.addEventListener("click", () => ustawMotyw(b.dataset.m));
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => ustawMotyw(czytaj("pg.motyw", "auto")));
+ustawMotyw(czytaj("pg.motyw", "auto"));
 
 // ---------- start ----------
 async function start() {
@@ -2174,6 +2678,7 @@ async function start() {
     odswiez();
   }
   wczytajBazowy();
+  wczytajWykonane();
   if (!ust.token) otworzUstawienia("Wklej token GitHuba, żeby zacząć.");
 }
 start();
