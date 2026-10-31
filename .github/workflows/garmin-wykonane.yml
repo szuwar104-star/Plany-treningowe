@@ -1,0 +1,83 @@
+name: Garmin – wykonane treningi
+
+# Pobiera aktywności z Garmin Connect do wykonane.json (czyta je aplikacja).
+# Te same sekrety co garmin.yml: GARMIN_TOKENS i GH_PAT.
+
+on:
+  schedule:                     # 6:17, 10:17, 14:17, 18:17, 22:17 czasu zimowego (cron jest w UTC)
+    - cron: "17 5,9,13,17,21 * * *"
+  repository_dispatch:          # przycisk „Pobierz z Garmina” w aplikacji
+    types: [pobierz-wykonane]
+  workflow_dispatch:
+    inputs:
+      dni:
+        description: "Ile dni wstecz odświeżyć"
+        default: "21"
+
+concurrency:                    # ta sama grupa co garmin.yml – oba zużywają ten sam refresh token
+  group: garmin
+  cancel-in-progress: false
+
+permissions:
+  contents: write               # zapis wykonane.json
+
+jobs:
+  pobierz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TZ: Europe/Warsaw
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Instalacja
+        run: pip install "garminconnect==0.3.20" pyyaml
+
+      - name: Pobranie aktywności z Garmina
+        env:
+          GARMIN_TOKENS: ${{ secrets.GARMIN_TOKENS }}
+          DNI: ${{ inputs.dni || '21' }}
+          # z harmonogramu zapis tylko przy zmianach; z aplikacji zawsze (aplikacja czeka na nowy plik)
+          ZAWSZE: ${{ github.event_name != 'schedule' && '--zawsze-zapisz' || '' }}
+        run: python garmin_wykonane.py --dni "$DNI" $ZAWSZE
+
+      - name: Zapis w repo
+        run: |
+          [ -f wykonane.json ] || exit 0
+          git config user.name "wykonane z Garmina"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add wykonane.json
+          if git diff --cached --quiet; then
+            echo "Bez zmian."
+          else
+            git commit -m "Wykonane treningi z Garmina"
+            git pull --rebase
+            git push
+          fi
+
+      # jak w garmin.yml: odświeżone tokeny wracają do sekretu, także po błędzie
+      - name: Zapis odświeżonych tokenów do sekretu
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          STARE: ${{ secrets.GARMIN_TOKENS }}
+        run: |
+          plik=~/.garminconnect/garmin_tokens.json
+          [ -f "$plik" ] || { echo "Brak tokenów na dysku – nic do zapisania."; exit 0; }
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::warning::Brak sekretu GH_PAT – odświeżone tokeny NIE zostały zapisane."
+            exit 0
+          fi
+          stary=$(printf '%s' "$STARE" | base64 -d 2>/dev/null | tar -xzO 2>/dev/null | sha256sum)
+          nowy=$(sha256sum < "$plik")
+          if [ "$stary" = "$nowy" ]; then
+            echo "Tokeny bez zmian."
+          else
+            python garmin_trening.py --eksport-tokenow \
+              | gh secret set GARMIN_TOKENS --repo "$GITHUB_REPOSITORY"
+            echo "Zapisano odświeżone tokeny do GARMIN_TOKENS."
+          fi
